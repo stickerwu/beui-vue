@@ -30,11 +30,14 @@ jobs:
           pnpm test:parity
           pnpm test:gallery
           pnpm test:motion
+          python3 scripts/package-motion-review.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: visual-comparisons-${{ github.sha }}
+          include-hidden-files: true
+          if-no-files-found: error
           path: |
             vue/.artifacts/gallery
             vue/.artifacts/parity
-            vue/.artifacts/motion-review
+            vue/.artifacts/motion-review.zip

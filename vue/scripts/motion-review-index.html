@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>beUI Vue · Motion comparison</title>
+  <style>
+    :root {color-scheme:light dark;--paper:#f7f8f8;--surface:#fff;--ink:#182329;--muted:#495960;--line:#c7d0d3;--accent:#006450}
+    @media(prefers-color-scheme:dark){:root{--paper:#101718;--surface:#192324;--ink:#ecf3f0;--muted:#b7c9c4;--line:#455653;--accent:#82dbba}}
+    *{box-sizing:border-box}
+    body{margin:0;color:var(--ink);background:var(--paper);font:1rem/1.5 Inter,system-ui,sans-serif}
+    header,main{width:min(100% - 2rem,100rem);margin-inline:auto}
+    header{padding:2.3rem 0 1.2rem;border-bottom:1px solid var(--line)}
+    h1,h2,h3,p,figure{margin:0}
+    h1{font-size:clamp(1.8rem,4vw,3.15rem);line-height:1.15;letter-spacing:-.045em}
+    h2{font-size:clamp(1.4rem,3vw,1.95rem);line-height:1.2;overflow-wrap:anywhere}
+    header p,.note{color:var(--muted);margin-block:.45rem}
+    a{color:var(--accent);text-underline-offset:.2em}
+    :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+    .toolbar{display:grid;grid-template-columns:minmax(9rem,1fr) minmax(13rem,2fr) minmax(6rem,.6fr) auto;gap:.8rem;align-items:end;padding-block:1.3rem}
+    label,figcaption{display:block;font-weight:650}
+    input,select,button{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:.4rem;min-height:2.65rem;padding:.35rem .7rem}
+    input,select{display:block;width:100%;margin-top:.25rem}
+    button{cursor:pointer}
+    button:disabled{opacity:.5;cursor:default}
+    .steps{display:flex;gap:.35rem}
+    .rowhead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:.35rem .8rem;margin:.45rem 0}
+    .frame{border-top:1px solid var(--line);padding:.7rem 0 1.3rem}
+    .images{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem}
+    figcaption{color:var(--muted);font-size:.85rem;margin-bottom:.25rem}
+    img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:.35rem}
+    details{margin:.6rem 0 1rem}
+    summary{cursor:pointer;color:var(--accent);width:fit-content}
+    pre{white-space:pre-wrap;overflow-wrap:anywhere;padding:.7rem;background:var(--surface);border:1px solid var(--line);font-size:.85rem}
+    #result-note{color:var(--muted);margin-bottom:.45rem}
+    @media(max-width:50rem){.toolbar{grid-template-columns:1fr 1fr}}
+    @media(max-width:36rem){header,main{width:calc(100% - 1.25rem)}header{padding:1.2rem 0 .7rem}.toolbar{grid-template-columns:minmax(0,1fr)}.images{grid-template-columns:minmax(0,1fr)}}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Motion comparison</h1>
+    <p id="coverage"></p>
+    <p>Compare the upstream React preview and its Vue port at the same checkpoints. Human review is pending.</p>
+    <a href="report.json">Open the complete JSON report</a>
+  </header>
+  <main>
+    <div class="toolbar">
+      <label for="filter">Find a component<input id="filter" type="search" placeholder="Name or variant"></label>
+      <label for="variant">Preview variant<select id="variant"></select></label>
+      <label for="theme">Capture theme<select id="theme"><option value="light">Light</option><option value="dark">Dark</option></select></label>
+      <div class="steps"><button type="button" id="previous">Previous</button><button type="button" id="next">Next</button></div>
+    </div>
+    <p id="result-note" role="status"></p>
+    <noscript>Enable JavaScript to browse captures, or open the complete JSON report.</noscript>
+    <article id="capture">
+      <h2 id="name"></h2>
+      <p class="note" id="match"></p>
+      <details><summary>Input and capture settings</summary><pre id="input"></pre></details>
+      <div id="frames"></div>
+    </article>
+  </main>
+  <script id="report-data" type="application/json">__MOTION_REPORT__</script>
+  <script>
+    const report = JSON.parse(document.getElementById('report-data').textContent)
+    const byId = id => document.getElementById(id)
+    const filter = byId('filter'), variant = byId('variant'), theme = byId('theme')
+    const key = row => `${row.slug}/${row.variant}`
+    const all = [...new Set(report.results.map(key))]
+    const position = new URLSearchParams(location.hash.slice(1))
+    const sideNames = {react:'React reference',vue:'Vue port',diff:'Pixel difference'}
+    const phaseNames = {start:'Start',mid:'Midpoint',end:'End'}
+    const matches = {
+      'same-action-and-name':'The action and accessible control name match.',
+      'same-action-by-position':'Controls were paired by position. Check their labels and behavior.',
+      'identical-sequence':'Both previews received the same sequence. Check their visual response.',
+      'no-common-control':'The previews have no shared actionable control for this input.'
+    }
+    byId('coverage').textContent = `${all.length} variants · ${report.results.length} themed captures · ${report.dimensions.width} × ${report.dimensions.height} pixels per image`
+    if (position.get('theme') === 'dark') theme.value = 'dark'
+
+    function showFrames(row) {
+      const blocks = row.frames.map(frame => {
+        const section = document.createElement('section')
+        section.className = 'frame'
+        const heading = document.createElement('div')
+        heading.className = 'rowhead'
+        const phase = document.createElement('h3')
+        phase.textContent = `${phaseNames[frame.name]} · ${frame.at} ms`
+        const pixels = document.createElement('span')
+        pixels.textContent = `${(100 * frame.ratio).toFixed(2)}% different · ${frame.changedPixels.toLocaleString('en-US')} pixels`
+        heading.append(phase, pixels)
+        const images = document.createElement('div')
+        images.className = 'images'
+        for (const [side, label] of Object.entries(sideNames)) {
+          const figure = document.createElement('figure')
+          const caption = document.createElement('figcaption')
+          caption.textContent = label
+          const link = document.createElement('a')
+          link.href = frame[side]
+          const image = document.createElement('img')
+          image.src = frame[side]
+          image.width = report.dimensions.width
+          image.height = report.dimensions.height
+          image.alt = `Open ${label} at ${frame.at} ms for ${row.slug}, ${row.variant}, ${row.theme}`
+          link.append(image)
+          figure.append(caption, link)
+          images.append(figure)
+        }
+        section.append(heading, images)
+        return section
+      })
+      byId('frames').replaceChildren(...blocks)
+    }
+
+    function selectCapture() {
+      const row = report.results.find(item => key(item) === variant.value && item.theme === theme.value)
+      byId('previous').disabled = variant.selectedIndex < 1
+      byId('next').disabled = variant.selectedIndex < 0 || variant.selectedIndex >= variant.length - 1
+      variant.disabled = !row
+      byId('capture').hidden = !row
+      byId('result-note').textContent = row ? `Showing ${variant.selectedIndex + 1} of ${variant.length} matching variants` : 'No matching variants. Try another name.'
+      if (!row) return
+      byId('name').textContent = row.slug === row.variant ? row.slug : `${row.slug} / ${row.variant}`
+      byId('match').textContent = `Input · ${row.input.scenario.kind}. ${matches[row.input.inputEquivalence] ?? row.input.inputEquivalence}`
+      byId('input').textContent = JSON.stringify({
+        previewKey:row.previewKey, ...row.input, mountAdvanceMs:row.mountAdvanceMs,
+        clockStart:report.clockStart, seed:report.seed, threshold:report.threshold, baseline:report.baseline
+      }, null, 2)
+      showFrames(row)
+      const hash = new URLSearchParams({variant:variant.value,theme:theme.value})
+      history.replaceState(null, '', `#${hash}`)
+    }
+
+    function filterVariants(preferred = variant.value) {
+      const needle = filter.value.trim().toLowerCase()
+      const options = all.filter(value => value.toLowerCase().includes(needle)).map(value => new Option(value.replace('/', ' / '), value))
+      variant.replaceChildren(...options)
+      if (options.some(option => option.value === preferred)) variant.value = preferred
+      selectCapture()
+    }
+
+    filter.addEventListener('input', () => filterVariants())
+    variant.addEventListener('change', selectCapture)
+    theme.addEventListener('change', selectCapture)
+    for (const [id, direction] of [['previous', -1], ['next', 1]]) {
+      byId(id).addEventListener('click', () => {
+        variant.selectedIndex += direction
+        selectCapture()
+      })
+    }
+    filterVariants(position.get('variant'))
+  </script>
+</body>
+</html>

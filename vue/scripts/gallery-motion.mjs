@@ -1,4 +1,5 @@
 import { spawn } from 'node:child_process'
+import { createHash } from 'node:crypto'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import { setTimeout as delay } from 'node:timers/promises'
@@ -39,7 +40,8 @@ const report = {
   inputs:'Named controls use accessible names when both fixtures provide a match. Positional controls, pointer coordinates and missing controls carry explicit inputEquivalence labels.',
   humanReview:'pending',results:[],
 }
-const reportName = selected.length ? `selection-${selected.join('-')}.json` : 'report.json'
+const selectionId = createHash('sha256').update(JSON.stringify([...selected].sort())).digest('hex').slice(0,16)
+const reportName = selected.length ? `selection-${selectionId}.json` : 'report.json'
 let browser
 
 async function mergeRecapturedCases() {
