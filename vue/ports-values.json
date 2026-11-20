@@ -1,0 +1,17 @@
+{
+  "button-stateful": {"name":"StatefulButton","api":"`state` 接受 idle、loading、success、error。`loadingText`、`successText` 和 `errorText` 提供状态文案。忙碌时禁用重复提交。"},
+  "expanding-arrow-button": {"name":"ExpandingArrowButton","api":"默认插槽提供操作名称，悬停和键盘聚焦会展开点阵箭头。支持原生按钮属性。"},
+  "slide-action-button": {"name":"SlideActionButton","api":"滑过 `threshold`（默认 0.82）或按 Enter / Space 触发 `@complete`。`resetDelay` 以毫秒计，负值保持完成状态。"},
+  "theme-toggle": {"name":"ThemeToggle","api":"`v-model:theme` 同步 light / dark。`variant` 支持 rectangle、circle、circle-blur、blinds，`start` 设置揭示方向。"},
+  "digit-swap": {"name":"DigitSwap","api":"`value` 接受字符串和数字，`direction` 控制上下滚动，`duration`、`stagger` 以秒计。`suffixLength` 保留末尾字符的位置。"},
+  "number-ticker": {"name":"NumberTicker","api":"`value` 为目标数值，`pad`、`decimals`、`locale`、`format` 和前后缀决定显示格式。`startOnView` 在首次进入视口时启动滚轮。"},
+  "animated-number": {"name":"AnimatedNumber","api":"`value` 设定目标，`duration` 以秒计，`format` 可格式化中间值，`startOnView` 控制首次播放。"},
+  "animated-badge": {"name":"AnimatedBadge","api":"`status` 支持 neutral、info、success、warning、danger、loading。`size`、`pulse`、`showIcon` 和 `#icon` 控制外观。"},
+  "range-slider": {"name":"RangeSlider","api":"`v-model`、`min`、`max`、`step` 定义值域。`showTicks` 切换刻度。支持指针拖动、方向键、Home、End 和 PageUp / PageDown。"},
+  "range-slider-fluid": {"name":"RangeSlider","api":"`variant=\"fluid\"` 用裁剪层反转填充区域的文字。`v-model` 同步值，`label` 和 `format` 定制读数。"},
+  "range-slider-inline": {"name":"RangeSlider","api":"`variant=\"inline\"` 将标签、读数和手柄置于同一行，`v-model`、`step`、`min` 和 `max` 控制取值。"},
+  "range-slider-wave": {"name":"RangeSlider","api":"`variant=\"wave\"` 生成跟随指针位置的波峰，`bars` 指定振幅条数。通过 `v-model` 同步数值。"},
+  "range-slider-bubble": {"name":"RangeSlider","api":"`variant=\"bubble\"` 拖动时浮出读数，`format` 支持自定义格式，`formatValueText` 指定辅助技术读数。"},
+  "range-slider-ruler": {"name":"RangeSlider","api":"`variant=\"ruler\"` 可水平拖动标尺，`majorEvery`、`gap`、`unit` 分别设定主刻度频率、间距和单位。"},
+  "wheel-picker": {"name":"WheelPicker","api":"`options` 支持字符串或 `{label,value}`，`v-model` 同步选中值。滚轮、触摸与键盘均可操作，`itemHeight`、`visibleCount` 控制尺寸。"}
+}

@@ -4,6 +4,7 @@ dist/
 docs/components/
 docs/catalog.md
 test-results/
+test-results-*/
 playwright-report/
 *.tgz
 .artifacts/

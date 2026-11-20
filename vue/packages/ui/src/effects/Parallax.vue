@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'motion-v'
 import { toRef, useTemplateRef, watchEffect } from 'vue'
+import { useSmoothScroll } from '../layout/scroll-context'
 
 const { speed = .3, axis = 'y', spring = true, container } = defineProps<{ speed?: number; axis?: 'x' | 'y'; spring?: boolean; container?: HTMLElement | null }>()
 const target = useTemplateRef('target')
-const { scrollYProgress } = useScroll({ target, container: toRef(() => container ?? undefined), offset: ['start end', 'end start'] })
+const provider = useSmoothScroll()
+const { scrollYProgress } = useScroll({ target, container: toRef(() => container ?? provider?.container.value), offset: ['start end', 'end start'] })
 const travel = useMotionValue(speed * 100)
 watchEffect(() => travel.set(speed * 100))
 const mapped = useTransform(() => (1 - 2 * scrollYProgress.get()) * travel.get())

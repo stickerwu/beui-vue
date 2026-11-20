@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onBeforeUnmount, shallowRef, useId, useTemplateRef, watchEffect } from 'vue'
+import { motion, useReducedMotion } from 'motion-v'
 import { useLineChart } from './chart-model'
 import { seriesPaths, type Point } from './chart-geometry'
 import { useChartMotion } from './use-chart-motion'
@@ -13,6 +14,9 @@ const stage = useTemplateRef('stage')
 const host = useTemplateRef('host')
 const width = shallowRef(0)
 const revealed = shallowRef(false)
+const reduced = useReducedMotion()
+const ease = [0.16, 1, 0.3, 1] as const
+const glide = computed(() => reduced.value ? { duration: 0 } : { type: 'spring' as const, stiffness: 400, damping: 40 })
 const id = useId()
 const left = 44
 const top = 12
@@ -109,31 +113,33 @@ function nativeInput(event: Event) {
       <p v-if="empty && !loading" class="centered">{{ messages.noData }}</p>
       <svg v-if="width && (!empty || loading)" aria-hidden="true" class="drawing" :width="width" :height="height">
         <defs>
+          <clipPath :id="`${id}-clip`"><motion.rect x="0" y="-16" :width="width" :height="height + 32" :style="{ originX: 0 }"
+            :initial="reduced ? false : { scaleX: 0 }" :animate="{ scaleX: (revealed && !loading) || reduced ? 1 : 0 }"
+            :transition="revealed ? { duration: .7, delay: .12, ease } : { duration: 0 }" /></clipPath>
           <linearGradient :id="`${id}-edges`" gradientUnits="userSpaceOnUse" :x1="left" :x2="left + innerWidth" y1="0" y2="0">
             <stop offset="0" stop-color="white" :stop-opacity="fadeEdges ? 0 : 1" /><stop :offset="edgeFraction" stop-color="white" />
             <stop :offset="1 - edgeFraction" stop-color="white" /><stop offset="1" stop-color="white" :stop-opacity="fadeEdges ? 0 : 1" />
           </linearGradient>
-          <mask :id="`${id}-mask`" maskUnits="userSpaceOnUse" x="0" :width="width" y="0" :height="height">
-            <rect :width="width" :height="height" :fill="`url(#${id}-edges)`" />
-            <rect v-if="inspecting" :x="crossX" :width="width" :height="height" fill="black" opacity=".6" />
+          <mask :id="`${id}-mask`" maskUnits="userSpaceOnUse" x="0" :width="width" y="-16" :height="height + 32">
+            <rect y="-16" :width="width" :height="height + 32" :fill="`url(#${id}-edges)`" />
+            <motion.rect x="0" y="-16" :width="width" :height="height + 32" fill="black"
+              :initial="{ x: left, opacity: 0 }" :animate="{ x: index < 0 ? left : crossX, opacity: inspecting ? .6 : 0 }"
+              :transition="{ x: glide, opacity: { duration: .18, ease } }" />
           </mask>
-          <linearGradient :id="`${id}-cross`" x1="0" x2="0" y1="0" y2="1">
-            <stop stop-color="currentColor" stop-opacity="0" /><stop offset=".3" stop-color="currentColor" stop-opacity=".35" />
-            <stop offset=".7" stop-color="currentColor" stop-opacity=".35" /><stop offset="1" stop-color="currentColor" stop-opacity="0" />
+          <linearGradient :id="`${id}-cross`" gradientUnits="userSpaceOnUse" x1="0" x2="0" :y1="top" :y2="height - 8">
+            <stop stop-color="currentColor" stop-opacity="0" /><stop offset=".25" stop-color="currentColor" stop-opacity=".35" />
+            <stop offset=".75" stop-color="currentColor" stop-opacity=".35" /><stop offset="1" stop-color="currentColor" stop-opacity="0" />
           </linearGradient>
           <linearGradient v-for="row in paths" :id="row.gradient" :key="row.id" x1="0" x2="0" y1="0" y2="1">
             <stop :stop-color="row.color" :stop-opacity="paths.length > 1 ? .14 : .28" /><stop offset="1" :stop-color="row.color" stop-opacity="0" />
           </linearGradient>
         </defs>
-        <g v-if="!loading" class="axis">
-          <g v-for="tick in domain.ticks" :key="tick">
-            <line v-if="showGrid" :x1="left" :x2="left + innerWidth" :y1="yAt(tick)" :y2="yAt(tick)" stroke="currentColor" opacity=".14" stroke-dasharray="3 4" />
-            <text :x="left - 8" :y="yAt(tick)" text-anchor="end" dominant-baseline="middle">{{ tickText(tick) }}</text>
-          </g>
+        <g v-if="showGrid" class="axis">
+          <line v-for="tick in domain.ticks" :key="tick" :x1="left" :x2="left + innerWidth" :y1="yAt(tick)" :y2="yAt(tick)" stroke="currentColor" :stroke-opacity="tick === 0 ? .3 : .12" />
         </g>
         <g :mask="`url(#${id}-mask)`">
           <path v-if="loading" class="placeholder" :d="placeholder" fill="none" stroke="currentColor" :stroke-width="strokeWidth" />
-          <g v-else :class="['marks', { revealed }]">
+          <g v-else :clip-path="`url(#${id}-clip)`">
             <g v-for="row in paths" :key="row.id" class="series" :opacity="hidden.includes(row.id) ? 0 : hovered && !hidden.includes(hovered) && hovered !== row.id ? .2 : 1">
               <path v-if="props.variant === 'area'" :d="row.area" :fill="`url(#${row.gradient})`" />
               <path :d="row.line" fill="none" :stroke="row.color" :stroke-width="strokeWidth" stroke-linecap="round" stroke-linejoin="round" />
@@ -141,12 +147,15 @@ function nativeInput(event: Event) {
           </g>
         </g>
         <g v-if="inspecting">
-          <rect :x="crossX - .5" :y="top" width="1" :height="innerHeight" :fill="`url(#${id}-cross)`" />
-          <g v-for="mark in markers" :key="mark.id" :transform="`translate(${mark.x} ${mark.y})`">
-            <circle r="10" :fill="mark.color" opacity=".18" /><circle r="4" :fill="mark.color" stroke="var(--beui-chart-bg, Canvas)" stroke-width="2" />
-          </g>
+          <motion.line x1="0" x2="0" :y1="top" :y2="height - 8" :stroke="`url(#${id}-cross)`" :initial="{ x: crossX, opacity: 0 }" :animate="{ x: crossX, opacity: 1 }" :transition="{ x: glide, opacity: { duration: .12 } }" />
+          <motion.g v-for="mark in markers" :key="mark.id" :initial="{ x: mark.x, y: mark.y, opacity: 0, scale: .5 }" :animate="{ x: mark.x, y: mark.y, opacity: 1, scale: 1 }" :transition="{ default: glide, opacity: { duration: .12 } }">
+            <circle r="10" :fill="mark.color" opacity=".18" /><circle r="4" :fill="mark.color" stroke="var(--beui-chart-bg, var(--beui-background))" stroke-width="2" />
+          </motion.g>
         </g>
       </svg>
+      <div v-if="width && !loading && !empty" aria-hidden="true" class="axis-labels">
+        <span v-for="tick in domain.ticks" :key="tick" class="value-tick" :style="{ top: `${yAt(tick)}px`, width: `${left - 8}px` }">{{ tickText(tick) }}</span>
+      </div>
       <output v-if="loading" class="centered">{{ props.loadingLabel ?? messages.loading }}<span v-if="props.loadingLabel === ''" class="sr-only">{{ messages.loadingStatus }}</span></output>
       <div ref="host" class="inspection" :style="{ left: `${left}px`, top: `${top}px` }">
         <input v-if="!loading && !empty" class="inspector" type="range" :min="0" :max="count - 1" step="1" :value="cursor"
@@ -159,7 +168,7 @@ function nativeInput(event: Event) {
     <div v-if="!empty" aria-hidden="true" class="categories">
       <template v-if="width && !loading">
         <span v-for="column in columnLabels" :key="column.category" class="tick" :style="{ left: `${column.position}px`, opacity: inspecting && Math.abs(column.position - crossX) < 40 ? 0 : undefined }">{{ column.category }}</span>
-        <span v-if="inspecting" class="pill" :style="{ left: `${crossX}px` }">{{ data.categories[cursor] }}</span>
+        <motion.div v-if="inspecting" class="pill-position" :initial="{ x: crossX, opacity: 0 }" :animate="{ x: crossX, opacity: 1 }" :transition="{ x: glide, opacity: { duration: .12 } }"><span class="pill">{{ data.categories[cursor] }}</span></motion.div>
       </template>
     </div>
   </div>
@@ -169,22 +178,22 @@ function nativeInput(event: Event) {
 .chart-plot { width: 100%; min-width: 0; user-select: none; }
 .stage, .categories { position: relative; }
 .drawing { position: absolute; inset: 0; overflow: visible; }
-.axis text, .tick { font: 11px system-ui, sans-serif; fill: currentColor; opacity: .72; }
+.axis,.value-tick,.tick { color: var(--beui-chart-muted, var(--beui-muted-foreground)); }
+.axis-labels { position: absolute; inset: 0; pointer-events: none; }
+.value-tick { position: absolute; left: 0; text-align: right; transform: translateY(-50%); font: 11px/1.5 ui-monospace, monospace; font-variant-numeric: tabular-nums; }
 .centered { position: absolute; inset: 0; display: grid; place-items: center; font: inherit; font-size: 13px; opacity: .72; }
 .inspection { position: absolute; right: 16px; bottom: 8px; border-radius: 3px; }
-.inspection:has(.inspector:focus-visible) { outline: 2px solid currentColor; outline-offset: 4px; }
+.inspection:has(.inspector:focus-visible) { outline: 2px solid var(--beui-chart-ring, color-mix(in srgb, currentColor 12%, transparent)); outline-offset: 4px; }
 .inspector { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; touch-action: pan-y; cursor: crosshair; }
 .categories { height: 20px; margin-top: 8px; }
-.tick, .pill { position: absolute; top: 1px; transform: translateX(-50%); white-space: nowrap; }
-.pill { top: 0; border-radius: 1rem; padding: 2px 8px; font: 500 11px/16px system-ui, sans-serif; color: var(--beui-chart-bg, Canvas); background: var(--beui-chart-fg, CanvasText); }
+.tick { position: absolute; top: 2px; transform: translateX(-50%); white-space: nowrap; font-size: 11px; line-height: 1.5; transition: opacity 150ms; }
+.pill-position { position: absolute; left: 0; top: 0; pointer-events: none; }
+.pill { display: block; transform: translateX(-50%); white-space: nowrap; border-radius: 1rem; padding: 2px 8px; font-size: 11px; font-weight: 500; line-height: 16px; color: var(--beui-chart-bg, var(--beui-background)); background: var(--beui-chart-fg, var(--beui-foreground)); }
 .series { transition: opacity 180ms ease-out; }
 .placeholder { opacity: .35; }
 .sr-only { position: absolute; clip-path: inset(50%); width: 1px; height: 1px; overflow: hidden; }
 @media (prefers-reduced-motion: no-preference) {
-  .marks { clip-path: inset(0 100% 0 0); }
-  .marks.revealed { animation: reveal 700ms ease-out 120ms both; }
   .placeholder { animation: pulse 1600ms ease-in-out infinite alternate; }
 }
-@keyframes reveal { to { clip-path: inset(0); } }
 @keyframes pulse { to { opacity: .65; } }
 </style>

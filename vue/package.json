@@ -12,6 +12,8 @@
     "docs:preview": "vitepress preview docs --host 127.0.0.1 --port 4173",
     "test:e2e": "playwright test",
     "test:package": "node scripts/test-package.mjs",
+    "test:parity": "node scripts/parity.mjs",
+    "test:gallery": "node scripts/gallery.mjs",
     "changeset": "changeset",
     "version-packages": "changeset version"
   },
@@ -21,6 +23,7 @@
     "@types/node": "^24.0.0",
     "@vitejs/plugin-vue": "^5.2.4",
     "beui-vue": "workspace:*",
+    "motion-v": "2.13.0",
     "pixelmatch": "7.1.0",
     "pngjs": "7.0.0",
     "typescript": "~5.9.3",

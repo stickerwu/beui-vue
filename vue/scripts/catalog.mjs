@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import ts from 'typescript'
 import { readPorts } from './ports.mjs'
+import { approvedExamples, expectedExamples } from './acceptance.mjs'
 
 const baseline = 'c0a936f59eb767e263c0e81b93dd323511dc9b6b'
 const root = new URL('../', import.meta.url)
@@ -24,7 +25,7 @@ const entries = registry.flatMap(category => category.components.flatMap(page =>
     slug: item.installSlug || page.slug, category: category.slug, title: item.name,
     page: `https://beui.dev/${section}/${page.slug}`, source: item.file,
     credit: item.credit || page.credit || null,
-    examples: (variants.length ? [item] : page.examples ?? []).map(example => ({slug: example.slug, title: example.name, source: example.previewFile, credit: example.credit || null})),
+    examples: (variants.length ? [item] : page.examples ?? []).map(example => ({slug: example.slug, title: example.name, source: example.previewFile, previewKey: example.previewKey, credit: example.credit || null})),
   }))
 }))
 if (entries.length !== 160 || new Set(entries.map(entry => entry.slug)).size !== 160 || JSON.stringify(entries.map(item => item.slug)) !== JSON.stringify(INSTALL_SLUGS)) throw Error('Pinned registry mismatch')
@@ -43,7 +44,9 @@ if (process.argv.includes('--docs')) {
     catalog += `\n## ${label}\n\n| 条目 | Vue 状态 |\n| --- | --- |\n`
     for (const entry of entries.filter(entry => entry.category === key)) {
       const port = ports[entry.slug]
-      const stage = port ? '已实现 · 待还原验收' : '待迁移'
+      const approved = approvedExamples(entry, port).length
+      const total = expectedExamples(entry).length
+      const stage = !port ? '待迁移' : approved === total ? '已通过还原验收' : `Vue 已实现 · 还原验收 ${approved}/${total}`
       catalog += `| [${entry.title}](./components/${entry.slug}) | ${stage} |\n`
       let text = `# ${entry.title}\n\n${stage} · [上游演示](${entry.page}) · [固定版本源码](https://github.com/starc007/ui-components/blob/${baseline}/${entry.source})\n`
       if (entry.credit) text += `\n原设计：[${entry.credit.name}](${entry.credit.url})\n`

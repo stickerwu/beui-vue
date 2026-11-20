@@ -94,6 +94,7 @@
           "slug": "morphing",
           "title": "Morphing",
           "source": "components/previews/motion/morphing-lightbox.preview.tsx",
+          "previewKey": "motion/morphing-lightbox",
           "credit": null
         }
       ]
@@ -182,6 +183,7 @@
           "slug": "metallic",
           "title": "Metallic Button",
           "source": "components/previews/motion/button-metallic.preview.tsx",
+          "previewKey": "motion/button-metallic",
           "credit": null
         }
       ]
@@ -198,6 +200,7 @@
           "slug": "base",
           "title": "Button",
           "source": "components/previews/motion/button-base.preview.tsx",
+          "previewKey": "motion/button-base",
           "credit": null
         }
       ]
@@ -214,6 +217,7 @@
           "slug": "stateful",
           "title": "Stateful Button",
           "source": "components/previews/motion/button-stateful.preview.tsx",
+          "previewKey": "motion/button-stateful",
           "credit": null
         }
       ]
@@ -230,6 +234,7 @@
           "slug": "magnetic",
           "title": "Magnetic Button",
           "source": "components/previews/motion/button-magnetic.preview.tsx",
+          "previewKey": "motion/button-magnetic",
           "credit": null
         }
       ]
@@ -246,6 +251,7 @@
           "slug": "expanding-arrow",
           "title": "Expanding Arrow Button",
           "source": "components/previews/motion/expanding-arrow-button.preview.tsx",
+          "previewKey": "motion/expanding-arrow-button",
           "credit": null
         }
       ]
@@ -262,6 +268,7 @@
           "slug": "hold-action",
           "title": "Hold Action Button",
           "source": "components/previews/motion/hold-action-button.preview.tsx",
+          "previewKey": "motion/hold-action-button",
           "credit": null
         }
       ]
@@ -278,6 +285,7 @@
           "slug": "slide-action",
           "title": "Slide Action Button",
           "source": "components/previews/motion/slide-action-button.preview.tsx",
+          "previewKey": "motion/slide-action-button",
           "credit": null
         }
       ]
@@ -348,6 +356,7 @@
           "slug": "default",
           "title": "Select",
           "source": "components/previews/motion/select.preview.tsx",
+          "previewKey": "motion/select",
           "credit": null
         }
       ]
@@ -364,6 +373,7 @@
           "slug": "morph",
           "title": "Morph Select",
           "source": "components/previews/motion/select-morph.preview.tsx",
+          "previewKey": "motion/select-morph",
           "credit": null
         }
       ]
@@ -398,12 +408,14 @@
           "slug": "default",
           "title": "Checkbox",
           "source": "components/previews/motion/checkbox.preview.tsx",
+          "previewKey": "motion/checkbox",
           "credit": null
         },
         {
           "slug": "description",
           "title": "With Description",
           "source": "components/previews/motion/checkbox-description.preview.tsx",
+          "previewKey": "motion/checkbox-description",
           "credit": null
         }
       ]
@@ -420,12 +432,14 @@
           "slug": "default",
           "title": "Radio Group",
           "source": "components/previews/motion/radio.preview.tsx",
+          "previewKey": "motion/radio",
           "credit": null
         },
         {
           "slug": "description",
           "title": "With Description",
           "source": "components/previews/motion/radio-description.preview.tsx",
+          "previewKey": "motion/radio-description",
           "credit": null
         }
       ]
@@ -514,12 +528,14 @@
           "slug": "default",
           "title": "Tooltip",
           "source": "components/previews/motion/tooltip.preview.tsx",
+          "previewKey": "motion/tooltip",
           "credit": null
         },
         {
           "slug": "toolbar",
           "title": "Toolbar",
           "source": "components/previews/motion/tooltip-toolbar.preview.tsx",
+          "previewKey": "motion/tooltip-toolbar",
           "credit": null
         }
       ]
@@ -545,6 +561,7 @@
           "slug": "gooey",
           "title": "Gooey Popover",
           "source": "components/previews/motion/popover.preview.tsx",
+          "previewKey": "motion/popover",
           "credit": null
         }
       ]
@@ -561,6 +578,7 @@
           "slug": "morph",
           "title": "Morph Popover",
           "source": "components/previews/motion/popover-morph.preview.tsx",
+          "previewKey": "motion/popover-morph",
           "credit": null
         }
       ]
@@ -595,6 +613,7 @@
           "slug": "text-scramble",
           "title": "Text Scramble",
           "source": "components/previews/motion/text-scramble.preview.tsx",
+          "previewKey": "motion/text-scramble",
           "credit": null
         }
       ]
@@ -611,6 +630,7 @@
           "slug": "chromatic-reveal",
           "title": "Dia Text Animation",
           "source": "components/previews/motion/chromatic-text-reveal.preview.tsx",
+          "previewKey": "motion/chromatic-text-reveal",
           "credit": null
         }
       ]
@@ -627,6 +647,7 @@
           "slug": "reveal",
           "title": "Text Reveal",
           "source": "components/previews/motion/text-reveal.preview.tsx",
+          "previewKey": "motion/text-reveal",
           "credit": null
         }
       ]
@@ -643,6 +664,7 @@
           "slug": "shimmer",
           "title": "Text Shimmer",
           "source": "components/previews/motion/text-shimmer.preview.tsx",
+          "previewKey": "motion/text-shimmer",
           "credit": null
         }
       ]
@@ -659,6 +681,7 @@
           "slug": "cascade",
           "title": "Text Cascade",
           "source": "components/previews/motion/text-cascade.preview.tsx",
+          "previewKey": "motion/text-cascade",
           "credit": null
         }
       ]
@@ -675,6 +698,7 @@
           "slug": "digit-swap",
           "title": "Digit Swap",
           "source": "components/previews/motion/digit-swap.preview.tsx",
+          "previewKey": "motion/digit-swap",
           "credit": null
         }
       ]
@@ -691,6 +715,7 @@
           "slug": "ticker",
           "title": "Number Ticker",
           "source": "components/previews/motion/number-ticker.preview.tsx",
+          "previewKey": "motion/number-ticker",
           "credit": null
         }
       ]
@@ -707,6 +732,7 @@
           "slug": "animated",
           "title": "Animated Number",
           "source": "components/previews/motion/animated-number.preview.tsx",
+          "previewKey": "motion/animated-number",
           "credit": null
         }
       ]
@@ -732,6 +758,7 @@
           "slug": "cascade",
           "title": "Cascade",
           "source": "components/previews/motion/action-swap-cascade.preview.tsx",
+          "previewKey": "motion/action-swap-cascade",
           "credit": null
         }
       ]
@@ -748,6 +775,7 @@
           "slug": "blur",
           "title": "Blur",
           "source": "components/previews/motion/action-swap-blur.preview.tsx",
+          "previewKey": "motion/action-swap-blur",
           "credit": null
         }
       ]
@@ -764,6 +792,7 @@
           "slug": "roll",
           "title": "Roll",
           "source": "components/previews/motion/action-swap-roll.preview.tsx",
+          "previewKey": "motion/action-swap-roll",
           "credit": null
         }
       ]
@@ -816,6 +845,7 @@
           "slug": "smooth-scroll",
           "title": "Smooth Scroll",
           "source": "components/previews/motion/smooth-scroll.preview.tsx",
+          "previewKey": "motion/smooth-scroll",
           "credit": null
         }
       ]
@@ -832,6 +862,7 @@
           "slug": "scroll-progress",
           "title": "Scroll Progress",
           "source": "components/previews/motion/scroll-progress.preview.tsx",
+          "previewKey": "motion/scroll-progress",
           "credit": null
         }
       ]
@@ -848,6 +879,7 @@
           "slug": "parallax",
           "title": "Parallax",
           "source": "components/previews/motion/parallax.preview.tsx",
+          "previewKey": "motion/parallax",
           "credit": null
         }
       ]
@@ -864,6 +896,7 @@
           "slug": "scroll-to",
           "title": "Scroll To",
           "source": "components/previews/motion/scroll-to.preview.tsx",
+          "previewKey": "motion/scroll-to",
           "credit": null
         }
       ]
@@ -880,6 +913,7 @@
           "slug": "scroll-reveal",
           "title": "Scroll Reveal",
           "source": "components/previews/motion/scroll-reveal.preview.tsx",
+          "previewKey": "motion/scroll-reveal",
           "credit": null
         }
       ]
@@ -896,6 +930,7 @@
           "slug": "inline",
           "title": "Inline Slider",
           "source": "components/previews/motion/range-slider-inline.preview.tsx",
+          "previewKey": "motion/range-slider-inline",
           "credit": null
         }
       ]
@@ -912,6 +947,7 @@
           "slug": "stepped",
           "title": "Range Slider",
           "source": "components/previews/motion/range-slider.preview.tsx",
+          "previewKey": "motion/range-slider",
           "credit": null
         }
       ]
@@ -932,6 +968,7 @@
           "slug": "fluid",
           "title": "Fluid Slider",
           "source": "components/previews/motion/range-slider-fluid.preview.tsx",
+          "previewKey": "motion/range-slider-fluid",
           "credit": {
             "name": "Avinit",
             "url": "https://x.com/0xvntr",
@@ -956,6 +993,7 @@
           "slug": "wave",
           "title": "Wave Slider",
           "source": "components/previews/motion/range-slider-wave.preview.tsx",
+          "previewKey": "motion/range-slider-wave",
           "credit": {
             "name": "Avinit",
             "url": "https://x.com/0xvntr",
@@ -980,6 +1018,7 @@
           "slug": "bubble",
           "title": "Bubble Slider",
           "source": "components/previews/motion/range-slider-bubble.preview.tsx",
+          "previewKey": "motion/range-slider-bubble",
           "credit": {
             "name": "Avinit",
             "url": "https://x.com/0xvntr",
@@ -1004,6 +1043,7 @@
           "slug": "ruler",
           "title": "Ruler Slider",
           "source": "components/previews/motion/range-slider-ruler.preview.tsx",
+          "previewKey": "motion/range-slider-ruler",
           "credit": {
             "name": "Avinit",
             "url": "https://x.com/0xvntr",
@@ -1033,6 +1073,7 @@
           "slug": "data",
           "title": "Data Table",
           "source": "components/previews/motion/table.preview.tsx",
+          "previewKey": "motion/table",
           "credit": null
         }
       ]
@@ -1049,6 +1090,7 @@
           "slug": "editable",
           "title": "Editable Table",
           "source": "components/previews/motion/table-editable.preview.tsx",
+          "previewKey": "motion/table-editable",
           "credit": null
         }
       ]
@@ -1065,6 +1107,7 @@
           "slug": "async",
           "title": "Async Table",
           "source": "components/previews/motion/table-async.preview.tsx",
+          "previewKey": "motion/table-async",
           "credit": null
         }
       ]
@@ -1277,6 +1320,7 @@
           "slug": "plane",
           "title": "Plane",
           "source": "components/previews/casino/crash.preview.tsx",
+          "previewKey": "casino/crash",
           "credit": {
             "name": "Avinit",
             "url": "https://x.com/0xvntr",
@@ -1301,6 +1345,7 @@
           "slug": "balloon",
           "title": "Balloon",
           "source": "components/previews/casino/crash-balloon.preview.tsx",
+          "previewKey": "casino/crash-balloon",
           "credit": {
             "name": "Avinit",
             "url": "https://x.com/0xvntr",
@@ -1325,6 +1370,7 @@
           "slug": "tower",
           "title": "Tower",
           "source": "components/previews/casino/crash-tower.preview.tsx",
+          "previewKey": "casino/crash-tower",
           "credit": {
             "name": "Avinit",
             "url": "https://x.com/0xvntr",
@@ -1393,18 +1439,21 @@
           "slug": "surfaces",
           "title": "Animated Surfaces",
           "source": "components/previews/agents/message-bubble.preview.tsx",
+          "previewKey": "agents/message-bubble",
           "credit": null
         },
         {
           "slug": "avatars",
           "title": "With Avatars",
           "source": "components/previews/agents/message-bubble-avatars.preview.tsx",
+          "previewKey": "agents/message-bubble-avatars",
           "credit": null
         },
         {
           "slug": "show-more",
           "title": "Show More",
           "source": "components/previews/agents/message-bubble-collapsible.preview.tsx",
+          "previewKey": "agents/message-bubble-collapsible",
           "credit": null
         }
       ]
@@ -1466,12 +1515,14 @@
           "slug": "questions",
           "title": "Questions",
           "source": "components/previews/agents/approval-card-question.preview.tsx",
+          "previewKey": "agents/approval-card-question",
           "credit": null
         },
         {
           "slug": "review",
           "title": "Review and Approve",
           "source": "components/previews/agents/approval-card-review.preview.tsx",
+          "previewKey": "agents/approval-card-review",
           "credit": null
         }
       ]
@@ -1497,12 +1548,14 @@
           "slug": "terminal-output",
           "title": "Terminal Output",
           "source": "components/previews/agents/tool-result-terminal.preview.tsx",
+          "previewKey": "agents/tool-result-terminal",
           "credit": null
         },
         {
           "slug": "request-result",
           "title": "Request Result",
           "source": "components/previews/agents/tool-result-request.preview.tsx",
+          "previewKey": "agents/tool-result-request",
           "credit": null
         }
       ]
@@ -1555,36 +1608,42 @@
           "slug": "streaming-text",
           "title": "Streaming Text",
           "source": "components/previews/agents/agent-activity-text.preview.tsx",
+          "previewKey": "agents/agent-activity-text",
           "credit": null
         },
         {
           "slug": "reasoning-steps",
           "title": "Reasoning Steps",
           "source": "components/previews/agents/agent-activity-steps.preview.tsx",
+          "previewKey": "agents/agent-activity-steps",
           "credit": null
         },
         {
           "slug": "web-search",
           "title": "Web Search",
           "source": "components/previews/agents/agent-activity-search.preview.tsx",
+          "previewKey": "agents/agent-activity-search",
           "credit": null
         },
         {
           "slug": "tool-calls",
           "title": "Tool Calls",
           "source": "components/previews/agents/agent-activity-tools.preview.tsx",
+          "previewKey": "agents/agent-activity-tools",
           "credit": null
         },
         {
           "slug": "mixed-activity",
           "title": "Mixed Activity",
           "source": "components/previews/agents/agent-activity.preview.tsx",
+          "previewKey": "agents/agent-activity-mixed",
           "credit": null
         },
         {
           "slug": "agent-trace",
           "title": "Agent Trace",
           "source": "components/previews/agents/agent-trace.preview.tsx",
+          "previewKey": "agents/agent-trace",
           "credit": null
         }
       ]
@@ -1601,6 +1660,7 @@
           "slug": "reasoning-text",
           "title": "Reasoning Text",
           "source": "components/previews/agents/reasoning-text.preview.tsx",
+          "previewKey": "agents/reasoning-text",
           "credit": null
         }
       ]
@@ -1617,6 +1677,7 @@
           "slug": "thinking-shimmer",
           "title": "Thinking Shimmer",
           "source": "components/previews/agents/thinking-shimmer.preview.tsx",
+          "previewKey": "agents/thinking-shimmer",
           "credit": null
         }
       ]
@@ -1633,6 +1694,7 @@
           "slug": "agent-progress",
           "title": "Agent Progress",
           "source": "components/previews/agents/agent-progress.preview.tsx",
+          "previewKey": "agents/agent-progress",
           "credit": null
         }
       ]
@@ -1707,6 +1769,7 @@
           "slug": "knockout-wheel",
           "title": "Knockout Wheel",
           "source": "components/previews/blocks/knockout-wheel.preview.tsx",
+          "previewKey": "blocks/knockout-wheel",
           "credit": {
             "name": "Avinit",
             "url": "https://x.com/0xvntr",
@@ -1731,6 +1794,7 @@
           "slug": "knockout-bracket",
           "title": "Knockout Bracket",
           "source": "components/previews/blocks/knockout-bracket.preview.tsx",
+          "previewKey": "blocks/knockout-bracket",
           "credit": {
             "name": "Avinit",
             "url": "https://x.com/0xvntr",
@@ -1787,6 +1851,7 @@
           "slug": "chips",
           "title": "Chip Search",
           "source": "components/previews/blocks/morphing-search-chips.preview.tsx",
+          "previewKey": "blocks/morphing-search-chips",
           "credit": null
         }
       ]
@@ -1803,6 +1868,7 @@
           "slug": "overlay",
           "title": "Morphing Search",
           "source": "components/previews/blocks/morphing-search.preview.tsx",
+          "previewKey": "blocks/morphing-search",
           "credit": null
         }
       ]
@@ -1864,6 +1930,7 @@
           "slug": "attachment-upload",
           "title": "Attachment Upload",
           "source": "components/previews/blocks/attachment-upload.preview.tsx",
+          "previewKey": "blocks/attachment-upload",
           "credit": null
         }
       ]
@@ -1880,6 +1947,7 @@
           "slug": "upload-queue",
           "title": "Upload Queue",
           "source": "components/previews/blocks/file-upload.preview.tsx",
+          "previewKey": "blocks/file-upload",
           "credit": null
         }
       ]
@@ -1896,6 +1964,7 @@
           "slug": "market-cards",
           "title": "Market Cards",
           "source": "components/previews/blocks/prediction-market-card.preview.tsx",
+          "previewKey": "blocks/prediction-market-card",
           "credit": null
         }
       ]
@@ -1912,6 +1981,7 @@
           "slug": "trade-ticket",
           "title": "Trade Ticket",
           "source": "components/previews/blocks/prediction-market.preview.tsx",
+          "previewKey": "blocks/prediction-market",
           "credit": null
         }
       ]
@@ -1982,6 +2052,7 @@
           "slug": "glitch",
           "title": "Glitch",
           "source": "components/previews/blocks/not-found-glitch.preview.tsx",
+          "previewKey": "blocks/not-found-glitch",
           "credit": null
         }
       ]
@@ -1998,6 +2069,7 @@
           "slug": "magnetic",
           "title": "Magnetic",
           "source": "components/previews/blocks/not-found-magnetic.preview.tsx",
+          "previewKey": "blocks/not-found-magnetic",
           "credit": null
         }
       ]
@@ -2014,6 +2086,7 @@
           "slug": "spotlight",
           "title": "Spotlight",
           "source": "components/previews/blocks/not-found-spotlight.preview.tsx",
+          "previewKey": "blocks/not-found-spotlight",
           "credit": null
         }
       ]
@@ -2030,6 +2103,7 @@
           "slug": "stacked",
           "title": "Stacked",
           "source": "components/previews/blocks/not-found-stacked.preview.tsx",
+          "previewKey": "blocks/not-found-stacked",
           "credit": null
         }
       ]
@@ -2046,6 +2120,7 @@
           "slug": "terminal",
           "title": "Terminal",
           "source": "components/previews/blocks/not-found-terminal.preview.tsx",
+          "previewKey": "blocks/not-found-terminal",
           "credit": null
         }
       ]

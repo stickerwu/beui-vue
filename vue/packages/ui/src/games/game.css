@@ -1,0 +1,9 @@
+.game { width: 100%; max-width: 28rem; box-sizing: border-box; padding: 14px; border-radius: 16px; border: 1px solid color-mix(in srgb, currentColor 15%, transparent); font: 14px/1.5 system-ui, sans-serif; }
+.game .game-head, .game .game-controls { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.game .game-head { margin-bottom: 10px; }.game .game-head strong { font-weight: 650; }.game .game-controls { margin-top: 12px; }.game .game-controls label { font-size: 12px; }
+.game button, .game select, .game input { font: inherit; color: inherit; }.game select,.game input { border: 1px solid #8886; background: Canvas; color: CanvasText; border-radius: 6px; padding: 3px 6px; }.game select { appearance: auto; }
+.game button { cursor: pointer; }.game button:disabled { opacity: .5; cursor: default; }.game button:focus-visible, .game input:focus-visible, .game select:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.game .toggle { min-width: 30px; min-height: 30px; padding: 2px 7px; border: 0; border-radius: 6px; background: #8882; font-size: 12px; }.game .toggle[aria-pressed='true'] { color: #7650cf; background: #9272dc22; }
+.game .primary { border: 0; border-radius: 9px; padding: 8px 18px; color: Canvas; background: CanvasText; font-size: 13px; font-weight: 600; }
+.game .history { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }.game .history span { font-size: 11px; padding: 2px 7px; border-radius: 12px; background: #8882; font-variant-numeric: tabular-nums; }
+.game .sr-game { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }

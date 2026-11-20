@@ -1,0 +1,23 @@
+{
+  "bookshelf": {"name":"Bookshelf","api":"`books` 配置封面、书脊和作者。`v-model` 为展开的书籍 ID。方向键移动焦点，回车展开。`sound` 和 `tilt` 控制触感反馈。"},
+  "timeline": {"name":"Timeline","api":"`events` 使用 UTC 日期，`v-model` 指定当前事件。支持拖动、惯性吸附、点击和方向键。用 `media`、`meta` 插槽自定义卡片。"},
+  "sortable-stack": {"name":"SortableStack","api":"`v-model` 绑定带有 `id`、`title` 的数组。拖动手柄调整顺序，或按空格提起、方向键移动、空格放下。支持撤销。"},
+  "morphing-lightbox": {"name":"MorphingLightbox","api":"`images` 接收带 `src`、`alt` 的图片。`v-model` 设置当前图片 ID。支持左右键、滑动浏览和 Esc 关闭。"},
+  "expandable-control": {"name":"ExpandableControl","api":"`variant` 可为 `button` 或 `chip`。使用 `label`、`actionLabel`、`icon` 插槽配置内容。触发 `activate` 或 `remove`。"},
+  "adaptive-stepper": {"name":"AdaptiveStepper","api":"`v-model` 为数值。`min`、`max` 和 `step` 约束步进，达到边界时收起对应按钮。`name` 支持表单提交。"},
+  "bottom-sheet": {"name":"BottomSheet","api":"`v-model:open` 控制面板。`snapPoints` 指定视口高度比例。拖动手柄或按上下方向键调整高度。"},
+  "pull-to-refresh": {"name":"PullToRefresh","api":"传入异步 `onRefresh` 函数。在滚动区域顶部下拉并释放，即可刷新。`threshold` 与 `maxPull` 控制触发距离和阻力。"},
+  "shared-layout-bg": {"name":"SharedLayoutBg","api":"默认插槽的直接子元素共享背景。指针移动或键盘焦点切换时，背景弹簧跟随目标的位置与大小。"},
+  "bounce-sidebar": {"name":"BounceSidebar","api":"`items` 提供标签与可选链接，`v-model` 为当前项 ID。活动标记沿列表弹动。"},
+  "animated-sidebar": {"name":"AnimatedSidebar","api":"`items` 支持子菜单。`v-model` 与 `v-model:open` 控制当前项目与展开状态。窄屏使用模态抽屉。Ctrl+B 或 Cmd+B 切换。"},
+  "file-tree": {"name":"FileTree","api":"`items` 使用递归 `children`。`v-model` 绑定文件，`v-model:expanded` 绑定展开的目录 ID 列表。支持方向键、Home 和 End。"},
+  "preview-rail": {"name":"PreviewRail","api":"指向、聚焦或轻触 `items` 中的刻度显示预览。`orientation` 和 `previewSide` 配置布局。`preview` 插槽自定义内容。"},
+  "dock": {"name":"Dock","api":"`items` 支持图标、链接与 `separatorBefore` 分隔符。`v-model` 指定活动项，`icon` 插槽提供自定义图标。"},
+  "morphing-modal": {"name":"MorphingModal","api":"`v-model:view-id` 为 `null` 时关闭。更改视图 ID 可使面板平滑适应内容高度。默认插槽提供 `view` 与 `close`。"},
+  "center-morph-modal": {"name":"CenterMorphModal","api":"`trigger` 插槽定义触发器文本。面板从触发器位置展开，`v-model:open` 控制开关，`label` 提供无障碍名称。"},
+  "bouncy-accordion": {"name":"BouncyAccordion","api":"`items` 定义条目标题与内容。`v-model` 指定展开项。方向键、Home、End 移动焦点，回车或空格切换面板。"},
+  "drawer": {"name":"Drawer","api":"`v-model:open` 控制原生模态抽屉，`side` 选择左或右。默认插槽接收 `close` 函数。支持 Esc 及点击遮罩关闭。"},
+  "smooth-scroll": {"name":"SmoothScroll","api":"默认驱动窗口滚动。`:root=\"false\"` 创建局部区域。支持 `lerp`、`duration`、`orientation`、`wheelMultiplier` 和 `touch`。子级 ScrollTo、Parallax 和 ScrollProgress 共享容器。"},
+  "cylinder-carousel": {"name":"CylinderCarousel","api":"`items` 和作用域插槽提供幻灯片。`variant` 选择凹面或凸面，`snap`、`arc`、`dragSpeed`、`autoRotate` 调整旋转。`indexChange` 通知当前索引。"},
+  "loader": {"name":"Loader","api":"`variant` 选择 17 种图形、字符或数字加载动画。`size`、`speed`、`paused` 控制显示，`label` 提供读屏提示。"}
+}

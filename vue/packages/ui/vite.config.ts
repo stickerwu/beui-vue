@@ -6,7 +6,7 @@ export default defineConfig({
   build: {
     lib: { entry: 'src/index.ts', formats: ['es'], fileName: () => 'index.js' },
     rollupOptions: {
-      external: ['vue', 'motion-v', '@paper-design/shaders', '@vueuse/core'],
+      external: ['vue', 'motion-v', '@paper-design/shaders', '@vueuse/core', 'lenis'],
       output: { assetFileNames: 'style[extname]' },
     },
   },

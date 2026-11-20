@@ -1,0 +1,15 @@
+.be-block { box-sizing: border-box; width: min(100%, 32rem); min-width: 0; color: var(--beui-foreground); font-size: .875rem; line-height: 1.5; }
+.be-block-panel { padding: 1rem; border: 1px solid var(--beui-border); border-radius: 1rem; background: var(--beui-background); }
+.be-block-stack { display: grid; align-content: start; gap: .75rem; }
+.be-block-row { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; }
+.be-block-muted { color: var(--beui-muted-foreground); font-size: .8125rem; }
+.be-block-button { display: inline-flex; align-items: center; justify-content: center; gap: .375rem; min-height: 2.25rem; padding: .4rem .8rem; border: 1px solid var(--beui-border); border-radius: .65rem; background: var(--beui-background); color: inherit; font: inherit; cursor: pointer; }
+.be-block-button:disabled { opacity: .5; cursor: default; }
+.be-block-button:is([aria-pressed=true],[aria-selected=true]), .be-block-primary { background: var(--beui-foreground); color: var(--beui-background); }
+.be-block :is(button,input,select,textarea,a):focus-visible { outline: 2px solid var(--beui-ring); outline-offset: 2px; }
+.be-block-field { box-sizing: border-box; width: 100%; min-height: 2.5rem; padding: .5rem .7rem; border: 1px solid var(--beui-border); border-radius: .65rem; background: var(--beui-background); color: inherit; font: inherit; }
+.be-block .be-block-error { color: var(--beui-destructive); }
+.be-block-list { list-style: none; padding: 0; margin: 0; }
+.be-block-end { margin-inline-start: auto; }
+.be-block-dialog { box-sizing: border-box; width: min(90vw, 30rem); padding: 1rem; border: 1px solid var(--beui-border); border-radius: 1rem; background: var(--beui-background); color: var(--beui-foreground); }
+.be-block-dialog::backdrop { background: rgb(0 0 0 / .35); }

@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from 'motion-v'
 import { computed, toRef, watchEffect } from 'vue'
+import { useSmoothScroll } from '../layout/scroll-context'
 
 const { progress, container, spring = true, variant = 'bar', position = 'top', height = 2, fixed = true, size = 40, thickness = 3 } = defineProps<{
   progress?: number | MotionValue<number>; container?: HTMLElement | null; spring?: boolean; variant?: 'bar' | 'circle'; position?: 'top' | 'bottom'; height?: number; fixed?: boolean; size?: number; thickness?: number
 }>()
 const reduce = useReducedMotion()
-const { scrollYProgress } = useScroll({ container: toRef(() => container ?? undefined) })
+const provider = useSmoothScroll()
+const { scrollYProgress } = useScroll({ container: toRef(() => container ?? provider?.container.value) })
 const raw = useMotionValue(0)
 const smooth = useSpring(raw, { stiffness: 120, damping: 30, mass: .6 })
 watchEffect(cleanup => {
-  const input = progress ?? scrollYProgress
+  const input = progress ?? (!container && provider ? provider.progress : scrollYProgress)
   const update = (next: number) => raw.set(Math.min(1, Math.max(0, next)))
   if (typeof input === 'number') update(input)
   else { update(input.get()); cleanup(input.on('change', update)) }

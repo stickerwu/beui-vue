@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { animate, useReducedMotion } from 'motion-v'
 import { onBeforeUnmount } from 'vue'
+import { useSmoothScroll } from '../layout/scroll-context'
 
 const { to, offset = 0, duration, container } = defineProps<{ to: number | string | HTMLElement; offset?: number; duration?: number; container?: HTMLElement | null }>()
 const reduce = useReducedMotion()
+const provider = useSmoothScroll()
 let cancel: (() => void) | undefined
 
 function navigate() {
   cancel?.()
+  if (provider && !container) { provider.scrollTo(to, { offset, duration, immediate: duration === 0 }); return }
   const host = container ?? window
   const origin = container?.scrollTop ?? window.scrollY
   let target: number

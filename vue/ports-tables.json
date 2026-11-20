@@ -1,0 +1,5 @@
+{
+  "table": { "name": "Table", "api": "提供 `data`、`columns`、稳定的 `getRowId`。`height`、`rowHeight` 和 `overscan` 设置虚拟滚动。`v-model:sort` 和 `v-model:selected-row-ids` 同步排序与选中项。`resizable` 和 `reorderable` 支持拖动和方向键。" },
+  "table-editable": { "name": "TableEditable", "api": "在 `columns` 中设置 `editable`。`@cell-edit` 接收行标识、列键与新值。`@column-rename`、`@insert-row`、`@delete-row`、`@insert-column`、`@delete-column` 启用相应的结构编辑；数据和列定义由调用方维护。" },
+  "table-async": { "name": "TableAsync", "api": "`@end-reached` 在视口接近底部时触发。设置 `loading` 暂停重复通知并显示骨架，更新 `data` 后清除 `loading`；`skeletonRows` 控制追加加载时的占位行数。示例按页生成本地数据。" }
+}

@@ -33,6 +33,12 @@ export function useComparisonMotion(frame: Ref<HTMLElement | null>, current: Rea
   let hintRunning = false
   let inView = false
   let smooth = false
+  let pendingGlide: number | undefined
+
+  function cancelPendingGlide() {
+    if (pendingGlide !== undefined) cancelAnimationFrame(pendingGlide)
+    pendingGlide = undefined
+  }
 
   function stopHint() {
     hintPlayed = true
@@ -51,15 +57,19 @@ export function useComparisonMotion(frame: Ref<HTMLElement | null>, current: Rea
 
   watch(current, value => {
     stopHint()
+    cancelPendingGlide()
     position.stop()
     if (reduce.value) position.jump(value)
-    else if (smooth) animate(position, value, glideSpring)
+    else if (smooth) pendingGlide = requestAnimationFrame(() => {
+      pendingGlide = undefined
+      animate(position, value, glideSpring)
+    })
     else position.set(value)
     smooth = false
   }, { flush: 'sync' })
   watch([reduce, canHint], () => {
     motionAllowed.set(reduce.value ? 0 : 1)
-    if (reduce.value || !canHint()) { stopHint(); position.jump(current.value) }
+    if (reduce.value || !canHint()) { cancelPendingGlide(); stopHint(); position.jump(current.value) }
     else playHint()
   })
   onMounted(() => {
@@ -76,6 +86,6 @@ export function useComparisonMotion(frame: Ref<HTMLElement | null>, current: Rea
     }, { threshold: .6 })
     visibility.observe(frame.value)
   })
-  onBeforeUnmount(() => { resize?.disconnect(); visibility?.disconnect(); position.stop() })
+  onBeforeUnmount(() => { cancelPendingGlide(); resize?.disconnect(); visibility?.disconnect(); position.stop() })
   return { clipPath, line, position, dividerX, beforeOpacity, afterOpacity, stopHint, glide: (next: boolean) => { smooth = next } }
 }

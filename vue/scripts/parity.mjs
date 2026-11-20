@@ -22,10 +22,10 @@ try {
         const errors = []
         page.on('pageerror', err => errors.push(err.message))
         try {
+          await page.clock.install({time:new Date('2026-01-01T12:00:00Z')})
           await page.goto(`http://127.0.0.1:4185/?${new URLSearchParams({side,slug,theme})}`)
           await page.locator('body[data-ready=true]').waitFor({state:'attached',timeout:45000})
           await page.evaluate(() => document.fonts.ready)
-          await page.clock.install()
           await page.clock.runFor(1500)
           const stage = page.locator('#stage')
           const frames = [await stage.screenshot()]

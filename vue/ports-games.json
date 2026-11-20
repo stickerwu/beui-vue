@@ -1,0 +1,8 @@
+{
+  "crash": { "name": "Crash", "api": "`getCrashPoint` 为每轮提供同步或异步结果。使用 `v-model:auto-cash-out` 配置自动结算，`@start`、`@cash-out` 与 `@crash` 通知回合状态。示例使用本地预设结果。" },
+  "crash-balloon": { "name": "CrashBalloon", "api": "使用 `:crash-at=\"null\"` 开始等待揭晓。`@start` 接收回合编号，通过 `{ round, value }` 揭晓对应回合，`@cash-out` 在有效结果确认后触发。示例在本地延迟揭晓。" },
+  "crash-tower": { "name": "CrashTower", "api": "塔楼场景与 `Crash` 共用 `getCrashPoint`、`crashAt`、自动结算和回合事件。`v-model:sound` 控制合成音效；示例轮换本地结果。" },
+  "mines": { "name": "Mines", "api": "用 `size`、`v-model:mines` 配置棋盘，`@reveal` 接收格子、类型和当前倍率，`@cash-out` 接收倍率与宝石数。`random` 可注入确定性随机源，`minesMultiplier` 计算公平赔率。" },
+  "plinko": { "name": "Plinko", "api": "`rows` 生成钉阵，`slots` 可覆盖各落点值。`maxBalls` 控制同时运行的球数，`@land` 接收从零开始的落点和显示值。`plinkoSlots` 生成对称数列，减少动态效果时直接显示结果。" },
+  "slide-game": { "name": "SlideGame", "api": "`v-model:bet` 和 `v-model:target` 配置模拟回合。`getResult` 每轮返回一个数字或 Promise，`@result` 在停牌后接收结果、锁定目标与模拟筹码。`slideResult` 接受可复现的随机源和边际参数。" }
+}

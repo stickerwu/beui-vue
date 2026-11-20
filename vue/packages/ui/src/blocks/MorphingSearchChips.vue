@@ -1,0 +1,18 @@
+<script setup lang="ts">
+import { computed, onMounted, shallowRef, useId } from 'vue'
+import { useValue } from '../agents/shared'
+const props=withDefaults(defineProps<{ chips?:string[],defaultChips?:string[],query?:string,defaultQuery?:string,recents?:string[],defaultRecents?:string[],storageKey?:string,suggestions?:string[],placeholder?:string,maxRecents?:number }>(),{defaultChips:()=>[],defaultQuery:'',defaultRecents:()=>[],suggestions:()=>[],maxRecents:8})
+const emit=defineEmits<{'update:chips':[value:string[]],chipsChange:[value:string[]],'update:query':[value:string],queryChange:[value:string],'update:recents':[value:string[]],recentsChange:[value:string[]],search:[query:string,chips:string[]]}>()
+const chips=useValue(()=>props.chips,props.defaultChips,next=>{emit('update:chips',next);emit('chipsChange',next)})
+const query=useValue(()=>props.query,props.defaultQuery,next=>{emit('update:query',next);emit('queryChange',next)})
+const recent=useValue(()=>props.recents,props.defaultRecents,next=>{emit('update:recents',next);emit('recentsChange',next);if(props.storageKey && props.recents===undefined)try{localStorage.setItem(props.storageKey,JSON.stringify(next))}catch{}})
+const active=shallowRef(false)
+const index=shallowRef(-1)
+const id=useId()
+const result=computed(()=>[...new Set([...props.suggestions,...recent.value.value])].filter(item=>!chips.value.value.includes(item)&&item.toLowerCase().includes(query.value.value.toLowerCase())))
+function choose(value:string){if(!value.trim())return;chips.set([...new Set([...chips.value.value,value.trim()])]);query.set('');index.value=-1}
+function submit(){if(index.value>=0&&result.value[index.value]){choose(result.value[index.value]);return}const text=query.value.value.trim();if(text)recent.set([text,...recent.value.value.filter(item=>item!==text)].slice(0,props.maxRecents));emit('search',text,chips.value.value);active.value=false}
+onMounted(()=>{if(!props.storageKey||props.recents!==undefined)return;try{const saved=JSON.parse(localStorage.getItem(props.storageKey)??'null');if(Array.isArray(saved)&&saved.every(item=>typeof item==='string'))recent.set(saved)}catch{}})
+</script>
+<template><div class="be-block be-block-panel be-block-stack" @focusout="!($event.currentTarget as HTMLElement).contains($event.relatedTarget as Node) && (active=false)"><div class="be-block-row"><button v-for="chip in chips.value.value" :key="chip" type="button" class="be-block-button" :aria-label="`Remove ${chip}`" @click="chips.set(chips.value.value.filter(value=>value!==chip))">{{ chip }} ×</button><input class="be-block-field" role="combobox" aria-label="Search" :aria-expanded="active" :aria-controls="id" :aria-activedescendant="active && index>=0 ? `${id}-${index}` : undefined" :placeholder="placeholder??'Search'" :value="query.value.value" @input="query.set(($event.target as HTMLInputElement).value);index=-1;active=true" @focus="active=true" @keydown.enter.prevent="submit" @keydown.down.prevent="active=true;index=Math.min(index+1,result.length-1)" @keydown.up.prevent="index=Math.max(-1,index-1)" @keydown.esc="active=false" @keydown.backspace="!query.value.value && chips.set(chips.value.value.slice(0,-1))" /></div><ul v-show="active" :id="id" class="be-block-list" role="listbox" aria-label="Suggestions"><li v-for="(item,position) in result" :id="`${id}-${position}`" :key="item" role="option" :aria-selected="index===position" @mousedown.prevent="choose(item)">{{ item }}</li></ul></div></template>
+<style scoped>.be-block-row input{flex:1;min-width:7rem;width:10rem}li{padding:.35rem .6rem;cursor:pointer;border-radius:.45rem}li:is(:hover,[aria-selected=true]){background:var(--beui-muted)}</style>

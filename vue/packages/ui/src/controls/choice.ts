@@ -1,4 +1,4 @@
-import { defineComponent, h, type PropType } from 'vue'
+import { defineComponent, h, shallowRef, type PropType } from 'vue'
 import ChoiceList from './ChoiceList.vue'
 import type { ChoiceOption } from './types'
 
@@ -19,9 +19,14 @@ function choiceComponent(config: ChoiceConfig) {
     },
     emits: ['update:modelValue'],
     setup(props, { attrs, slots, emit }) {
+      const selected = shallowRef<string | string[]>(config.multiple ? [] : '')
       return () => h(ChoiceList, {
         ...attrs, ...props, ...config, name: props.name,
-        'onUpdate:modelValue': (value: string | string[] | undefined) => emit('update:modelValue', value),
+        modelValue: props.modelValue ?? selected.value,
+        'onUpdate:modelValue': (value: string | string[] | undefined) => {
+          selected.value = value ?? (config.multiple ? [] : '')
+          emit('update:modelValue', value)
+        },
       }, slots)
     },
   })
