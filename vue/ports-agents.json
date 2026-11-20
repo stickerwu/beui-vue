@@ -1,0 +1,21 @@
+{
+  "voice-orb": {"name":"VoiceOrb","api":"传入 0 到 1 的 `activity`、MotionValue 或 `analyser` 驱动上游 WebGL 材质。`colors`、`active`、`speed` 控制外观与动画，`@error` 报告渲染故障。"},
+  "message-bubble": {"name":"MessageBubble","api":"`align`、六种 `variant` 和 `animateIn` 控制气泡。组合 MessageBubbleContent、MessageBubbleGroup、MessageBubbleCollapsible，使用 `v-model:open` 管理折叠。"},
+  "message": {"name":"Message","api":"`from` 指定 user 或 assistant。组合 MessageAvatar、MessageContent、MessageHeader、MessageFooter、MessageMarker、MessageTyping、MessageGroup，也可在内容中嵌入 MessageBubble。"},
+  "message-scroller": {"name":"MessageScroller","api":"`followOutput`、`followThreshold`、`smooth` 控制跟随输出，`@follow-change` 报告阅读位置。`busy` 标示实时日志，`navigation=rail` 提供逐条消息导航。"},
+  "prompt-input": {"name":"PromptInput","api":"`v-model` 或 `defaultValue` 控制文本。`models`、`v-model:model` 设置模型，`actions` 配合 `@action` 扩展工具。Enter 提交、Shift+Enter 换行。`@submit` 返回文本与模型，`loading` 配合 `@stop` 中断生成。"},
+  "todo-list": {"name":"TodoList","api":"`items` 接收带 id、title、status、progress、detail 的任务。`v-model:open`、`collapseOnComplete` 控制进度列表，`#item` 自定义任务内容。"},
+  "code-block": {"name":"CodeBlock","api":"`code`、`language`、`filename` 设置内容，`highlightLines`、`wrap`、`maxHeight`、`showLineNumbers` 管理呈现，`copyable`、`onCopy` 管理复制。"},
+  "approval-card": {"name":"ApprovalCard","api":"使用 `questions`、`v-model:step`、`v-model:answers` 配置单选、多选与自定义回答。`@submit` 返回答案。审查模式提供 `@approve`、`@reject`、`@request-changes`，`status` 与 `#result` 展示结果。"},
+  "file-diff": {"name":"FileDiff","api":"`file`、`lines` 定义文件和增删行，`status` 区分 streaming / complete。`v-model:open`、`collapseOnComplete`、`maxHeight` 管理差异区，`copyText` 自定义复制文本。"},
+  "tool-result": {"name":"ToolResult","api":"`tool`、`title`、`kind`、`status` 标记终端、请求或自定义结果。用默认插槽或 ToolResultOutput 展示输出，`@retry` 处理失败，`copyText` 提供复制文本。"},
+  "streaming-response": {"name":"StreamingResponse","api":"默认插槽接收流式内容，`status`、`announce`、`showActions` 控制朗读和完成操作。可配置 `copyText`、`@retry`、`sources`、`v-model:feedback` 和 `v-model:sources-open`。"},
+  "image-generation": {"name":"ImageGeneration","api":"`status` 支持 queued、generating、refining、complete、error。传入插槽媒体、`prompt`、`resolution`、`aspectRatio`；`interactive` 启用指针响应，`@retry` 处理失败。"},
+  "tool-approval": {"name":"ToolApproval","api":"`tool`、`title`、`parameters` 描述动作，`v-model:open` 查看参数。用 `@approve`、`@always-allow`、`@deny` 处理选择，`status` 由调用方管理。"},
+  "citations": {"name":"Citations","api":"`citations` 包含 id、title、domain、url。通过 `v-model:open` 管理来源清单，同一 `idPrefix` 的 Citation 可从正文打开并聚焦来源。"},
+  "agent-activity": {"name":"AgentActivity","api":"传入 `items` 组合 step、text、search、tool、trace 事件；`status`、`duration`、`collapseOnComplete` 管理运行和完成行为。`#item`、`#working-status` 与 `#completed-status` 可替换默认内容。"},
+  "reasoning-text": {"name":"ReasoningText","api":"`phrases`、`interval` 设定轮换文案，`variant` 支持 cascade、swap、scramble，`#indicator` 替换前导图标。"},
+  "agent-progress": {"name":"AgentProgress","api":"`label` 标记活动，`initialSeconds` 初始化内部计时器，`running` 暂停或恢复，`elapsedSeconds` 切换为外部控制。"},
+  "ai-sidebar": {"name":"AISidebar","api":"`defaultItems` 或 `v-model:items` 提供树，`v-model:active-id` 同步选择。支持方向键、F2 重命名、拖放和 Alt+Shift+方向键移动。`onMove`、`onRename` 可返回 Promise，失败时恢复原数据。"},
+  "chat-app": {"name":"ChatApp","api":"`#sidebar` 与默认插槽组成聊天外壳。插槽提供 `open`、`setOpen`，主内容另有 `toggle`。`sidebarWidth`、`collapseSidebarBelow` 控制停靠宽度，`v-model:open` 交给调用方管理。"}
+}

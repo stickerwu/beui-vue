@@ -20,6 +20,7 @@
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": [
+    "vue",
     "dist",
     ".build",
     "worker",

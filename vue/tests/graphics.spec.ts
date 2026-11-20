@@ -1,0 +1,36 @@
+import { expect, test } from '@playwright/test'
+import { openDemo } from './open-demo'
+
+test('the chart exposes the same values through its keyboard inspector and data table', async ({ page }) => {
+  await openDemo(page, 'line-chart')
+  const chart = page.getByRole('region', { name: 'Illustrative monthly revenue' })
+  const inspector = chart.getByRole('slider')
+  await expect(chart.getByRole('table')).toHaveAccessibleName('Illustrative monthly revenue data')
+  await inspector.focus()
+  await inspector.press('Home')
+  await expect(inspector).toHaveAttribute('aria-valuetext', /^Jan\. This year \$/)
+  await inspector.press('ArrowRight')
+  await expect(chart.getByRole('tooltip')).toContainText('Feb')
+  await inspector.press('Escape')
+  await expect(chart.getByRole('tooltip')).toHaveCount(0)
+  const target = chart.getByRole('button', { name: 'Target' })
+  await target.click()
+  await expect(target).toHaveAttribute('aria-pressed', 'false')
+  await page.getByRole('button', { name: 'Reload', exact: true }).click()
+  await expect(chart).toHaveAttribute('aria-busy', 'true')
+  await expect(chart.getByRole('table')).toHaveCount(0)
+  await expect(inspector).toBeVisible()
+})
+
+test('decorative shader alternatives stay operable by keyboard with reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await openDemo(page, 'shader-background')
+  const variant = page.getByRole('combobox', { name: 'Shader preset' })
+  await variant.selectOption('dot-grid')
+  const surface = page.locator('[data-slot="shader-background"]')
+  await expect(surface).toHaveAttribute('data-variant', 'dot-grid')
+  await expect(surface).toHaveAttribute('aria-hidden', 'true')
+  await expect(surface).toHaveAttribute('data-renderer', /^(webgl|fallback)$/)
+  await variant.selectOption('mesh-gradient')
+  await expect(surface).toHaveAttribute('data-motion', 'paused')
+})

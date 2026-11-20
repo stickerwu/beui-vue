@@ -1,0 +1,2054 @@
+{
+  "baseline": "c0a936f59eb767e263c0e81b93dd323511dc9b6b",
+  "entries": [
+    {
+      "slug": "bookshelf",
+      "category": "motion",
+      "title": "Bookshelf",
+      "page": "https://beui.dev/components/motion/bookshelf",
+      "source": "components/motion/bookshelf.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "dropdown-menu",
+      "category": "motion",
+      "title": "Dropdown Menu",
+      "page": "https://beui.dev/components/motion/dropdown-menu",
+      "source": "components/motion/dropdown-menu.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "before-after-slider",
+      "category": "motion",
+      "title": "Before After Slider",
+      "page": "https://beui.dev/components/motion/before-after-slider",
+      "source": "components/motion/before-after-slider.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "timeline",
+      "category": "motion",
+      "title": "Timeline",
+      "page": "https://beui.dev/components/motion/timeline",
+      "source": "components/motion/timeline.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "alert",
+      "category": "motion",
+      "title": "Animated Alert",
+      "page": "https://beui.dev/components/motion/alert",
+      "source": "components/motion/alert.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "collapsible",
+      "category": "motion",
+      "title": "Animated Collapsible",
+      "page": "https://beui.dev/components/motion/collapsible",
+      "source": "components/motion/collapsible.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "aspect-ratio",
+      "category": "motion",
+      "title": "Aspect Ratio",
+      "page": "https://beui.dev/components/motion/aspect-ratio",
+      "source": "components/motion/aspect-ratio.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "arc-picker",
+      "category": "motion",
+      "title": "Arc Picker",
+      "page": "https://beui.dev/components/motion/arc-picker",
+      "source": "components/motion/arc-picker.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "sortable-stack",
+      "category": "motion",
+      "title": "Sortable List",
+      "page": "https://beui.dev/components/motion/sortable-stack",
+      "source": "components/motion/sortable-list.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "morphing-lightbox",
+      "category": "motion",
+      "title": "Morphing",
+      "page": "https://beui.dev/components/motion/image-viewer",
+      "source": "components/motion/morphing-lightbox.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "morphing",
+          "title": "Morphing",
+          "source": "components/previews/motion/morphing-lightbox.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "date-range-picker",
+      "category": "motion",
+      "title": "Date Range Picker",
+      "page": "https://beui.dev/components/motion/date-range-picker",
+      "source": "components/motion/date-range-picker.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "card",
+      "category": "motion",
+      "title": "Card",
+      "page": "https://beui.dev/components/motion/card",
+      "source": "components/motion/card.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "color-picker",
+      "category": "motion",
+      "title": "Color Picker",
+      "page": "https://beui.dev/components/motion/color-picker",
+      "source": "components/motion/color-picker.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "color-selector",
+      "category": "motion",
+      "title": "Animated Color Selector",
+      "page": "https://beui.dev/components/motion/color-selector",
+      "source": "components/motion/color-selector.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "pagination",
+      "category": "motion",
+      "title": "Animated Pagination",
+      "page": "https://beui.dev/components/motion/pagination",
+      "source": "components/motion/pagination.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "avatar-group",
+      "category": "motion",
+      "title": "Animated Avatar Group",
+      "page": "https://beui.dev/components/motion/avatar-group",
+      "source": "components/motion/avatar-group.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "breadcrumb",
+      "category": "motion",
+      "title": "Animated Breadcrumb",
+      "page": "https://beui.dev/components/motion/breadcrumb",
+      "source": "components/motion/breadcrumb.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "tilt-card",
+      "category": "motion",
+      "title": "Tilt Card",
+      "page": "https://beui.dev/components/motion/tilt-card",
+      "source": "components/motion/tilt-card.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "button-metallic",
+      "category": "motion",
+      "title": "Metallic Button",
+      "page": "https://beui.dev/components/motion/button",
+      "source": "components/motion/button/metallic.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "metallic",
+          "title": "Metallic Button",
+          "source": "components/previews/motion/button-metallic.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "button-base",
+      "category": "motion",
+      "title": "Button",
+      "page": "https://beui.dev/components/motion/button",
+      "source": "components/motion/button/base.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "base",
+          "title": "Button",
+          "source": "components/previews/motion/button-base.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "button-stateful",
+      "category": "motion",
+      "title": "Stateful Button",
+      "page": "https://beui.dev/components/motion/button",
+      "source": "components/motion/button/stateful.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "stateful",
+          "title": "Stateful Button",
+          "source": "components/previews/motion/button-stateful.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "button-magnetic",
+      "category": "motion",
+      "title": "Magnetic Button",
+      "page": "https://beui.dev/components/motion/button",
+      "source": "components/motion/button/magnetic.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "magnetic",
+          "title": "Magnetic Button",
+          "source": "components/previews/motion/button-magnetic.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "expanding-arrow-button",
+      "category": "motion",
+      "title": "Expanding Arrow Button",
+      "page": "https://beui.dev/components/motion/expanding-arrow-button",
+      "source": "components/motion/expanding-arrow-button.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "expanding-arrow",
+          "title": "Expanding Arrow Button",
+          "source": "components/previews/motion/expanding-arrow-button.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "hold-action-button",
+      "category": "motion",
+      "title": "Hold Action Button",
+      "page": "https://beui.dev/components/motion/expanding-arrow-button",
+      "source": "components/motion/hold-action-button.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "hold-action",
+          "title": "Hold Action Button",
+          "source": "components/previews/motion/hold-action-button.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "slide-action-button",
+      "category": "motion",
+      "title": "Slide Action Button",
+      "page": "https://beui.dev/components/motion/expanding-arrow-button",
+      "source": "components/motion/slide-action-button.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "slide-action",
+          "title": "Slide Action Button",
+          "source": "components/previews/motion/slide-action-button.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "expandable-control",
+      "category": "motion",
+      "title": "Expandable Control",
+      "page": "https://beui.dev/components/motion/expandable-control",
+      "source": "components/motion/expandable-control.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "adaptive-stepper",
+      "category": "motion",
+      "title": "Adaptive Stepper",
+      "page": "https://beui.dev/components/motion/adaptive-stepper",
+      "source": "components/motion/adaptive-stepper.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "marquee",
+      "category": "motion",
+      "title": "Marquee",
+      "page": "https://beui.dev/components/motion/marquee",
+      "source": "components/motion/marquee.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "tabs",
+      "category": "motion",
+      "title": "Tabs",
+      "page": "https://beui.dev/components/motion/tabs",
+      "source": "components/motion/tabs.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "switch",
+      "category": "motion",
+      "title": "Switch",
+      "page": "https://beui.dev/components/motion/switch",
+      "source": "components/motion/switch.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "input",
+      "category": "motion",
+      "title": "Input",
+      "page": "https://beui.dev/components/motion/input",
+      "source": "components/motion/input.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "select",
+      "category": "motion",
+      "title": "Select",
+      "page": "https://beui.dev/components/motion/select",
+      "source": "components/motion/select.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "default",
+          "title": "Select",
+          "source": "components/previews/motion/select.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "select-morph",
+      "category": "motion",
+      "title": "Morph Select",
+      "page": "https://beui.dev/components/motion/select",
+      "source": "components/motion/select-morph.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "morph",
+          "title": "Morph Select",
+          "source": "components/previews/motion/select-morph.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "combobox",
+      "category": "motion",
+      "title": "Combobox",
+      "page": "https://beui.dev/components/motion/combobox",
+      "source": "components/motion/combobox.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "multi-select",
+      "category": "motion",
+      "title": "Multi Select",
+      "page": "https://beui.dev/components/motion/multi-select",
+      "source": "components/motion/multi-select/index.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "checkbox",
+      "category": "motion",
+      "title": "Checkbox",
+      "page": "https://beui.dev/components/motion/checkbox",
+      "source": "components/motion/checkbox.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "default",
+          "title": "Checkbox",
+          "source": "components/previews/motion/checkbox.preview.tsx",
+          "credit": null
+        },
+        {
+          "slug": "description",
+          "title": "With Description",
+          "source": "components/previews/motion/checkbox-description.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "radio",
+      "category": "motion",
+      "title": "Radio Group",
+      "page": "https://beui.dev/components/motion/radio",
+      "source": "components/motion/radio.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "default",
+          "title": "Radio Group",
+          "source": "components/previews/motion/radio.preview.tsx",
+          "credit": null
+        },
+        {
+          "slug": "description",
+          "title": "With Description",
+          "source": "components/previews/motion/radio-description.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "bottom-sheet",
+      "category": "motion",
+      "title": "Bottom Sheet",
+      "page": "https://beui.dev/components/motion/bottom-sheet",
+      "source": "components/motion/bottom-sheet.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "pull-to-refresh",
+      "category": "motion",
+      "title": "Pull to Refresh",
+      "page": "https://beui.dev/components/motion/pull-to-refresh",
+      "source": "components/motion/pull-to-refresh.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "shared-layout-bg",
+      "category": "motion",
+      "title": "Shared Layout Background",
+      "page": "https://beui.dev/components/motion/shared-layout-bg",
+      "source": "components/motion/shared-layout-bg.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "bounce-sidebar",
+      "category": "motion",
+      "title": "Bounce Sidebar",
+      "page": "https://beui.dev/components/motion/bounce-sidebar",
+      "source": "components/motion/bounce-sidebar.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "animated-sidebar",
+      "category": "motion",
+      "title": "Animated Sidebar",
+      "page": "https://beui.dev/components/motion/animated-sidebar",
+      "source": "components/motion/animated-sidebar.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "file-tree",
+      "category": "motion",
+      "title": "File Tree",
+      "page": "https://beui.dev/components/motion/file-tree",
+      "source": "components/motion/file-tree.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "preview-rail",
+      "category": "motion",
+      "title": "Preview Rail",
+      "page": "https://beui.dev/components/motion/preview-rail",
+      "source": "components/motion/preview-rail.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "dock",
+      "category": "motion",
+      "title": "Dock",
+      "page": "https://beui.dev/components/motion/dock",
+      "source": "components/motion/dock.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "tooltip",
+      "category": "motion",
+      "title": "Tooltip",
+      "page": "https://beui.dev/components/motion/tooltip",
+      "source": "components/motion/tooltip.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "default",
+          "title": "Tooltip",
+          "source": "components/previews/motion/tooltip.preview.tsx",
+          "credit": null
+        },
+        {
+          "slug": "toolbar",
+          "title": "Toolbar",
+          "source": "components/previews/motion/tooltip-toolbar.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "context-menu",
+      "category": "motion",
+      "title": "Animated Context Menu",
+      "page": "https://beui.dev/components/motion/context-menu",
+      "source": "components/motion/context-menu.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "popover",
+      "category": "motion",
+      "title": "Gooey Popover",
+      "page": "https://beui.dev/components/motion/popover",
+      "source": "components/motion/popover.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "gooey",
+          "title": "Gooey Popover",
+          "source": "components/previews/motion/popover.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "popover-morph",
+      "category": "motion",
+      "title": "Morph Popover",
+      "page": "https://beui.dev/components/motion/popover",
+      "source": "components/motion/popover-morph.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "morph",
+          "title": "Morph Popover",
+          "source": "components/previews/motion/popover-morph.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "morphing-modal",
+      "category": "motion",
+      "title": "Morphing Modal",
+      "page": "https://beui.dev/components/motion/morphing-modal",
+      "source": "components/motion/morphing-modal.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "center-morph-modal",
+      "category": "motion",
+      "title": "Center Morph Modal",
+      "page": "https://beui.dev/components/motion/center-morph-modal",
+      "source": "components/motion/center-morph-modal.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "text-scramble",
+      "category": "motion",
+      "title": "Text Scramble",
+      "page": "https://beui.dev/components/motion/text-animation",
+      "source": "components/motion/text-scramble.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "text-scramble",
+          "title": "Text Scramble",
+          "source": "components/previews/motion/text-scramble.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "chromatic-text-reveal",
+      "category": "motion",
+      "title": "Dia Text Animation",
+      "page": "https://beui.dev/components/motion/text-animation",
+      "source": "components/motion/chromatic-text-reveal.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "chromatic-reveal",
+          "title": "Dia Text Animation",
+          "source": "components/previews/motion/chromatic-text-reveal.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "text-reveal",
+      "category": "motion",
+      "title": "Text Reveal",
+      "page": "https://beui.dev/components/motion/text-animation",
+      "source": "components/motion/text-reveal.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "reveal",
+          "title": "Text Reveal",
+          "source": "components/previews/motion/text-reveal.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "text-shimmer",
+      "category": "motion",
+      "title": "Text Shimmer",
+      "page": "https://beui.dev/components/motion/text-animation",
+      "source": "components/motion/text-shimmer.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "shimmer",
+          "title": "Text Shimmer",
+          "source": "components/previews/motion/text-shimmer.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "text-cascade",
+      "category": "motion",
+      "title": "Text Cascade",
+      "page": "https://beui.dev/components/motion/text-animation",
+      "source": "components/motion/text-cascade.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "cascade",
+          "title": "Text Cascade",
+          "source": "components/previews/motion/text-cascade.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "digit-swap",
+      "category": "motion",
+      "title": "Digit Swap",
+      "page": "https://beui.dev/components/motion/number",
+      "source": "components/motion/digit-swap.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "digit-swap",
+          "title": "Digit Swap",
+          "source": "components/previews/motion/digit-swap.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "number-ticker",
+      "category": "motion",
+      "title": "Number Ticker",
+      "page": "https://beui.dev/components/motion/number",
+      "source": "components/motion/number-ticker.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "ticker",
+          "title": "Number Ticker",
+          "source": "components/previews/motion/number-ticker.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "animated-number",
+      "category": "motion",
+      "title": "Animated Number",
+      "page": "https://beui.dev/components/motion/number",
+      "source": "components/motion/animated-number.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "animated",
+          "title": "Animated Number",
+          "source": "components/previews/motion/animated-number.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "animated-badge",
+      "category": "motion",
+      "title": "Animated Badge",
+      "page": "https://beui.dev/components/motion/animated-badge",
+      "source": "components/motion/animated-badge.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "action-swap-cascade",
+      "category": "motion",
+      "title": "Cascade",
+      "page": "https://beui.dev/components/motion/action-swap",
+      "source": "components/motion/action-swap-cascade.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "cascade",
+          "title": "Cascade",
+          "source": "components/previews/motion/action-swap-cascade.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "action-swap-blur",
+      "category": "motion",
+      "title": "Blur",
+      "page": "https://beui.dev/components/motion/action-swap",
+      "source": "components/motion/action-swap-blur.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "blur",
+          "title": "Blur",
+          "source": "components/previews/motion/action-swap-blur.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "action-swap-roll",
+      "category": "motion",
+      "title": "Roll",
+      "page": "https://beui.dev/components/motion/action-swap",
+      "source": "components/motion/action-swap-roll.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "roll",
+          "title": "Roll",
+          "source": "components/previews/motion/action-swap-roll.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "animated-toast-stack",
+      "category": "motion",
+      "title": "Animated Toast Stack",
+      "page": "https://beui.dev/components/motion/animated-toast-stack",
+      "source": "components/motion/animated-toast-stack.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "theme-toggle",
+      "category": "motion",
+      "title": "Theme Toggle",
+      "page": "https://beui.dev/components/motion/theme-toggle",
+      "source": "components/motion/theme-toggle.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "bouncy-accordion",
+      "category": "motion",
+      "title": "Bouncy Accordion",
+      "page": "https://beui.dev/components/motion/bouncy-accordion",
+      "source": "components/motion/bouncy-accordion.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "drawer",
+      "category": "motion",
+      "title": "Drawer",
+      "page": "https://beui.dev/components/motion/drawer",
+      "source": "components/motion/drawer.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "smooth-scroll",
+      "category": "motion",
+      "title": "Smooth Scroll",
+      "page": "https://beui.dev/components/motion/scroll-animation",
+      "source": "components/motion/smooth-scroll.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "smooth-scroll",
+          "title": "Smooth Scroll",
+          "source": "components/previews/motion/smooth-scroll.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "scroll-progress",
+      "category": "motion",
+      "title": "Scroll Progress",
+      "page": "https://beui.dev/components/motion/scroll-animation",
+      "source": "components/motion/scroll-progress.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "scroll-progress",
+          "title": "Scroll Progress",
+          "source": "components/previews/motion/scroll-progress.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "parallax",
+      "category": "motion",
+      "title": "Parallax",
+      "page": "https://beui.dev/components/motion/scroll-animation",
+      "source": "components/motion/parallax.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "parallax",
+          "title": "Parallax",
+          "source": "components/previews/motion/parallax.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "scroll-to",
+      "category": "motion",
+      "title": "Scroll To",
+      "page": "https://beui.dev/components/motion/scroll-animation",
+      "source": "components/motion/scroll-to.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "scroll-to",
+          "title": "Scroll To",
+          "source": "components/previews/motion/scroll-to.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "scroll-reveal",
+      "category": "motion",
+      "title": "Scroll Reveal",
+      "page": "https://beui.dev/components/motion/scroll-animation",
+      "source": "components/motion/scroll-reveal.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "scroll-reveal",
+          "title": "Scroll Reveal",
+          "source": "components/previews/motion/scroll-reveal.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "range-slider-inline",
+      "category": "motion",
+      "title": "Inline Slider",
+      "page": "https://beui.dev/components/motion/range-slider",
+      "source": "components/motion/range-slider-inline.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "inline",
+          "title": "Inline Slider",
+          "source": "components/previews/motion/range-slider-inline.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "range-slider",
+      "category": "motion",
+      "title": "Range Slider",
+      "page": "https://beui.dev/components/motion/range-slider",
+      "source": "components/motion/range-slider.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "stepped",
+          "title": "Range Slider",
+          "source": "components/previews/motion/range-slider.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "range-slider-fluid",
+      "category": "motion",
+      "title": "Fluid Slider",
+      "page": "https://beui.dev/components/motion/range-slider",
+      "source": "components/motion/range-slider-fluid.tsx",
+      "credit": {
+        "name": "Avinit",
+        "url": "https://x.com/0xvntr",
+        "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+      },
+      "examples": [
+        {
+          "slug": "fluid",
+          "title": "Fluid Slider",
+          "source": "components/previews/motion/range-slider-fluid.preview.tsx",
+          "credit": {
+            "name": "Avinit",
+            "url": "https://x.com/0xvntr",
+            "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "range-slider-wave",
+      "category": "motion",
+      "title": "Wave Slider",
+      "page": "https://beui.dev/components/motion/range-slider",
+      "source": "components/motion/range-slider-wave.tsx",
+      "credit": {
+        "name": "Avinit",
+        "url": "https://x.com/0xvntr",
+        "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+      },
+      "examples": [
+        {
+          "slug": "wave",
+          "title": "Wave Slider",
+          "source": "components/previews/motion/range-slider-wave.preview.tsx",
+          "credit": {
+            "name": "Avinit",
+            "url": "https://x.com/0xvntr",
+            "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "range-slider-bubble",
+      "category": "motion",
+      "title": "Bubble Slider",
+      "page": "https://beui.dev/components/motion/range-slider",
+      "source": "components/motion/range-slider-bubble.tsx",
+      "credit": {
+        "name": "Avinit",
+        "url": "https://x.com/0xvntr",
+        "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+      },
+      "examples": [
+        {
+          "slug": "bubble",
+          "title": "Bubble Slider",
+          "source": "components/previews/motion/range-slider-bubble.preview.tsx",
+          "credit": {
+            "name": "Avinit",
+            "url": "https://x.com/0xvntr",
+            "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "range-slider-ruler",
+      "category": "motion",
+      "title": "Ruler Slider",
+      "page": "https://beui.dev/components/motion/range-slider",
+      "source": "components/motion/range-slider-ruler.tsx",
+      "credit": {
+        "name": "Avinit",
+        "url": "https://x.com/0xvntr",
+        "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+      },
+      "examples": [
+        {
+          "slug": "ruler",
+          "title": "Ruler Slider",
+          "source": "components/previews/motion/range-slider-ruler.preview.tsx",
+          "credit": {
+            "name": "Avinit",
+            "url": "https://x.com/0xvntr",
+            "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "wheel-picker",
+      "category": "motion",
+      "title": "Wheel Picker",
+      "page": "https://beui.dev/components/motion/wheel-picker",
+      "source": "components/motion/wheel-picker.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "table",
+      "category": "motion",
+      "title": "Data Table",
+      "page": "https://beui.dev/components/motion/table",
+      "source": "components/motion/table/index.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "data",
+          "title": "Data Table",
+          "source": "components/previews/motion/table.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "table-editable",
+      "category": "motion",
+      "title": "Editable Table",
+      "page": "https://beui.dev/components/motion/table",
+      "source": "components/motion/table/index.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "editable",
+          "title": "Editable Table",
+          "source": "components/previews/motion/table-editable.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "table-async",
+      "category": "motion",
+      "title": "Async Table",
+      "page": "https://beui.dev/components/motion/table",
+      "source": "components/motion/table/index.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "async",
+          "title": "Async Table",
+          "source": "components/previews/motion/table-async.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "shader-background",
+      "category": "motion",
+      "title": "Shader Background",
+      "page": "https://beui.dev/components/motion/shader-background",
+      "source": "components/motion/shader-background.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "cylinder-carousel",
+      "category": "motion",
+      "title": "Cylinder Carousel",
+      "page": "https://beui.dev/components/motion/cylinder-carousel",
+      "source": "components/motion/cylinder-carousel.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "loader",
+      "category": "motion",
+      "title": "Loader",
+      "page": "https://beui.dev/components/motion/loader",
+      "source": "components/motion/loader.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "line-chart",
+      "category": "charts",
+      "title": "Line Chart",
+      "page": "https://beui.dev/charts/line-chart",
+      "source": "components/charts/line-chart.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "bar-chart",
+      "category": "charts",
+      "title": "Bar Chart",
+      "page": "https://beui.dev/charts/bar-chart",
+      "source": "components/charts/bar-chart.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "sparkline",
+      "category": "charts",
+      "title": "Sparkline",
+      "page": "https://beui.dev/charts/sparkline",
+      "source": "components/charts/sparkline.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "sankey-chart",
+      "category": "charts",
+      "title": "Sankey Chart",
+      "page": "https://beui.dev/charts/sankey-chart",
+      "source": "components/charts/sankey-chart.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "treemap",
+      "category": "charts",
+      "title": "Treemap",
+      "page": "https://beui.dev/charts/treemap",
+      "source": "components/charts/treemap.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "candlestick-chart",
+      "category": "charts",
+      "title": "Candlestick Chart",
+      "page": "https://beui.dev/charts/candlestick-chart",
+      "source": "components/charts/candlestick-chart.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "donut-chart",
+      "category": "charts",
+      "title": "Donut Chart",
+      "page": "https://beui.dev/charts/donut-chart",
+      "source": "components/charts/donut-chart.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "volume-profile",
+      "category": "charts",
+      "title": "Volume Profile",
+      "page": "https://beui.dev/charts/volume-profile",
+      "source": "components/charts/volume-profile.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "status-bar",
+      "category": "charts",
+      "title": "Status Bar",
+      "page": "https://beui.dev/charts/status-bar",
+      "source": "components/charts/status-bar.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "composition-chart",
+      "category": "charts",
+      "title": "Composition Chart",
+      "page": "https://beui.dev/charts/composition-chart",
+      "source": "components/charts/composition-chart.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "funnel-chart",
+      "category": "charts",
+      "title": "Funnel Chart",
+      "page": "https://beui.dev/charts/funnel-chart",
+      "source": "components/charts/funnel-chart.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "liquidity-heatmap",
+      "category": "charts",
+      "title": "Liquidity Heatmap",
+      "page": "https://beui.dev/charts/liquidity-heatmap",
+      "source": "components/charts/liquidity-heatmap.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "bump-chart",
+      "category": "charts",
+      "title": "Bump Chart",
+      "page": "https://beui.dev/charts/bump-chart",
+      "source": "components/charts/bump-chart.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "order-book",
+      "category": "charts",
+      "title": "Order Book",
+      "page": "https://beui.dev/charts/order-book",
+      "source": "components/charts/order-book.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "heat-calendar",
+      "category": "charts",
+      "title": "Heat Calendar",
+      "page": "https://beui.dev/charts/heat-calendar",
+      "source": "components/charts/heat-calendar.tsx",
+      "credit": {
+        "name": "Savva",
+        "url": "https://ssych.com",
+        "avatar": "https://avatars.githubusercontent.com/u/117964765?s=64&v=4"
+      },
+      "examples": []
+    },
+    {
+      "slug": "returns-calendar",
+      "category": "charts",
+      "title": "Returns Calendar",
+      "page": "https://beui.dev/charts/returns-calendar",
+      "source": "components/charts/returns-calendar.tsx",
+      "credit": {
+        "name": "Savva",
+        "url": "https://ssych.com",
+        "avatar": "https://avatars.githubusercontent.com/u/117964765?s=64&v=4"
+      },
+      "examples": []
+    },
+    {
+      "slug": "price-target-fan",
+      "category": "charts",
+      "title": "Price Target Fan",
+      "page": "https://beui.dev/charts/price-target-fan",
+      "source": "components/charts/price-target-fan.tsx",
+      "credit": {
+        "name": "Savva",
+        "url": "https://ssych.com",
+        "avatar": "https://avatars.githubusercontent.com/u/117964765?s=64&v=4"
+      },
+      "examples": []
+    },
+    {
+      "slug": "crash",
+      "category": "casino",
+      "title": "Plane",
+      "page": "https://beui.dev/casino/crash",
+      "source": "components/motion/crash.tsx",
+      "credit": {
+        "name": "Avinit",
+        "url": "https://x.com/0xvntr",
+        "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+      },
+      "examples": [
+        {
+          "slug": "plane",
+          "title": "Plane",
+          "source": "components/previews/casino/crash.preview.tsx",
+          "credit": {
+            "name": "Avinit",
+            "url": "https://x.com/0xvntr",
+            "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "crash-balloon",
+      "category": "casino",
+      "title": "Balloon",
+      "page": "https://beui.dev/casino/crash",
+      "source": "components/motion/crash/crash-balloon.tsx",
+      "credit": {
+        "name": "Avinit",
+        "url": "https://x.com/0xvntr",
+        "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+      },
+      "examples": [
+        {
+          "slug": "balloon",
+          "title": "Balloon",
+          "source": "components/previews/casino/crash-balloon.preview.tsx",
+          "credit": {
+            "name": "Avinit",
+            "url": "https://x.com/0xvntr",
+            "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "crash-tower",
+      "category": "casino",
+      "title": "Tower",
+      "page": "https://beui.dev/casino/crash",
+      "source": "components/motion/crash/crash-tower.tsx",
+      "credit": {
+        "name": "Avinit",
+        "url": "https://x.com/0xvntr",
+        "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+      },
+      "examples": [
+        {
+          "slug": "tower",
+          "title": "Tower",
+          "source": "components/previews/casino/crash-tower.preview.tsx",
+          "credit": {
+            "name": "Avinit",
+            "url": "https://x.com/0xvntr",
+            "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "mines",
+      "category": "casino",
+      "title": "Mines",
+      "page": "https://beui.dev/casino/mines",
+      "source": "components/motion/mines.tsx",
+      "credit": {
+        "name": "Avinit",
+        "url": "https://x.com/0xvntr",
+        "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+      },
+      "examples": []
+    },
+    {
+      "slug": "plinko",
+      "category": "casino",
+      "title": "Plinko",
+      "page": "https://beui.dev/casino/plinko",
+      "source": "components/motion/plinko.tsx",
+      "credit": {
+        "name": "Avinit",
+        "url": "https://x.com/0xvntr",
+        "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+      },
+      "examples": []
+    },
+    {
+      "slug": "slide-game",
+      "category": "casino",
+      "title": "Slide",
+      "page": "https://beui.dev/casino/slide-game",
+      "source": "components/motion/slide-game.tsx",
+      "credit": {
+        "name": "Avinit",
+        "url": "https://x.com/0xvntr",
+        "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+      },
+      "examples": []
+    },
+    {
+      "slug": "voice-orb",
+      "category": "agents",
+      "title": "Voice Orb",
+      "page": "https://beui.dev/components/agents/voice-orb",
+      "source": "components/agents/voice-orb.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "message-bubble",
+      "category": "agents",
+      "title": "Message Bubble",
+      "page": "https://beui.dev/components/agents/message-bubble",
+      "source": "components/agents/message-bubble.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "surfaces",
+          "title": "Animated Surfaces",
+          "source": "components/previews/agents/message-bubble.preview.tsx",
+          "credit": null
+        },
+        {
+          "slug": "avatars",
+          "title": "With Avatars",
+          "source": "components/previews/agents/message-bubble-avatars.preview.tsx",
+          "credit": null
+        },
+        {
+          "slug": "show-more",
+          "title": "Show More",
+          "source": "components/previews/agents/message-bubble-collapsible.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "message",
+      "category": "agents",
+      "title": "Message",
+      "page": "https://beui.dev/components/agents/message",
+      "source": "components/agents/message.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "message-scroller",
+      "category": "agents",
+      "title": "Message Scroller",
+      "page": "https://beui.dev/components/agents/message-scroller",
+      "source": "components/agents/message-scroller.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "prompt-input",
+      "category": "agents",
+      "title": "Prompt Input",
+      "page": "https://beui.dev/components/agents/prompt-input",
+      "source": "components/agents/prompt-input.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "todo-list",
+      "category": "agents",
+      "title": "Todo List",
+      "page": "https://beui.dev/components/agents/todo-list",
+      "source": "components/agents/todo-list.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "code-block",
+      "category": "agents",
+      "title": "Code Block",
+      "page": "https://beui.dev/components/agents/code-block",
+      "source": "components/agents/code-block.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "approval-card",
+      "category": "agents",
+      "title": "Approval Card",
+      "page": "https://beui.dev/components/agents/approval-card",
+      "source": "components/agents/approval-card/index.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "questions",
+          "title": "Questions",
+          "source": "components/previews/agents/approval-card-question.preview.tsx",
+          "credit": null
+        },
+        {
+          "slug": "review",
+          "title": "Review and Approve",
+          "source": "components/previews/agents/approval-card-review.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "file-diff",
+      "category": "agents",
+      "title": "File Diff",
+      "page": "https://beui.dev/components/agents/file-diff",
+      "source": "components/agents/file-diff.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "tool-result",
+      "category": "agents",
+      "title": "Tool Result",
+      "page": "https://beui.dev/components/agents/tool-result",
+      "source": "components/agents/tool-result.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "terminal-output",
+          "title": "Terminal Output",
+          "source": "components/previews/agents/tool-result-terminal.preview.tsx",
+          "credit": null
+        },
+        {
+          "slug": "request-result",
+          "title": "Request Result",
+          "source": "components/previews/agents/tool-result-request.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "streaming-response",
+      "category": "agents",
+      "title": "Streaming Response",
+      "page": "https://beui.dev/components/agents/streaming-response",
+      "source": "components/agents/streaming-response.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "image-generation",
+      "category": "agents",
+      "title": "Image Generation",
+      "page": "https://beui.dev/components/agents/image-generation",
+      "source": "components/agents/image-generation.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "tool-approval",
+      "category": "agents",
+      "title": "Tool Approval",
+      "page": "https://beui.dev/components/agents/tool-approval",
+      "source": "components/agents/tool-approval.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "citations",
+      "category": "agents",
+      "title": "Citations",
+      "page": "https://beui.dev/components/agents/citations",
+      "source": "components/agents/citations.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "agent-activity",
+      "category": "agents",
+      "title": "Agent Activity",
+      "page": "https://beui.dev/components/agents/agent-activity",
+      "source": "components/agents/agent-activity/index.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "streaming-text",
+          "title": "Streaming Text",
+          "source": "components/previews/agents/agent-activity-text.preview.tsx",
+          "credit": null
+        },
+        {
+          "slug": "reasoning-steps",
+          "title": "Reasoning Steps",
+          "source": "components/previews/agents/agent-activity-steps.preview.tsx",
+          "credit": null
+        },
+        {
+          "slug": "web-search",
+          "title": "Web Search",
+          "source": "components/previews/agents/agent-activity-search.preview.tsx",
+          "credit": null
+        },
+        {
+          "slug": "tool-calls",
+          "title": "Tool Calls",
+          "source": "components/previews/agents/agent-activity-tools.preview.tsx",
+          "credit": null
+        },
+        {
+          "slug": "mixed-activity",
+          "title": "Mixed Activity",
+          "source": "components/previews/agents/agent-activity.preview.tsx",
+          "credit": null
+        },
+        {
+          "slug": "agent-trace",
+          "title": "Agent Trace",
+          "source": "components/previews/agents/agent-trace.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "reasoning-text",
+      "category": "agents",
+      "title": "Reasoning Text",
+      "page": "https://beui.dev/components/agents/loading-states",
+      "source": "components/agents/loading-states/reasoning-text.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "reasoning-text",
+          "title": "Reasoning Text",
+          "source": "components/previews/agents/reasoning-text.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "thinking-shimmer",
+      "category": "agents",
+      "title": "Thinking Shimmer",
+      "page": "https://beui.dev/components/agents/loading-states",
+      "source": "components/agents/loading-states/thinking-shimmer.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "thinking-shimmer",
+          "title": "Thinking Shimmer",
+          "source": "components/previews/agents/thinking-shimmer.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "agent-progress",
+      "category": "agents",
+      "title": "Agent Progress",
+      "page": "https://beui.dev/components/agents/loading-states",
+      "source": "components/agents/loading-states/agent-progress.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "agent-progress",
+          "title": "Agent Progress",
+          "source": "components/previews/agents/agent-progress.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "ai-sidebar",
+      "category": "agents",
+      "title": "AI Sidebar",
+      "page": "https://beui.dev/components/agents/ai-sidebar",
+      "source": "components/agents/ai-sidebar.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "chat-app",
+      "category": "agents",
+      "title": "Chat App",
+      "page": "https://beui.dev/components/agents/chat-app",
+      "source": "components/agents/chat-app.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "infinite-masonry",
+      "category": "blocks",
+      "title": "Infinite Masonry",
+      "page": "https://beui.dev/components/blocks/infinite-masonry",
+      "source": "components/motion/infinite-masonry.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "notification-stack",
+      "category": "blocks",
+      "title": "Notification Stack",
+      "page": "https://beui.dev/components/blocks/notification-stack",
+      "source": "components/motion/notification-stack.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "project-folder",
+      "category": "blocks",
+      "title": "Project Folder",
+      "page": "https://beui.dev/components/blocks/project-folder",
+      "source": "components/motion/project-folder.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "card-folder",
+      "category": "blocks",
+      "title": "Card Folder",
+      "page": "https://beui.dev/components/blocks/card-folder",
+      "source": "components/motion/card-folder.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "knockout-wheel",
+      "category": "blocks",
+      "title": "Knockout Wheel",
+      "page": "https://beui.dev/components/blocks/knockout-bracket",
+      "source": "components/motion/knockout-wheel.tsx",
+      "credit": {
+        "name": "Avinit",
+        "url": "https://x.com/0xvntr",
+        "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+      },
+      "examples": [
+        {
+          "slug": "knockout-wheel",
+          "title": "Knockout Wheel",
+          "source": "components/previews/blocks/knockout-wheel.preview.tsx",
+          "credit": {
+            "name": "Avinit",
+            "url": "https://x.com/0xvntr",
+            "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "knockout-bracket",
+      "category": "blocks",
+      "title": "Knockout Bracket",
+      "page": "https://beui.dev/components/blocks/knockout-bracket",
+      "source": "components/motion/knockout-bracket.tsx",
+      "credit": {
+        "name": "Avinit",
+        "url": "https://x.com/0xvntr",
+        "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+      },
+      "examples": [
+        {
+          "slug": "knockout-bracket",
+          "title": "Knockout Bracket",
+          "source": "components/previews/blocks/knockout-bracket.preview.tsx",
+          "credit": {
+            "name": "Avinit",
+            "url": "https://x.com/0xvntr",
+            "avatar": "https://avatars.githubusercontent.com/u/70722540?s=64&v=4"
+          }
+        }
+      ]
+    },
+    {
+      "slug": "availability-scheduler",
+      "category": "blocks",
+      "title": "Availability Scheduler",
+      "page": "https://beui.dev/components/blocks/availability-scheduler",
+      "source": "components/motion/availability-scheduler/index.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "swap",
+      "category": "blocks",
+      "title": "Multi-chain Swap",
+      "page": "https://beui.dev/components/blocks/swap",
+      "source": "components/motion/swap.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "dynamic-island",
+      "category": "blocks",
+      "title": "Dynamic Island",
+      "page": "https://beui.dev/components/blocks/dynamic-island",
+      "source": "components/motion/dynamic-island.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "command-palette",
+      "category": "blocks",
+      "title": "Command Palette",
+      "page": "https://beui.dev/components/blocks/command-palette",
+      "source": "components/motion/command-palette.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "morphing-search-chips",
+      "category": "blocks",
+      "title": "Chip Search",
+      "page": "https://beui.dev/components/blocks/morphing-search",
+      "source": "components/motion/morphing-search-chips.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "chips",
+          "title": "Chip Search",
+          "source": "components/previews/blocks/morphing-search-chips.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "morphing-search",
+      "category": "blocks",
+      "title": "Morphing Search",
+      "page": "https://beui.dev/components/blocks/morphing-search",
+      "source": "components/motion/morphing-search.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "overlay",
+          "title": "Morphing Search",
+          "source": "components/previews/blocks/morphing-search.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "expandable-action-bar",
+      "category": "blocks",
+      "title": "Expandable Action Bar",
+      "page": "https://beui.dev/components/blocks/expandable-action-bar",
+      "source": "components/motion/expandable-action-bar.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "overflow-actions",
+      "category": "blocks",
+      "title": "Overflow Actions",
+      "page": "https://beui.dev/components/blocks/overflow-actions",
+      "source": "components/motion/overflow-actions.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "expandable-tabs",
+      "category": "blocks",
+      "title": "Expandable Tabs",
+      "page": "https://beui.dev/components/blocks/expandable-tabs",
+      "source": "components/motion/expandable-tabs.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "morphing-tabs",
+      "category": "blocks",
+      "title": "Morphing Tabs",
+      "page": "https://beui.dev/components/blocks/morphing-tabs",
+      "source": "components/motion/morphing-tabs.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "swipeable-list",
+      "category": "blocks",
+      "title": "Swipeable List",
+      "page": "https://beui.dev/components/blocks/swipeable-list",
+      "source": "components/motion/swipeable-list.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "attachment-upload",
+      "category": "blocks",
+      "title": "Attachment Upload",
+      "page": "https://beui.dev/components/blocks/file-upload",
+      "source": "components/motion/attachment-upload.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "attachment-upload",
+          "title": "Attachment Upload",
+          "source": "components/previews/blocks/attachment-upload.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "file-upload",
+      "category": "blocks",
+      "title": "Upload Queue",
+      "page": "https://beui.dev/components/blocks/file-upload",
+      "source": "components/motion/file-upload.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "upload-queue",
+          "title": "Upload Queue",
+          "source": "components/previews/blocks/file-upload.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "prediction-market-card",
+      "category": "blocks",
+      "title": "Market Cards",
+      "page": "https://beui.dev/components/blocks/prediction-market",
+      "source": "components/motion/prediction-market-card.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "market-cards",
+          "title": "Market Cards",
+          "source": "components/previews/blocks/prediction-market-card.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "prediction-market",
+      "category": "blocks",
+      "title": "Trade Ticket",
+      "page": "https://beui.dev/components/blocks/prediction-market",
+      "source": "components/motion/prediction-market.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "trade-ticket",
+          "title": "Trade Ticket",
+          "source": "components/previews/blocks/prediction-market.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "wallet-card",
+      "category": "blocks",
+      "title": "Wallet Card",
+      "page": "https://beui.dev/components/blocks/wallet-card",
+      "source": "components/motion/wallet-card/index.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "otp-input",
+      "category": "blocks",
+      "title": "OTP Input",
+      "page": "https://beui.dev/components/blocks/otp-input",
+      "source": "components/motion/otp-input.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "signup-form",
+      "category": "blocks",
+      "title": "Sign Up Form",
+      "page": "https://beui.dev/components/blocks/signup-form",
+      "source": "components/motion/signup-form.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "card-dealer",
+      "category": "blocks",
+      "title": "Card Dealer",
+      "page": "https://beui.dev/components/blocks/card-dealer",
+      "source": "components/motion/card-dealer.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "bloom-menu",
+      "category": "blocks",
+      "title": "Bloom Menu",
+      "page": "https://beui.dev/components/blocks/bloom-menu",
+      "source": "components/motion/bloom-menu.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "feedback-widget",
+      "category": "blocks",
+      "title": "Feedback Widget",
+      "page": "https://beui.dev/components/blocks/feedback-widget",
+      "source": "components/motion/feedback-widget.tsx",
+      "credit": null,
+      "examples": []
+    },
+    {
+      "slug": "not-found-glitch",
+      "category": "blocks",
+      "title": "Glitch",
+      "page": "https://beui.dev/components/blocks/not-found",
+      "source": "components/motion/not-found/glitch.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "glitch",
+          "title": "Glitch",
+          "source": "components/previews/blocks/not-found-glitch.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "not-found-magnetic",
+      "category": "blocks",
+      "title": "Magnetic",
+      "page": "https://beui.dev/components/blocks/not-found",
+      "source": "components/motion/not-found/magnetic.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "magnetic",
+          "title": "Magnetic",
+          "source": "components/previews/blocks/not-found-magnetic.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "not-found-spotlight",
+      "category": "blocks",
+      "title": "Spotlight",
+      "page": "https://beui.dev/components/blocks/not-found",
+      "source": "components/motion/not-found/spotlight.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "spotlight",
+          "title": "Spotlight",
+          "source": "components/previews/blocks/not-found-spotlight.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "not-found-stacked",
+      "category": "blocks",
+      "title": "Stacked",
+      "page": "https://beui.dev/components/blocks/not-found",
+      "source": "components/motion/not-found/stacked.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "stacked",
+          "title": "Stacked",
+          "source": "components/previews/blocks/not-found-stacked.preview.tsx",
+          "credit": null
+        }
+      ]
+    },
+    {
+      "slug": "not-found-terminal",
+      "category": "blocks",
+      "title": "Terminal",
+      "page": "https://beui.dev/components/blocks/not-found",
+      "source": "components/motion/not-found/terminal.tsx",
+      "credit": null,
+      "examples": [
+        {
+          "slug": "terminal",
+          "title": "Terminal",
+          "source": "components/previews/blocks/not-found-terminal.preview.tsx",
+          "credit": null
+        }
+      ]
+    }
+  ]
+}

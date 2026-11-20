@@ -1,0 +1,45 @@
+import { expect, test } from '@playwright/test'
+import { openDemo } from './open-demo'
+
+test('the sorted, horizontal bar chart keeps its data and keyboard readout accessible', async ({ page }) => {
+  await openDemo(page, 'bar-chart')
+  const chart = page.getByRole('region', { name: 'Quarterly signups' })
+  await page.getByLabel('Orientation').selectOption('horizontal')
+  await page.getByLabel('Sort', { exact: true }).selectOption('descending')
+  const inspector = chart.getByRole('slider')
+  await inspector.focus()
+  await inspector.press('Home')
+  await expect(inspector).toHaveAttribute('aria-valuetext', /Q4\. Web 72/)
+  await expect(chart.getByRole('table')).toHaveAccessibleName('Quarterly signups data')
+  const series = chart.getByRole('button', { name: 'Web' })
+  await series.click()
+  await expect(series).toHaveAttribute('aria-pressed', 'false')
+})
+
+test('donut legend selection and sparklines can be inspected without a mouse', async ({ page }) => {
+  await openDemo(page, 'donut-chart')
+  const slice = page.getByRole('button', { name: /^Search/ })
+  await slice.focus()
+  await slice.press('Enter')
+  await expect(slice).toHaveAttribute('aria-pressed', 'true')
+  await openDemo(page, 'sparkline')
+  const inspector = page.getByRole('slider', { name: 'Daily signups: inspect values' })
+  await inspector.focus()
+  await inspector.press('Home')
+  await expect(inspector).toHaveAttribute('aria-valuetext', 'Nov 1: 39')
+})
+
+test('calendar ranges support keyboard anchoring, extension and dismissal', async ({ page }) => {
+  await openDemo(page, 'returns-calendar')
+  const january = page.getByRole('button', { name: 'Jan 2023, +2.4%' })
+  await january.focus()
+  await january.press('Enter')
+  await expect(january).toHaveAttribute('aria-pressed', 'true')
+  await january.press('ArrowRight')
+  const february = page.getByRole('button', { name: /Feb 2023,/ })
+  await expect(february).toBeFocused()
+  await february.press('Enter')
+  await expect(page.getByRole('tooltip')).toHaveText('Jan 2023 – Feb 2023 · +0.9%')
+  await february.press('Escape')
+  await expect(january).toHaveAttribute('aria-pressed', 'false')
+})

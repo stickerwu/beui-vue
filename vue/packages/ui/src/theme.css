@@ -1,0 +1,22 @@
+:where(:root, [data-beui-theme="light"]) {
+  --beui-background: #fcfcfc;
+  --beui-foreground: #0b0b0b;
+  --beui-card: #f5f5f5;
+  --beui-muted: var(--beui-card);
+  --beui-muted-foreground: #686868;
+  --beui-border: rgb(15 15 15 / 8%);
+  --beui-primary: #0285f7;
+  --beui-primary-foreground: white;
+  --beui-accent: oklch(72% 0.18 195);
+  --beui-ring: #717171;
+  --beui-destructive: #d73c35;
+}
+:where(.dark, [data-beui-theme="dark"]) {
+  --beui-background: #151515;
+  --beui-foreground: #f2f2f2;
+  --beui-card: #1c1c1c;
+  --beui-muted-foreground: #a3a3a3;
+  --beui-border: rgb(255 255 255 / 8%);
+  --beui-accent: oklch(80% 0.18 195);
+  --beui-ring: #a3a3a3;
+}

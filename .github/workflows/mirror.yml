@@ -1,0 +1,31 @@
+name: Sync Gitee mirror
+on:
+  push:
+    branches: [main]
+    tags: ['*']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency: gitee-mirror
+jobs:
+  sync:
+    if: vars.GITEE_MIRROR_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Mirror references and verify SHAs
+        env:
+          GITEE_DEPLOY_KEY: ${{ secrets.GITEE_DEPLOY_KEY }}
+          GITEE_KNOWN_HOSTS: ${{ vars.GITEE_KNOWN_HOSTS }}
+          BEUI_GITEE_SSH: '1'
+        run: |
+          install -dm 700 ~/.ssh
+          printf '%s\n' "$GITEE_DEPLOY_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          printf '%s\n' "$GITEE_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          node vue/scripts/sync-gitee.mjs

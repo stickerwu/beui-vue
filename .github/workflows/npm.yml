@@ -1,0 +1,44 @@
+name: Publish verified Vue tarball
+on:
+  workflow_dispatch:
+    inputs:
+      run_id:
+        description: Successful Vue package and docs run ID for this main commit
+        required: true
+permissions:
+  actions: read
+  contents: read
+  id-token: write
+jobs:
+  publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: npm
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify artifact provenance
+        uses: actions/github-script@v7
+        env:
+          BUILD_RUN: ${{ inputs.run_id }}
+        with:
+          script: |
+            const {owner, repo} = context.repo;
+            const {data: run} = await github.rest.actions.getWorkflowRun({owner, repo, run_id: Number(process.env.BUILD_RUN)});
+            if (run.path !== '.github/workflows/vue.yml' || run.head_repository?.full_name !== `${owner}/${repo}` || run.head_sha !== context.sha || run.conclusion !== 'success' || run.event === 'pull_request' || run.head_branch !== 'main') throw Error('Select a successful run from this main commit');
+      - uses: actions/download-artifact@v4
+        with:
+          name: vue-package
+          path: pack
+          run-id: ${{ inputs.run_id }}
+          github-token: ${{ github.token }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - name: Publish
+        run: |
+          VERSION=$(node -p "require('./vue/packages/ui/package.json').version")
+          node vue/scripts/release-gate.mjs
+          TAG=latest
+          if [[ "$VERSION" == *-* ]]; then TAG=next; fi
+          npm publish "pack/beui-vue-$VERSION.tgz" --access public --provenance --tag "$TAG"

@@ -1,0 +1,5 @@
+{
+  "name":"beui-nuxt-consumer", "private":true, "type":"module",
+  "scripts":{"build":"nuxt build"},
+  "dependencies":{"nuxt":"4.6.4","vue":"3.5.45"}
+}

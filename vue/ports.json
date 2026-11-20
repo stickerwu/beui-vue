@@ -1,0 +1,8 @@
+{
+  "button-base": {"name":"ButtonBase", "api":"使用默认插槽设置内容；传入 `href` 渲染链接，其他原生属性透传到交互元素。"},
+  "tabs": {"name":"Tabs", "api":"`items` 定义标签项；`v-model` 同步选中值，`defaultValue` 设置初始值，`variant` 控制外观。使用 `#trigger`、`#icon` 和 `#panel` 定制内容。"},
+  "before-after-slider": {"name":"BeforeAfterSlider", "api":"`#before`、`#after` 提供比较内容。`v-model` 同步分隔位置，`defaultValue` 设置初始位置，`disabled` 禁用交互，`labels` 定制文本。"},
+  "animated-toast-stack": {"name":"AnimatedToastStack", "api":"`toasts` 提供通知列表，`@dismiss` 处理关闭。可设置 `position`、`placement`、`portal` 和 `maxVisible`。`useAnimatedToastStack` 管理通知生命周期。"},
+  "line-chart": {"name":"LineChart", "api":"`series` 定义数据系列。支持 `v-model:active-id` 与 `v-model:hidden-series`，可组合图表、图例与提示层。"},
+  "shader-background": {"name":"ShaderBackground", "api":"`variant` 选择渲染预设，`params` 传入该预设的参数。背景为装饰层，前景内容放在同级元素。"}
+}

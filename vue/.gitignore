@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.vitepress/cache/
+docs/components/
+docs/catalog.md
+test-results/
+playwright-report/
+*.tgz
+.artifacts/

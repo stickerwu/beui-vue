@@ -1,3 +1,11 @@
+# beui-vue
+
+[Vue 组件文档](https://stickerwu.github.io/beui-vue/) · [Gitee 镜像](https://gitee.com/stickerwu/beui-vue) · [开发和发布](./vue/README.md)
+
+这是由 `stickerwu` 独立维护的 Vue 3.5 动效组件库。Vue 源码、示例和发布工具位于 `vue/`。上游 React 源码留作行为与视觉基准。MIT 许可证和社区贡献者署名随项目保留。
+
+## 上游项目
+
 <p align="center">
   <a href="https://beui.dev">
     <img src="./public/beui-mark.png" alt="beUI logo" width="88" height="88" />

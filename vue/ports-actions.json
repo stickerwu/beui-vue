@@ -1,0 +1,9 @@
+{
+  "tilt-card":{"name":"TiltCard","api":"`max` 设置最大倾角，`glare` 控制跟随鼠标的高光。默认插槽提供卡片内容。"},
+  "button-magnetic":{"name":"MagneticButton","api":"`strength` 指定磁吸强度，默认 0.25；按钮支持 ButtonBase 属性和原生事件。"},
+  "button-metallic":{"name":"MetallicButton","api":"`paused` 停止银色反光，`size` 设置尺寸。"},
+  "hold-action-button":{"name":"HoldActionButton","api":"`holdDuration` 设置确认时间（毫秒），`direction` 选择填充方向，完成时触发 `@hold-complete`。支持指针、空格和回车键。"},
+  "action-swap-roll":{"name":"ActionSwap","api":"`animation=\"roll\"` 滚动替换内容，`items` 定义操作列表，`v-model` 同步当前 ID。"},
+  "action-swap-blur":{"name":"ActionSwap","api":"`animation=\"blur\"` 设置模糊交替，`items`、`v-model` 与 `#icon` 配置内容和状态。"},
+  "action-swap-cascade":{"name":"ActionSwap","api":"`animation=\"cascade\"` 逐字交替。`items` 指定标签和 ID，`@value-change` 提供新的 ID 和完整项。"}
+}

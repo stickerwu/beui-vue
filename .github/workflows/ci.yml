@@ -2,7 +2,17 @@ name: CI
 
 on:
   pull_request:
+    paths-ignore:
+      - 'vue/**'
+      - '.github/workflows/vue.yml'
+      - '.github/workflows/npm.yml'
+      - '.github/workflows/mirror.yml'
   push:
+    paths-ignore:
+      - 'vue/**'
+      - '.github/workflows/vue.yml'
+      - '.github/workflows/npm.yml'
+      - '.github/workflows/mirror.yml'
     branches:
       - main
 
@@ -24,7 +34,7 @@ jobs:
         run: bun run check
 
       - name: Accessibility tests
-        run: bun test
+        run: bun test ./tests
 
       # Prerenders every page and writes the registry, feeds and social cards,
       # so a page or endpoint that fails to build fails CI.

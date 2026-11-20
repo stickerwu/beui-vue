@@ -1,0 +1,32 @@
+{
+  "name": "beui-vue-workspace",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.28.2",
+  "scripts": {
+    "build": "pnpm --filter beui-vue build",
+    "catalog": "node scripts/catalog.mjs",
+    "docs:dev": "pnpm docs:prepare && vitepress dev docs",
+    "docs:prepare": "node scripts/catalog.mjs --docs",
+    "docs:build": "pnpm docs:prepare && vitepress build docs",
+    "docs:preview": "vitepress preview docs --host 127.0.0.1 --port 4173",
+    "test:e2e": "playwright test",
+    "test:package": "node scripts/test-package.mjs",
+    "changeset": "changeset",
+    "version-packages": "changeset version"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.29.7",
+    "@playwright/test": "1.65.1",
+    "@types/node": "^24.0.0",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "beui-vue": "workspace:*",
+    "pixelmatch": "7.1.0",
+    "pngjs": "7.0.0",
+    "typescript": "~5.9.3",
+    "vite": "^5.4.21",
+    "vitepress": "1.6.4",
+    "vue": "^3.5.0",
+    "vue-tsc": "^3.3.14"
+  }
+}

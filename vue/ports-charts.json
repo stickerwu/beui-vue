@@ -1,0 +1,18 @@
+{
+  "bar-chart": {"name":"BarChart", "api":"`series` 和 `categories` 提供数据，`layout` 与 `orientation` 切换分组、堆叠及方向，`sort` 按可见合计排序。支持 `v-model:hidden-series` 与 `v-model:active-id`。"},
+  "donut-chart": {"name":"DonutChart", "api":"`segments` 定义各项占比，`gap` 与 `thickness` 调整环形。支持 `v-model:active-id`、`selectedId`、`@select` 和 `#center` 插槽。"},
+  "sparkline": {"name":"Sparkline", "api":"`data` 提供样本，`label` 命名图形，`interactive` 开启指针和键盘检查。支持 `curve`、`variant`、`showDelta` 及 `invertDelta`。"},
+  "status-bar": {"name":"StatusBar", "api":"`data` 提供时间观测，`statuses` 自定义状态颜色和名称，`v-model:active-id` 同步检查位置，可用 `#tooltip` 自定义读数。"},
+  "composition-chart": {"name":"CompositionChart", "api":"提供 `series` 和 `periods`，用 `view` 切换百分比堆叠柱形和面积。`v-model:period` 同步检查的时期，点击图例固定高亮。"},
+  "candlestick-chart": {"name":"CandlestickChart", "api":"`candles` 提供带稳定 ID 的 OHLCV 数据，`lastPrice` 绘制参考价，`v-model:active-id` 同步十字线所在的蜡烛。"},
+  "heat-calendar": {"name":"HeatCalendar", "api":"`values[week][day]` 使用 0–1 强度，结合 `maxCount` 和 `unit` 展示读数。`endDate` 接受 UTC 日期。`v-model:selection` 同步单日与日期范围。"},
+  "order-book": {"name":"OrderBook", "api":"`bids`、`asks` 接受价量快照，`levels` 控制深度，`v-model:active-level` 同步检查价位。`@level-select` 接收价位与方向，`#summary` 定制累计深度。"},
+  "returns-calendar": {"name":"ReturnsCalendar", "api":"`years` 和 `returns[year][month]` 提供年度与月度收益，年合计与跨月、跨年选择均采用复利。`v-model:selection` 同步选择。"},
+  "funnel-chart": {"name":"FunnelChart", "api":"`stages` 提供有序的阶段、标识和值，`direction` 切换方向。交互读数展示相较前一步的变化、转换率与总转换率。"},
+  "bump-chart": {"name":"BumpChart", "api":"`series[].ranks` 与 `periods` 对应，缺失名次保留断点，`v-model:active` 同步固定高亮的系列。"},
+  "liquidity-heatmap": {"name":"LiquidityHeatmap", "api":"`snapshots` 提供时间、分档流动性与市场价轨迹，`maxSize` 固定颜色量程。指针和方向键检查独立单元格。"},
+  "price-target-fan": {"name":"PriceTargetFan", "api":"`current`、`targets`、`history` 提供当前价、三个目标和历史价格，`dates` 定制轴标签，`v-model:active` 同步目标或历史读数。"},
+  "sankey-chart": {"name":"SankeyChart", "api":"`nodes`、`links` 定义带权流向；`nodeWidth`、`nodePadding`、`colors` 配置布局和颜色，`v-model:active-id` 同步节点或连线。"},
+  "treemap": {"name":"Treemap", "api":"`data` 提供分组或叶节点，叶节点面积按权重计算，`v-model:active-id` 同步交互，键盘方向键在叶节点间移动。"},
+  "volume-profile": {"name":"VolumeProfile", "api":"`data` 提供互不重叠的价格区间与成交量，`valueArea` 设置价值区间覆盖比例或 false。`v-model:active-id` 同步选中区间。"}
+}

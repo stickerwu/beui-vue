@@ -1,0 +1,7 @@
+{
+  "aspect-ratio": {"name":"AspectRatio", "api":"`ratio` 为宽高比（正数，默认 1），`animated` 控制布局动画，`contentClassName` 设置内层样式。`AspectRatioImage` 接收 `src`、`alt` 和原图 `width`、`height`，在不同画幅间保持覆盖裁切。"},
+  "alert": {"name":"Alert", "api":"`variant` 支持 default、info、success、warning、destructive。用 `v-model:open` 或 `defaultOpen` 控制显隐，`@open-change` 接收变化。组合 AlertIcon、AlertContent、AlertTitle、AlertDescription、AlertAction 和 AlertClose。`returnFocusRef` 指向关闭后的焦点，`labels.dismiss` 定制按钮名称。`useAlert()` 为后代提供响应式状态和 `dismiss()`。"},
+  "card": {"name":"Card", "api":"`variant` 支持 outlined / muted，`size` 支持 default / compact。`interactive` 提供指针反馈，`selected` 标记选中。将 `CARD_TARGET_CLASS` 用于拥有点击区域的控件。可组合 CardHeader、CardTitle、CardDescription、CardAction、CardContent、CardFooter，`CardTitle.as` 用于选择标题层级。"},
+  "collapsible": {"name":"Collapsible", "api":"`v-model:open`、`defaultOpen` 或 `@open-change` 管理开合，`disabled` 禁用。CollapsibleTrigger（支持 `render` 自定义按钮组件）、CollapsibleIndicator、CollapsibleContent 组合触发器和内容；默认插槽与 `useCollapsible()` 暴露 `open`、`setOpen`、`toggle`。"},
+  "switch": {"name":"Switch", "api":"`v-model:checked` 双向绑定，也可用 `:checked` 与 `@checked-change`。`disabled` 禁用交互，`label` 显示关联标签，`ariaLabel` 为无外部标签的开关命名。"}
+}

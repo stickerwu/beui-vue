@@ -1,0 +1,73 @@
+import { expect, test } from '@playwright/test'
+
+import { openDemo } from './open-demo'
+
+test('button forwards keyboard activation and keeps disabled controls inert', async ({ page }) => {
+  await openDemo(page, 'button-base')
+  const button = page.getByRole('button', { name: 'Continue', exact: true })
+  await button.focus()
+  await button.press('Enter')
+  await expect(page.getByRole('status').filter({ hasText: 'Continue pressed' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Disabled', exact: true })).toBeDisabled()
+  await expect(page.getByRole('button', { name: 'Delete', exact: true })).toHaveAccessibleName('Delete')
+})
+
+test('tabs move focus, wrap, and expose only the selected panel', async ({ page }) => {
+  await openDemo(page, 'tabs')
+  const list = page.getByRole('tablist', { name: 'Pill', exact: true })
+  const overview = list.getByRole('tab', { name: 'Overview' })
+  const activity = list.getByRole('tab', { name: 'Activity' })
+  await overview.focus()
+  await overview.press('ArrowRight')
+  await expect(activity).toBeFocused()
+  await expect(activity).toHaveAttribute('aria-selected', 'true')
+  await expect(overview).toHaveAttribute('tabindex', '-1')
+  await expect(page.getByRole('tabpanel', { name: 'Activity' })).toHaveText('Recent events.')
+  await activity.press('End')
+  await list.getByRole('tab', { name: 'Settings' }).press('ArrowRight')
+  await expect(overview).toBeFocused()
+  await expect(page.getByRole('tabpanel', { name: 'Overview' })).toBeVisible()
+})
+
+test('overflow control reveals hidden tabs without changing selection', async ({ page }) => {
+  await openDemo(page, 'tabs')
+  const list = page.getByRole('tablist', { name: 'Overflow' })
+  const scrollRight = page.getByRole('button', { name: 'Scroll tabs right' }).first()
+  await scrollRight.click()
+  await expect(page.getByRole('button', { name: 'Scroll tabs left' }).first()).toBeEnabled()
+  await expect(list.getByRole('tab', { selected: true })).toHaveAccessibleName('Overview')
+})
+
+test('comparison supports keyboard, accessible value text, pointer and reduced motion', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await openDemo(page, 'before-after-slider')
+  const slider = page.getByRole('slider', { name: 'Before and after comparison' })
+  await expect(slider).toHaveAttribute('aria-valuetext', '50% before')
+  await slider.press('Home')
+  await slider.press('Shift+ArrowRight')
+  await expect(slider).toHaveAttribute('aria-valuetext', '10% before')
+  await slider.press('End')
+  await expect(slider).toHaveAttribute('aria-valuetext', '100% before')
+  const frame = page.getByTestId('comparison-frame')
+  await frame.scrollIntoViewIfNeeded()
+  const box = await frame.boundingBox()
+  if (!box) throw new Error('Expected a visible comparison frame')
+  await page.mouse.move(box.x + box.width / 4, box.y + box.height / 2)
+  await page.mouse.down()
+  await page.mouse.move(box.x + box.width * 0.75, box.y + box.height / 2, { steps: 5 })
+  await page.mouse.up()
+  await expect(slider).toHaveAttribute('aria-valuetext', '75% before')
+})
+
+test('toast changes in place and persistent items dismiss independently', async ({ page }) => {
+  await openDemo(page, 'animated-toast-stack')
+  const list = page.getByRole('list', { name: 'Notifications' })
+  await page.getByRole('button', { name: 'Title only' }).click()
+  await page.getByRole('button', { name: 'Promise' }).click()
+  await expect(list.getByText('Publishing component')).toBeVisible()
+  await expect(list.getByText('Publish complete')).toBeVisible()
+  await expect(list.getByRole('listitem')).toHaveCount(2)
+  await list.getByRole('listitem').filter({ hasText: 'Saved' }).getByRole('button', { name: 'Dismiss toast' }).click()
+  await expect(list.getByText('Saved')).toHaveCount(0)
+  await expect(list.getByText('Publish complete')).toHaveCount(0, { timeout: 8000 })
+})

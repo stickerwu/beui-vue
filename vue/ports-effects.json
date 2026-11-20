@@ -1,0 +1,13 @@
+{
+  "text-scramble": {"name":"TextScramble","api":"传入 `text`，更新文本时字符从左至右解码。`duration` 单位为毫秒，`glyphs` 自定义扰动字符。"},
+  "text-reveal": {"name":"TextReveal","api":"`text` 支持单行或多行，`split` 设为 `word` 或 `char`。`delay`、`stagger`、`blur`、`yOffset`、`spring` 调整入场。`whileInView` 和 `once` 控制视口触发。"},
+  "text-shimmer": {"name":"TextShimmer","api":"默认插槽承载文字。`duration` 控制每次扫光的秒数，`paused` 可暂停，`as` 更改语义元素。"},
+  "text-cascade": {"name":"TextCascade","api":"传入 `text`，更新时两层文字逐字滚动切换。屏幕阅读器读取完整文本。"},
+  "chromatic-text-reveal": {"name":"ChromaticTextReveal","api":"传入固定 `prefix` 和轮播 `words`。用 `colors`、`foregroundColor`、`duration`、`delay` 和 `pauseDuration` 定制扫光。支持 `loop`、`paused`、`startOnView` 和 `once`。"},
+  "marquee": {"name":"Marquee","api":"默认插槽放置滚动内容。`direction` 有四个方向，`speed` 是每轮的秒数。`gap`、`fade`、`pauseOnHover` 和 `paused` 分别控制间距、渐隐和暂停。"},
+  "scroll-reveal": {"name":"ScrollReveal","api":"将内容放入默认插槽。传入 `root` 可限定滚动容器。`amount` 控制可见比例，`once` 控制重复入场，`y`、`blur`、`duration` 和 `delay` 调整动画。"},
+  "scroll-progress": {"name":"ScrollProgress","api":"`variant` 选择 `bar` 或 `circle`。默认跟踪页面，使用 `container` 指定滚动元素或 `progress` 传入 0 到 1 的数值或 MotionValue。支持 `spring`、`fixed`、`height`、`size` 和 `thickness`。"},
+  "parallax": {"name":"Parallax","api":"默认插槽随滚动偏移。`speed` 可为负数，`axis` 选择 `x` 或 `y`，`container` 指定滚动区域，`spring` 控制平滑跟随。"},
+  "scroll-to": {"name":"ScrollTo","api":"`to` 接收选择器、元素或像素位置。`container` 指定滚动区域，`offset` 留出固定栏空间，`duration` 指定秒数。默认插槽为按钮内容。"},
+  "thinking-shimmer": {"name":"ThinkingShimmer","api":"默认插槽或 `labels.thinking` 定制思考提示，默认 `duration` 为 1.8 秒，`paused` 可暂停。"}
+}
