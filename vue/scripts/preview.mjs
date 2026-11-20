@@ -4,7 +4,7 @@ import { extname, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const dist = fileURLToPath(new URL('../docs/.vitepress/dist/', import.meta.url))
-const prefix = '/beui-vue/'
+const prefix = '/'
 const port = Number(process.env.BEUI_PREVIEW_PORT ?? 4174)
 const contentTypes = {'.html':'text/html; charset=utf-8', '.js':'text/javascript', '.css':'text/css', '.json':'application/json', '.woff2':'font/woff2', '.svg':'image/svg+xml', '.png':'image/png', '.webp':'image/webp', '.ico':'image/x-icon'}
 createServer(async (request, response) => {
@@ -21,4 +21,4 @@ createServer(async (request, response) => {
   } catch {
     response.writeHead(404).end()
   }
-}).listen(port, '127.0.0.1', () => console.log(`http://127.0.0.1:${port}/beui-vue/`))
+}).listen(port, '127.0.0.1', () => console.log(`http://127.0.0.1:${port}/`))

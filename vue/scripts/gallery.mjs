@@ -4,9 +4,11 @@ import { setTimeout as delay } from 'node:timers/promises'
 import { fileURLToPath } from 'node:url'
 import { chromium } from '@playwright/test'
 import { expectedExamples } from './acceptance.mjs'
+import { componentRoutes } from './routes.mjs'
 
 const root = new URL('../', import.meta.url)
 const {baseline, entries} = JSON.parse(await readFile(new URL('catalog.json', root), 'utf8'))
+const {paths} = componentRoutes(entries)
 const directory = new URL('.artifacts/gallery/', root)
 const options = process.argv.slice(2)
 const tasks = entries.filter(entry => !options.length || options.includes(entry.slug))
@@ -25,7 +27,7 @@ try {
   await mkdir(directory, {recursive:true})
   await server.listen()
   for (let attempt = 0; attempt < 80; attempt++) {
-    if ((await fetch('http://127.0.0.1:4195/beui-vue/').catch(()=>null))?.ok) break
+    if ((await fetch('http://127.0.0.1:4195/').catch(()=>null))?.ok) break
     await delay(200)
   }
   browser = await chromium.launch()
@@ -39,7 +41,7 @@ try {
       page.on('pageerror',error=>result.errors.push(`${side}: ${error.message}`))
       try {
         const reference = `http://127.0.0.1:4194/?${new URLSearchParams({original:'1',slug:example.previewKey})}`
-        const address = side === 'react' ? reference : `http://127.0.0.1:4195/beui-vue/components/${entry.slug}?${new URLSearchParams({variant:example.slug})}`
+        const address = side === 'react' ? reference : `http://127.0.0.1:4195${paths.get(entry.slug)}?${new URLSearchParams({variant:example.slug})}`
         await page.goto(address, {waitUntil:'domcontentloaded',timeout:20000})
         const selector = side === 'react' ? 'body[data-ready=true] #stage' : '.beui-demo[data-ready=true]'
         const stage = page.locator(selector)

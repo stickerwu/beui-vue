@@ -9,7 +9,7 @@
     "url": "git+https://github.com/stickerwu/beui-vue.git",
     "directory": "vue/packages/ui"
   },
-  "homepage": "https://stickerwu.github.io/beui-vue/",
+  "homepage": "https://beui.stickerwu.net/",
   "files": [
     "dist",
     "LICENSE",

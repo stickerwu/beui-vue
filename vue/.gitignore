@@ -2,6 +2,8 @@ node_modules/
 dist/
 .vitepress/cache/
 docs/components/
+docs/charts/
+docs/casino/
 docs/catalog.md
 test-results/
 test-results-*/

@@ -1,9 +1,10 @@
 import { execFileSync } from 'node:child_process'
-import { mkdir, readFile, writeFile } from 'node:fs/promises'
+import { mkdir, readFile, unlink, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import ts from 'typescript'
 import { readPorts } from './ports.mjs'
 import { approvedExamples, expectedExamples } from './acceptance.mjs'
+import { componentRoutes } from './routes.mjs'
 
 const baseline = 'c0a936f59eb767e263c0e81b93dd323511dc9b6b'
 const root = new URL('../', import.meta.url)
@@ -58,9 +59,21 @@ async function standaloneExample(source, file) {
 
 if (process.argv.includes('--docs')) {
   const docs = new URL('docs/', root)
-  await mkdir(new URL('components/', docs), {recursive:true})
+  const {paths, groups: routeGroups} = componentRoutes(entries)
+  for (const entry of entries) {
+    await unlink(new URL(`components/${entry.slug}.md`, docs)).catch(error => { if (error.code !== 'ENOENT') throw error })
+  }
+  for (const [path, group] of routeGroups) {
+    if (group.length === 1) continue
+    const parent = registry.flatMap(category => category.components).find(page => page.slug === path.split('/').at(-1))
+    const title = parent.name
+    const target = new URL(`.${path}.md`, docs)
+    await mkdir(new URL('./', target), {recursive:true})
+    const list = group.map(entry => `- [${entry.title}](${paths.get(entry.slug)})`).join('\n')
+    await writeFile(target, `---\ndescription: ${JSON.stringify(`${title} 的 Vue 3 实现和 ${group.length} 个安装条目。浏览中文用法、在线演示和 beUI 原版。`)}\n---\n# ${title}\n\n选择要预览的 Vue 组件。每个条目包含在线示例、用法与 API。\n\n${list}\n\n[beUI 原版](${group[0].page})\n`)
+  }
   const groups = {motion:'基础组件',blocks:'组合区块',agents:'AI 界面',charts:'图表',casino:'游戏'}
-  let catalog = '# 组件目录\n\n按上游安装条目标记 Vue 实现进度。\n'
+  let catalog = '---\ndescription: 浏览 beui-vue 的 122 个 Vue 3 组件与 38 个区块，按动效、组合区块、AI 界面、图表和游戏查找在线示例、API 与还原验收进度。\n---\n# 组件目录\n\n按上游安装条目标记 Vue 实现进度。\n'
   for (const [key, label] of Object.entries(groups)) {
     catalog += `\n## ${label}\n\n| 条目 | Vue 状态 |\n| --- | --- |\n`
     for (const entry of entries.filter(entry => entry.category === key)) {
@@ -68,17 +81,23 @@ if (process.argv.includes('--docs')) {
       const approved = approvedExamples(entry, port).length
       const total = expectedExamples(entry).length
       const stage = !port ? '待迁移' : approved === total ? '已通过还原验收' : `Vue 已实现 · 还原验收 ${approved}/${total}`
-      catalog += `| [${entry.title}](./components/${entry.slug}) | ${stage} |\n`
-      let text = `# ${entry.title}\n\n${stage} · [上游演示](${entry.page}) · [固定版本源码](https://github.com/starc007/ui-components/blob/${baseline}/${entry.source})\n`
+      const route = paths.get(entry.slug)
+      const target = new URL(`.${route}.md`, docs)
+      await mkdir(new URL('./', target), {recursive:true})
+      const prefix = '../'.repeat(route.split('/').length - 2)
+      catalog += `| [${entry.title}](${route}) | ${stage} |\n`
+      const summary = port?.api.split('。')[0].replace(/`/g, '')
+      const description = `${entry.title} 是 beui-vue 的 Vue 3 ${label}条目。${summary ? `${summary}。` : ''}查看 Vue 示例、API 和 beUI 原版对照。`
+      let text = `---\ndescription: ${JSON.stringify(description)}\n---\n# ${entry.title}\n\n${stage} · [上游演示](${entry.page}) · [固定版本源码](https://github.com/starc007/ui-components/blob/${baseline}/${entry.source})\n`
       if (entry.credit) text += `\n原设计：[${entry.credit.name}](${entry.credit.url})\n`
       if (port) {
         const path = new URL(`examples/${entry.slug}.vue`, docs)
         const demo = await standaloneExample(await readFile(path, 'utf8'), path)
-        text += `\n<script setup>\nimport DemoFrame from '../.vitepress/DemoFrame.vue'\nimport Demo from '../examples/${entry.slug}.vue'\n</script>\n\n## 预览\n\n<DemoFrame><Demo /></DemoFrame>\n\n## 用法\n\n\`\`\`vue\n${demo.trim()}\n\`\`\`\n\n## API\n\n${port.api}\n`
+        text += `\n<script setup>\nimport DemoFrame from '${prefix}.vitepress/DemoFrame.vue'\nimport Demo from '${prefix}examples/${entry.slug}.vue'\n</script>\n\n## 预览\n\n<DemoFrame><Demo /></DemoFrame>\n\n## 用法\n\n\`\`\`vue\n${demo.trim()}\n\`\`\`\n\n## API\n\n${port.api}\n`
       }
       if (entry.examples.length) text += '\n## 上游变体\n\n' + entry.examples.map(example => `- [${example.title}](https://github.com/starc007/ui-components/blob/${baseline}/${example.source})${example.credit ? ` · ${example.credit.name}` : ''}`).join('\n') + '\n'
-      text += '\n## 还原验收\n\n' + expectedExamples(entry).map(example => `- [${example.title} · 查看对照图](../review/index.html#${entry.slug}--${example.slug})`).join('\n') + '\n'
-      await writeFile(new URL(`components/${entry.slug}.md`, docs), text)
+      text += '\n## 还原验收\n\n' + expectedExamples(entry).map(example => `- [${example.title} · 查看对照图](/review/index.html#${entry.slug}--${example.slug})`).join('\n') + '\n'
+      await writeFile(target, text)
     }
   }
   await writeFile(new URL('catalog.md', docs), catalog)

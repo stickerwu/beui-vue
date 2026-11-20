@@ -9,7 +9,7 @@ pnpm docs:build
 pnpm docs:preview
 ```
 
-访问 `http://127.0.0.1:4173/beui-vue/`。开发文档时用 `pnpm docs:dev`，组件修改后重新构建包。网页展示的是工作区构建出的 npm 产物。
+访问 `http://127.0.0.1:4173/`。开发文档时用 `pnpm docs:dev`，组件修改后重新构建包。网页展示的是工作区构建出的 npm 产物。
 
 ## 迁移目录与验收
 
@@ -23,7 +23,7 @@ pnpm test:package
 
 `test:package` 创建 `.artifacts/*.tgz`，装入独立的 Vite 与 Nuxt 工程，检查类型、CSS、SSR 和浏览器水合。Playwright 失败会保存 trace 和截图。视觉验收须记录具体变体、视口、主题、动效偏好及关键帧，人工复核快速反向、中断和真机触摸，对照结果附到对应条目。
 
-在仓库根目录运行 `bun install --frozen-lockfile` 安装上游预览所需的依赖。回到 `vue/` 运行 `pnpm test:parity`，为六个样板在同一组数据与输入下采集亮暗主题的起始、中间和结束帧。原图、移植图、像素差异图和报告位于 `.artifacts/parity/`。`pnpm test:gallery` 采集固定上游目录的全部 172 组演示入口并生成 `.artifacts/gallery/index.html`，可逐组审看。两侧默认演示的数据、交互路径或内容仍有区别时，应先对齐再作结论。所有截图均在本地浏览器生成。
+在仓库根目录运行 `bun install --frozen-lockfile` 安装上游预览所需的依赖。Bun 测试目录限定为 `tests/`，Vue 的浏览器测试通过 Playwright 单独运行。回到 `vue/` 运行 `pnpm test:parity`，为六个样板在同一组数据与输入下采集亮暗主题的起始、中间和结束帧。原图、移植图、像素差异图和报告位于 `.artifacts/parity/`。`pnpm test:gallery` 采集固定上游目录的全部 172 组演示入口并生成 `.artifacts/gallery/index.html`，可逐组审看。两侧默认演示的数据、交互路径或内容仍有区别时，应先对齐再作结论。所有截图均在本地浏览器生成。
 
 使用 `pnpm docs:evidence` 将已生成的完整图库和六个样板的关键帧复制到文档静态目录，再运行 `pnpm docs:build`。这些图片只随文档分发。
 
@@ -32,9 +32,16 @@ pnpm test:package
 ## 发布
 
 1. 使用 `pnpm changeset` 记录改动，执行 `pnpm version-packages` 更新包版本。`0.x-alpha` 用于阶段性预览；稳定版受全量验收门槛约束。
-2. 主分支通过 Vue 工作流后，Pages 部署文档，静态产物在 `docs/.vitepress/dist`。Actions 的 `vue-package` 附件是验证过的 npm 压缩包。
+2. 主分支的 **Vue package and docs** 工作流通过后，从同一次运行下载发布附件。`vue-package` 包含已在 Vite 与 Nuxt 工程中验证的 npm 压缩包，`vue-docs` 包含文档静态站点 `vue-docs.tar.gz`。
 3. 首次在 npm 建立包时由包维护者登录，通过 2FA 发布经过验证的预发布压缩包。后续在 npm 配置 GitHub Trusted Publishing，仓库填 `stickerwu/beui-vue`，工作流填 `npm.yml`，环境填 `npm`。
 4. 手动运行 Publish verified Vue tarball 并填写同一主分支提交的成功构建 run ID。工作流复用已测试的压缩包，预发布使用 `next` 标签，正式版使用 `latest`。
+
+### 在 1Panel 发布文档
+
+1. 在 1Panel 将 `beui.stickerwu.net` 配置为独立 HTTPS 静态站点，站点运行目录设为 `/opt/1panel/www/sites/beui.stickerwu.net/index/current`。
+2. 将 `vue-docs.tar.gz` 解包到站点的 `releases/<release>` 新目录，`<release>` 可使用本次发布的提交 SHA。确认该目录顶层有 `index.html`、`assets/` 和 `sitemap.xml`。本地构建发布时，复制 `docs/.vitepress/dist/` 的内容到同一位置。
+3. 将 `index/current` 软链接原子切换至 `../releases/<release>`。OpenResty 的 `location /` 使用 `try_files $uri $uri.html $uri/index.html =404;`，让组件深层链接可直接访问。
+4. 访问 [站点首页](https://beui.stickerwu.net/) 并直接打开[折线图示例](https://beui.stickerwu.net/charts/line-chart)，检查刷新后图表、样式和交互是否正常。需要回滚时，将 `index/current` 切回上一个已验证的版本目录。
 
 ## 同步 Gitee
 

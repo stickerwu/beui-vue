@@ -1,1 +1,30 @@
 .beui-demo { padding: clamp(1rem, 4vw, 2.5rem); margin: 1rem 0; border: 1px solid var(--vp-c-divider); border-radius: 1rem; color: var(--beui-foreground); background: var(--beui-background); }
+
+:root {
+  --vp-c-brand-1: #08694f;
+  --vp-c-brand-2: #0a7659;
+  --vp-c-brand-3: #09684f;
+}
+
+.dark {
+  --vp-c-brand-1: #68f3bc;
+  --vp-c-brand-2: #117054;
+  --vp-c-brand-3: #0c664c;
+}
+
+.VPHero .image-src {
+  width: clamp(112px, 19vw, 234px);
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: 22%;
+}
+
+.VPNavBarTitle .logo {
+  border-radius: 22%;
+}
+
+.beui-home-guide {
+  max-width: 1152px;
+  margin: 0 auto;
+  padding: 0 clamp(24px, 5vw, 64px) 56px;
+}

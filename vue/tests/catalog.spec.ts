@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 import { readFileSync, readdirSync } from 'node:fs'
-import { openDemo } from './open-demo'
+import { demoPath, openDemo } from './open-demo'
 
 const manifests = readdirSync('.').filter(file => /^ports(?:-[a-z-]+)?\.json$/.test(file))
 const slugs = manifests.flatMap(file => Object.keys(JSON.parse(readFileSync(file, 'utf8')))).sort()
@@ -17,7 +17,7 @@ for (let start = 0; start < slugs.length; start += 10) {
     })
     for (slug of group) {
       await test.step(slug, async () => {
-        const address = `/beui-vue/components/${slug}`
+        const address = demoPath(slug)
         const response = await page.request.get(address)
         expect(response.ok()).toBe(true)
         expect(await response.text()).toMatch(/class="beui-demo" data-ready="false"/)

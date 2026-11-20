@@ -10,5 +10,5 @@ export default defineConfig({
     { name: 'webkit', use: devices['Desktop Safari'] },
     { name: 'mobile', use: { ...devices['iPhone 13'], colorScheme: 'dark', reducedMotion: 'reduce' } },
   ],
-  webServer: { command: 'node scripts/preview.mjs', url: 'http://127.0.0.1:4174/beui-vue/', reuseExistingServer: !process.env.CI },
+  webServer: { command: 'node scripts/preview.mjs', url: 'http://127.0.0.1:4174/', reuseExistingServer: !process.env.CI },
 })

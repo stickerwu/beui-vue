@@ -27,9 +27,14 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - run: pnpm docs:build
-      - uses: actions/upload-pages-artifact@v3
+      - run: node scripts/verify-docs.mjs
+      - run: tar -czf "$RUNNER_TEMP/vue-docs.tar.gz" -C docs/.vitepress/dist .
+      - uses: actions/upload-artifact@v4
         with:
-          path: vue/docs/.vitepress/dist
+          name: vue-docs
+          path: ${{ runner.temp }}/vue-docs.tar.gz
+          compression-level: 0
+          if-no-files-found: error
   verify:
     needs: build
     runs-on: ubuntu-latest
@@ -48,9 +53,11 @@ jobs:
       - run: pnpm install --frozen-lockfile && pnpm build
       - uses: actions/download-artifact@v4
         with:
-          name: github-pages
-          path: ${{ runner.temp }}/beui-pages
-      - run: mkdir -p docs/.vitepress/dist && tar -xf "$RUNNER_TEMP/beui-pages/artifact.tar" -C docs/.vitepress/dist
+          name: vue-docs
+          path: ${{ runner.temp }}
+      - run: |
+          mkdir -p docs/.vitepress/dist
+          tar -xzf "$RUNNER_TEMP/vue-docs.tar.gz" -C docs/.vitepress/dist
       - run: pnpm exec playwright install --with-deps chromium firefox webkit
       - run: pnpm test:e2e
       - run: pnpm test:package
@@ -60,16 +67,3 @@ jobs:
           path: vue/.artifacts/*.tgz
           include-hidden-files: true
           if-no-files-found: error
-  pages:
-    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4

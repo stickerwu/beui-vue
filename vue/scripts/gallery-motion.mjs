@@ -7,11 +7,13 @@ import { chromium } from '@playwright/test'
 import pixelmatch from 'pixelmatch'
 import { PNG } from 'pngjs'
 import { expectedExamples } from './acceptance.mjs'
+import { componentRoutes } from './routes.mjs'
 import { performInput, planInput, scenarioFor } from './motion-review-inputs.mjs'
 
 const root = new URL('../',import.meta.url)
 const directory = new URL('.artifacts/motion-review/',root)
 const {entries,baseline} = JSON.parse(await readFile(new URL('catalog.json',root),'utf8'))
+const {paths} = componentRoutes(entries)
 const selected = process.argv.slice(2)
 const referencePort = Number(process.env.BEUI_MOTION_REFERENCE_PORT || 4274)
 const previewPort = Number(process.env.BEUI_MOTION_PREVIEW_PORT || 4275)
@@ -72,7 +74,7 @@ async function configure(page,theme) {
 async function openView(page,side,task) {
   const {entry,example,theme}=task
   const upstream=`http://127.0.0.1:${referencePort}/?${new URLSearchParams({original:'1',slug:example.previewKey,theme})}`
-  const port=`http://127.0.0.1:${previewPort}/beui-vue/components/${entry.slug}?${new URLSearchParams({variant:example.slug})}`
+  const port=`http://127.0.0.1:${previewPort}${paths.get(entry.slug)}?${new URLSearchParams({variant:example.slug})}`
   await configure(page,theme)
   await page.goto(side==='react'?upstream:port,{waitUntil:'domcontentloaded',timeout:45000})
   const stage=page.locator(side==='react'?'body[data-ready=true] #stage':'.beui-demo[data-ready=true]')
@@ -192,7 +194,7 @@ try {
   await reference.listen()
   let ready=false
   for(let attempt=0;attempt<100;attempt++) {
-    if ((await fetch(`http://127.0.0.1:${previewPort}/beui-vue/`).catch(()=>null))?.ok) { ready=true; break }
+    if ((await fetch(`http://127.0.0.1:${previewPort}/`).catch(()=>null))?.ok) { ready=true; break }
     await delay(100)
   }
   if (!ready) throw Error('The built docs preview did not start')

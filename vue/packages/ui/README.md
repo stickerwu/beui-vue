@@ -1,6 +1,6 @@
 # beui-vue
 
-Vue 3.5 动效组件，独立移植自 [beUI](https://github.com/starc007/ui-components)。兼容 Vite 与 Nuxt SSR。安装预发布版本后，在应用入口引入编译后的样式。
+**beUI 动效组件与界面区块的 Vue 3 实现，由 stickerwu 独立维护。** 在 Vue 3.5 的 Vite 或 Nuxt SSR 项目中按名称导入组件，并在应用入口引入一次编译好的 CSS。[安装指南](https://beui.stickerwu.net/install) · [在线示例](https://beui.stickerwu.net/catalog) · [beUI 上游](https://github.com/starc007/ui-components)
 
 ```vue
 <script setup lang="ts">
@@ -11,4 +11,4 @@ import 'beui-vue/style.css'
 <template><ButtonBase>保存</ButtonBase></template>
 ```
 
-[组件文档与迁移进度](https://stickerwu.github.io/beui-vue/)。衍生代码保留 Saurabh Chauhan 的 MIT 版权和许可证。
+[组件文档与迁移进度](https://beui.stickerwu.net/)。衍生代码保留 Saurabh Chauhan 的 MIT 版权和许可证。
