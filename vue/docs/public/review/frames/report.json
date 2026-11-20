@@ -1,0 +1,110 @@
+[
+  {
+    "slug": "button-base",
+    "theme": "light",
+    "differences": [
+      0,
+      0.00153125,
+      0.002078125
+    ]
+  },
+  {
+    "slug": "button-base",
+    "theme": "dark",
+    "differences": [
+      0.0000078125,
+      0.001515625,
+      0.00203515625
+    ]
+  },
+  {
+    "slug": "tabs",
+    "theme": "light",
+    "differences": [
+      0.0006640625,
+      0.00042578125,
+      0.00000390625
+    ]
+  },
+  {
+    "slug": "tabs",
+    "theme": "dark",
+    "differences": [
+      0.0011171875,
+      0.001078125,
+      0.00081640625
+    ]
+  },
+  {
+    "slug": "before-after-slider",
+    "theme": "light",
+    "differences": [
+      0.00016015625,
+      0.00640625,
+      0.0004921875
+    ]
+  },
+  {
+    "slug": "before-after-slider",
+    "theme": "dark",
+    "differences": [
+      0.00016015625,
+      0.00687890625,
+      0.000484375
+    ]
+  },
+  {
+    "slug": "animated-toast-stack",
+    "theme": "light",
+    "differences": [
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "slug": "animated-toast-stack",
+    "theme": "dark",
+    "differences": [
+      0.00001953125,
+      0.000015625,
+      0.00001953125
+    ]
+  },
+  {
+    "slug": "line-chart",
+    "theme": "light",
+    "differences": [
+      0.00047265625,
+      0.00042578125,
+      0.00042578125
+    ]
+  },
+  {
+    "slug": "line-chart",
+    "theme": "dark",
+    "differences": [
+      0.000984375,
+      0.00081640625,
+      0.00081640625
+    ]
+  },
+  {
+    "slug": "shader-background",
+    "theme": "light",
+    "differences": [
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "slug": "shader-background",
+    "theme": "dark",
+    "differences": [
+      0,
+      0,
+      0
+    ]
+  }
+]

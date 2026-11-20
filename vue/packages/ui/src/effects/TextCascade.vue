@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { AnimatePresence, motion, useReducedMotion } from 'motion-v'
+import { AnimatePresence, motion } from 'motion-v'
 import { easeOut } from '../core/motion'
+import { useMountedMedia } from '../core/mounted-media'
 
 const { text } = defineProps<{ text: string }>()
-const reduce = useReducedMotion()
+const reduce = useMountedMedia('(prefers-reduced-motion: reduce)')
 const letters = {
   initial: { y: '-85%', opacity: 0, filter: 'blur(3px)' },
   shown: { y: '0%', opacity: 1, filter: 'blur(0px)' },

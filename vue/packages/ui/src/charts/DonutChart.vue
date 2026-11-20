@@ -29,6 +29,13 @@ function inspect(id: string | null) {
   if (props.activeId === undefined) internal.value = id
   emit('update:activeId', id); emit('activeChange', id)
 }
+function step(event: KeyboardEvent, index: number) {
+  const offset = event.key === 'ArrowDown' ? 1 : event.key === 'ArrowUp' ? -1 : 0
+  if (!offset) return
+  event.preventDefault()
+  const buttons = (event.currentTarget as HTMLElement).closest('ul')?.querySelectorAll('button')
+  buttons?.[(index + offset + buttons.length) % buttons.length]?.focus()
+}
 </script>
 
 <template>
@@ -40,18 +47,20 @@ function inspect(id: string | null) {
           :stroke="segment.color" :stroke-width="stroke + (active?.id === segment.id ? 3 : 0)" :stroke-dasharray="arcs.length === 1 ? undefined : `${segment.dash} ${100 - segment.dash}`" :stroke-dashoffset="-segment.start"
           stroke-linecap="round" :opacity="active && active.id !== segment.id ? .32 : 1" @pointerenter="$event.pointerType !== 'touch' && inspect(segment.id)" @click="emit('select', segment.id)" />
       </svg>
-      <div class="center"><slot name="center" :segment="active" :total="total"><small>{{ active?.name ?? labels?.total ?? 'Total' }}</small><strong>{{ formatValue(active?.value ?? total) }}</strong></slot></div>
+      <div class="center"><slot name="center" :segment="active" :total="total"><strong>{{ formatValue(active?.value ?? total) }}</strong><small>{{ active?.name ?? labels?.total ?? 'Total' }}</small></slot></div>
     </div>
-    <ul class="segments"><li v-for="segment in arcs" :key="segment.id"><button type="button" :aria-pressed="selectedId === undefined ? undefined : selectedId === segment.id"
+    <ul class="segments"><li v-for="(segment, index) in arcs" :key="segment.id"><button type="button" :aria-pressed="selectedId === undefined ? undefined : selectedId === segment.id" @keydown="step($event, index)"
       @focus="inspect(segment.id)" @blur="inspect(null)" @pointerenter="$event.pointerType !== 'touch' && inspect(segment.id)" @pointerleave="inspect(null)" @click="emit('select', segment.id)">
-      <i :style="{ backgroundColor: segment.color }" />{{ segment.name }}<b>{{ formatValue(segment.value) }}</b><small>{{ (segment.share * 100).toFixed(1) }}%</small>
+      <span class="row"><i :style="{ backgroundColor: segment.color }" />{{ segment.name }}<b>{{ (segment.share * 100).toFixed(1) }}%</b><small>{{ formatValue(segment.value) }}</small></span>
+      <span class="share" aria-hidden="true"><span :style="{ width: `${segment.share * 100}%`, background: segment.color }" /></span>
     </button></li></ul>
   </section>
 </template>
 
 <style scoped>
-.donut-chart { display: flex; gap: 24px; align-items: center; justify-content: center; flex-wrap: wrap; }
-.ring { position: relative; width: min(200px, 90%); }
+.donut-chart { display: grid; gap: 24px; align-items: center; }
+.ring { position: relative; width: min(100%, 240px); justify-self: center; }
+@media(min-width:640px) { .donut-chart { grid-template-columns: minmax(0, 15rem) minmax(0, 1fr); } }
 .ring svg { display: block; width: 100%; }
 .ring circle { transition: opacity 150ms ease-out; }
 .center { position: absolute; inset: 0; display: grid; align-content: center; text-align: center; pointer-events: none; }
@@ -59,7 +68,8 @@ function inspect(id: string | null) {
 .center strong { font: 600 24px/1.3 system-ui; }
 .segments { display: grid; gap: 2px; padding: 0; margin: 0; list-style: none; }
 .segments li { margin: 0; }
-.segments button { display: flex; align-items: center; gap: 8px; padding: 6px 8px; width: 100%; min-height: 32px; border: 0; border-radius: 6px; background: transparent; color: inherit; font: inherit; font-size: 13px; cursor: pointer; }
+.segments button { display: block; padding: 8px 12px; width: 100%; border: 0; border-radius: 12px; background: transparent; color: inherit; font: inherit; font-size: 14px; cursor: pointer; }
+.row { display: flex; align-items: center; gap: 8px; }.share { display: block; margin: 8px 0 0 22px; background: var(--beui-muted); border-radius: 4px; height: 4px; }.share span { height: 100%; display: block; border-radius: inherit; }
 .segments button:hover, .segments button:focus-visible, .segments button[aria-pressed='true'] { background: #8882; }
 .segments i { border-radius: 50%; width: 8px; height: 8px; }
 .segments b { margin-inline-start: auto; padding-inline-start: 8px; }

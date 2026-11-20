@@ -23,18 +23,21 @@ try {
         page.on('pageerror', err => errors.push(err.message))
         try {
           await page.clock.install({time:new Date('2026-01-01T12:00:00Z')})
+          await page.clock.pauseAt(new Date('2026-01-01T12:00:01Z'))
           await page.goto(`http://127.0.0.1:4185/?${new URLSearchParams({side,slug,theme})}`)
           await page.locator('body[data-ready=true]').waitFor({state:'attached',timeout:45000})
           await page.evaluate(() => document.fonts.ready)
           await page.clock.runFor(1500)
           const stage = page.locator('#stage')
           const frames = [await stage.screenshot()]
-          if (slug === 'tabs') await page.getByRole('tab', {name:'Activity', exact:true}).click()
+          if (slug === 'tabs') await page.getByRole('tab', {name:'Activity', exact:true}).click({force:true})
           else if (slug === 'button-base') {
-            await page.getByRole('button', {name:'Continue'}).hover()
+            await page.getByRole('button', {name:'Continue'}).hover({force:true})
             await page.mouse.down()
           } else if (slug === 'before-after-slider') await page.getByRole('slider').press('End')
           else if (slug === 'line-chart') await page.getByRole('slider').press('Home')
+          else if (slug === 'animated-toast-stack') await page.getByRole('button', {name:'Notify'}).click({force:true})
+          else if (slug === 'shader-background') await page.getByRole('button', {name:'Advance shader'}).click({force:true})
           await page.clock.runFor(80)
           frames.push(await stage.screenshot())
           await page.clock.runFor(700)

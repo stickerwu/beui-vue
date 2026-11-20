@@ -36,7 +36,7 @@ function activate(event: MouseEvent) {
     :role="href !== undefined && disabled ? 'link' : undefined" :aria-disabled="href !== undefined && disabled || undefined"
     :while-press="!reduce && !disabled ? { scale: pressScale } : undefined" :while-hover="!reduce && !disabled ? { scale: 1.02 } : undefined"
     :transition="pressSpring" @pointerdown="press" @click="activate">
-    <span v-if="ripple && !reduce" class="be-ripple-mask" aria-hidden="true">
+    <span v-if="ripple" class="be-ripple-mask" aria-hidden="true">
       <motion.span v-for="drop in ripples" :key="drop.id" class="be-ripple"
         :style="{ left: `${drop.left}px`, top: `${drop.top}px`, width: `${drop.size}px`, height: `${drop.size}px` }"
         :initial="{ scale: 0.05, opacity: 0.3 }" :animate="{ scale: 1, opacity: 0 }" :transition="{ duration: 1.6, ease: easeOut }"

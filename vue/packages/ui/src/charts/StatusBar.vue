@@ -6,7 +6,7 @@ interface Datum { id: string; label: string; status: string; description?: strin
 interface Status { id: string; label: string; color: string }
 const props = defineProps<{
   data: readonly Datum[]; statuses?: readonly Status[]; label?: string; activeId?: string | null
-  defaultActiveId?: string | null; labels?: Partial<Record<string, string>>
+  defaultActiveId?: string | null; labels?: Partial<Record<string, string>>; hideLegend?: boolean
 }>()
 const emit = defineEmits<{ 'update:activeId': [id: string | null]; activeChange: [id: string | null] }>()
 const defaults = [
@@ -54,7 +54,7 @@ const title = computed(() => props.label ?? props.labels?.label ?? 'Status histo
       </div>
     </div>
     <div v-if="periods.length" class="ends"><span>{{ periods[0].datum.label }}</span><span>{{ periods[periods.length - 1].datum.label }}</span></div>
-    <ul class="statuses"><li v-for="status in statuses" :key="status.id"><i :style="{ background: status.color }" />{{ status.label }}</li></ul>
+    <ul v-if="!hideLegend" class="statuses"><li v-for="status in statuses" :key="status.id"><i :style="{ background: status.color }" />{{ status.label }}</li></ul>
   </section>
 </template>
 

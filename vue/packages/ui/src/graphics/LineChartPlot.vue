@@ -16,7 +16,7 @@ const width = shallowRef(0)
 const revealed = shallowRef(false)
 const reduced = useReducedMotion()
 const ease = [0.16, 1, 0.3, 1] as const
-const glide = computed(() => reduced.value ? { duration: 0 } : { type: 'spring' as const, stiffness: 400, damping: 40 })
+const glide = computed(() => reduced.value ? { duration: 0 } : { type: 'spring' as const, stiffness: 360, damping: 32, mass: .6 })
 const id = useId()
 const left = 44
 const top = 12

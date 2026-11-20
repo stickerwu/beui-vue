@@ -8,7 +8,7 @@ export function mount(key:string) {
   if (!Preview) throw Error(`Unregistered upstream preview ${key}`)
   const stage = document.querySelector<HTMLElement>('#stage')!
   const ready = new MutationObserver(() => {
-    if (stage.querySelector('*')) {
+    if (stage.querySelector(':scope > :not(script,style,template)')) {
       document.body.dataset.ready = 'true'
       ready.disconnect()
     }

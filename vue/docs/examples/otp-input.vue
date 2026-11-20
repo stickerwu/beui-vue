@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { OTPInput } from 'beui-vue'
-const status = ref<'idle'|'success'>('idle')
+const code = '123456'
+const value = ref('')
+const status = ref<'idle' | 'success' | 'error'>('idle')
 </script>
-<template><OTPInput label="One-time passcode" :status="status" success-message="Verified" @change="status='idle'" @complete="status='success'" /></template>
+<template>
+  <div class="verification">
+    <OTPInput v-model="value" label="Verification code" :hint="`Enter ${code} to verify.`" :status="status"
+      success-message="Verified." error-message="Wrong code, try again." @change="status = 'idle'"
+      @complete="status = $event === code ? 'success' : 'error'" />
+  </div>
+</template>
+<style scoped>.verification { display: grid; justify-items: center; }</style>

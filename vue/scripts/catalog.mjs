@@ -35,6 +35,27 @@ const snapshot = JSON.stringify({baseline, entries}, null, 2) + '\n'
 if (process.argv.includes('--snapshot')) await writeFile(snapshotURL, snapshot)
 else if (snapshot !== await readFile(snapshotURL, 'utf8')) throw Error('Run catalog.mjs --snapshot to review baseline changes')
 
+async function standaloneExample(source, file) {
+  const imports = [...source.matchAll(/^import \{ (\w+) \} from '(\.[^']+)'$/gm)]
+  for (const [statement, name, location] of imports) {
+    const helper = await readFile(new URL(`${location}.ts`, file), 'utf8')
+    const vueImports = new Set()
+    const importsVue = /^import \{([^\n}]+)\} from 'vue'$/gm
+    for (const code of [source, helper]) {
+      for (const match of code.matchAll(importsVue)) {
+        for (const variable of match[1].split(',').map(value=>value.trim())) vueImports.add(variable)
+      }
+    }
+    const body = helper.replace(importsVue,'').trim().replace(`export function ${name}`,`function ${name}`)
+    source = source.replace(importsVue,'').replace(statement,`import { ${[...vueImports].join(', ')} } from 'vue'\n\n${body}\n`)
+  }
+  const styles = [...source.matchAll(/<style scoped src="(\.[^"]+\.css)"><\/style>/g)]
+  for (const [statement, location] of styles) {
+    source = source.replace(statement, `<style scoped>\n${(await readFile(new URL(location, file), 'utf8')).trim()}\n</style>`)
+  }
+  return source
+}
+
 if (process.argv.includes('--docs')) {
   const docs = new URL('docs/', root)
   await mkdir(new URL('components/', docs), {recursive:true})
@@ -51,10 +72,12 @@ if (process.argv.includes('--docs')) {
       let text = `# ${entry.title}\n\n${stage} · [上游演示](${entry.page}) · [固定版本源码](https://github.com/starc007/ui-components/blob/${baseline}/${entry.source})\n`
       if (entry.credit) text += `\n原设计：[${entry.credit.name}](${entry.credit.url})\n`
       if (port) {
-        const demo = await readFile(new URL(`examples/${entry.slug}.vue`, docs), 'utf8')
+        const path = new URL(`examples/${entry.slug}.vue`, docs)
+        const demo = await standaloneExample(await readFile(path, 'utf8'), path)
         text += `\n<script setup>\nimport DemoFrame from '../.vitepress/DemoFrame.vue'\nimport Demo from '../examples/${entry.slug}.vue'\n</script>\n\n## 预览\n\n<DemoFrame><Demo /></DemoFrame>\n\n## 用法\n\n\`\`\`vue\n${demo.trim()}\n\`\`\`\n\n## API\n\n${port.api}\n`
       }
       if (entry.examples.length) text += '\n## 上游变体\n\n' + entry.examples.map(example => `- [${example.title}](https://github.com/starc007/ui-components/blob/${baseline}/${example.source})${example.credit ? ` · ${example.credit.name}` : ''}`).join('\n') + '\n'
+      text += '\n## 还原验收\n\n' + expectedExamples(entry).map(example => `- [${example.title} · 查看对照图](../review/index.html#${entry.slug}--${example.slug})`).join('\n') + '\n'
       await writeFile(new URL(`components/${entry.slug}.md`, docs), text)
     }
   }

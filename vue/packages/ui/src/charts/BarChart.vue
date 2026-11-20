@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, shallowRef, watchEffect } from 'vue'
+import { computed, onBeforeUnmount, onMounted, shallowRef, useTemplateRef, watchEffect } from 'vue'
 import ChartInspector from './ChartInspector.vue'
 import { normalizeChart, valueAxis, type LineChartSeries } from '../graphics/chart-geometry'
 
@@ -8,7 +8,7 @@ const props = withDefaults(defineProps<{
   sort?: 'none' | 'ascending' | 'descending'; max?: number; activeId?: string | null; defaultActiveId?: string | null
   hiddenSeries?: readonly string[]; defaultHiddenSeries?: readonly string[]; formatValue?: (value: number) => string
   formatTick?: (value: number) => string; label?: string; labels?: Partial<Record<string, string>>; height?: number
-}>(), { layout: 'grouped', orientation: 'vertical', formatValue: (value: number) => value.toLocaleString('en-US'), height: 250 })
+}>(), { layout: 'grouped', orientation: 'vertical', formatValue: (value: number) => value.toLocaleString('en-US') })
 const emit = defineEmits<{ 'update:activeId': [id: string]; 'update:hiddenSeries': [ids: string[]]; activeChange: [id: string]; hiddenSeriesChange: [ids: string[]] }>()
 const title = computed(() => props.label ?? props.labels?.label ?? 'Bar chart')
 const data = computed(() => normalizeChart(props.series.map(row => ({ ...row, values: row.values.map(value => value !== null && value >= 0 ? value : null) })), props.categories))
@@ -35,6 +35,18 @@ const columns = computed(() => {
 const axis = computed(() => valueAxis(props.layout === 'grouped' ? visible.value : [{ id: '', name: '', color: '', values: columns.value.map(column => column.total) }], true,
   props.max !== undefined && props.max > 0 ? [0, props.max] : undefined))
 const horizontal = computed(() => props.orientation === 'horizontal')
+const stageHeight = computed(() => props.height ?? (horizontal.value ? Math.max(160, columns.value.length * 36) : 288))
+const canvas = useTemplateRef<HTMLDivElement>('canvas')
+const width = shallowRef(480)
+let observer: ResizeObserver | undefined
+onMounted(() => {
+  if (!canvas.value) return
+  const measure = () => { if (canvas.value) width.value = canvas.value.clientWidth }
+  measure()
+  observer = new ResizeObserver(measure)
+  observer.observe(canvas.value)
+})
+onBeforeUnmount(() => observer?.disconnect())
 const descriptions = computed(() => columns.value.map(column => [column.name, ...column.bars.map(bar => `${bar.name} ${bar.amount === null ? props.labels?.missing ?? 'no data' : props.formatValue(bar.amount)}`)].join('. ')))
 const selected = computed(() => columns.value.findIndex(column => column.name === (props.activeId === undefined ? active.value : props.activeId)))
 const inspected = computed(() => open.value ? columns.value[selected.value] : undefined)
@@ -51,14 +63,19 @@ function toggle(id: string) {
 }
 const bars = computed(() => {
   const slot = 100 / (columns.value.length || 1)
+  const band = horizontal.value ? stageHeight.value : width.value
+  const slotPixels = band / (columns.value.length || 1)
+  const stacked = props.layout === 'stacked'
+  const count = Math.max(1, visible.value.length)
+  const thick = stacked ? Math.min(56, slotPixels * .7) : Math.max(1, Math.min(32, (slotPixels * .7 - (count - 1) * 3) / count))
+  const group = stacked ? thick : count * thick + (count - 1) * 3
   return columns.value.flatMap((column, ordinal) => column.bars.flatMap((bar, index) => {
     if (bar.amount === null) return []
-    const stacked = props.layout === 'stacked'
-    const breadth = slot * .76 / (stacked ? 1 : column.bars.length)
-    const category = slot * (ordinal + .12) + (stacked ? 0 : index * breadth)
+    const breadth = thick / band * 100
+    const category = slot * (ordinal + .5) - group / 2 / band * 100 + (stacked ? 0 : index * (thick + 3) / band * 100)
     const base = stacked ? bar.offset / axis.value.max * 100 : 0
     const length = bar.amount / axis.value.max * 100
-    const rect = horizontal.value ? { left: base, top: category, width: length, height: breadth * .96 } : { left: category, top: 100 - base - length, width: breadth * .96, height: length }
+    const rect = horizontal.value ? { left: base, top: category, width: length, height: breadth } : { left: category, top: 100 - base - length, width: breadth, height: length }
     return [{ key: JSON.stringify([column.name, bar.id]), ordinal, color: bar.color, rect: Object.fromEntries(Object.entries(rect).map(([field, value]) => [field, `${value}%`])) }]
   }))
 })
@@ -66,8 +83,8 @@ const bars = computed(() => {
 
 <template>
   <section class="bar-chart" :aria-label="title" data-slot="bar-chart">
-    <div class="bar-stage" :class="{ horizontal }" :style="{ height: `${height}px` }">
-      <div class="canvas">
+    <div class="bar-stage" :class="{ horizontal }" :style="{ height: `${stageHeight + 28}px` }">
+      <div ref="canvas" class="canvas">
         <span v-for="tick in axis.ticks" :key="tick" class="gridline" :style="horizontal ? { left: `${tick / axis.max * 100}%` } : { bottom: `${tick / axis.max * 100}%` }"><small>{{ (formatTick ?? formatValue)(tick) }}</small></span>
         <span v-for="bar in bars" :key="bar.key" class="bar" :style="{ ...bar.rect, backgroundColor: bar.color, opacity: inspected && bar.ordinal !== selected ? .46 : 1 }" />
         <span v-for="(column, index) in columns" :key="column.name" class="category" :style="horizontal ? { top: `${(index + .5) / columns.length * 100}%` } : { left: `${(index + .5) / columns.length * 100}%` }">{{ column.name }}</span>
@@ -82,16 +99,16 @@ const bars = computed(() => {
 
 <style scoped>
 .bar-chart { width: 100%; position: relative; }
-.bar-stage { box-sizing: border-box; padding: 12px 12px 25px 45px; }
+.bar-stage { box-sizing: border-box; padding: 12px 12px 28px 44px; }.bar-stage.horizontal { padding: 0 24px 28px 96px; }
 .canvas { width: 100%; height: 100%; position: relative; }
 .canvas:focus-within { outline: 2px solid currentColor; outline-offset: 3px; }
 .bar, .gridline, .category { position: absolute; }
-.bar { border-radius: 3px; transition: opacity .15s ease-out; }
-.gridline { left: 0; width: 100%; border-bottom: 1px dashed #8884; }
+.bar { border-radius: 4px 4px 0 0; transition: opacity .15s ease-out; }.horizontal .bar { border-radius: 0 4px 4px 0; }
+.gridline { left: 0; width: 100%; border-bottom: 1px solid color-mix(in srgb, var(--beui-muted-foreground) 12%, transparent); }
 .gridline small, .category { font-size: 11px; white-space: nowrap; }
-.gridline small { position: absolute; right: calc(100% + 5px); transform: translateY(-50%); }
-.category { top: calc(100% + 3px); transform: translateX(-50%); }
-.horizontal .gridline { top: 0; width: 0; height: 100%; border: 0; border-left: 1px dashed #8884; }
+.gridline small { position: absolute; right: calc(100% + 8px); transform: translateY(-50%); font-family: ui-monospace, monospace; color: var(--beui-muted-foreground); }
+.category { top: calc(100% + 8px); transform: translateX(-50%); color: var(--beui-muted-foreground); }
+.horizontal .gridline { top: 0; width: 0; height: 100%; border: 0; border-left: 1px solid color-mix(in srgb, var(--beui-muted-foreground) 12%, transparent); }
 .horizontal .gridline small { right: auto; top: calc(100% + 2px); transform: translateX(-50%); }
 .horizontal .category { right: calc(100% + 5px); transform: translateY(-50%); }
 .bar-readout { pointer-events: none; position: absolute; right: 2px; top: 0; padding: 6px 10px; background: CanvasText; color: Canvas; border-radius: 6px; font: 12px/1.5 system-ui; }

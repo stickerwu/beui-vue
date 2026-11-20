@@ -27,7 +27,8 @@ const scrollTo: SmoothScrollApi['scrollTo'] = (target, options = {}) => {
   const horizontal = orientation === 'horizontal'
   const current = container.value ? (horizontal ? container.value.scrollLeft : container.value.scrollTop) : (horizontal ? window.scrollX : window.scrollY)
   const axis = horizontal ? 'left' : 'top'
-  const position = typeof element === 'number' ? element : element.getBoundingClientRect()[axis] - (container.value?.getBoundingClientRect()[axis] ?? 0) + current
+  const border = container.value ? (horizontal ? container.value.clientLeft : container.value.clientTop) : 0
+  const position = typeof element === 'number' ? element : element.getBoundingClientRect()[axis] - (container.value?.getBoundingClientRect()[axis] ?? 0) - border + current
   source.scrollTo({ [axis]: position + (options.offset ?? 0), behavior: reduce.value || options.immediate ? 'instant' : 'smooth' })
 }
 provide(scrollKey, { container, progress, velocity, scrollY, scrollTo })

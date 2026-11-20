@@ -1,6 +1,35 @@
 import { expect, test } from '@playwright/test'
 import { openDemo } from './open-demo'
 
+test('description examples deep-link to labeled native inputs', async ({page}) => {
+  await openDemo(page,'checkbox?variant=description')
+  const comments = page.getByRole('checkbox',{name:'Comments',exact:true})
+  await expect(comments).toHaveAccessibleDescription('Replies on threads you started.')
+  await comments.press('Space')
+  await expect(comments).not.toBeChecked()
+  await openDemo(page,'radio?variant=description')
+  const schedule = page.getByRole('radio',{name:'Run once',exact:true})
+  await expect(schedule).toHaveAccessibleDescription('Runs a single time, right now.')
+  await schedule.press('ArrowDown')
+  await expect(page.getByRole('radio',{name:'Run on a schedule',exact:true})).toBeChecked()
+})
+
+test('toolbar tooltip buttons have labels, toggle state and keyboard navigation', async ({page}) => {
+  await openDemo(page,'tooltip?variant=toolbar')
+  const toolbar = page.getByRole('toolbar',{name:'Text formatting'})
+  const bold = toolbar.getByRole('button',{name:'Bold',exact:true})
+  await expect(bold).toHaveAttribute('aria-pressed','true')
+  await bold.press('Space')
+  await expect(bold).toHaveAttribute('aria-pressed','false')
+  await expect(toolbar.getByRole('button',{name:'Insert link'})).toBeDisabled()
+  await bold.press('ArrowRight')
+  const italic = toolbar.getByRole('button',{name:'Italic'})
+  await expect(italic).toBeFocused()
+  await expect(page.getByRole('tooltip')).toContainText('Italic')
+  await italic.press('Escape')
+  await expect(page.getByRole('tooltip')).not.toBeVisible()
+})
+
 test('input associates validation details and supports password visibility', async ({ page }) => {
   await openDemo(page, 'input')
   const email = page.getByRole('textbox', { name: 'Email', exact: true })

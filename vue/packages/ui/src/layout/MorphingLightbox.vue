@@ -8,14 +8,17 @@ const active = defineModel<string | null>({ default: null })
 const index = computed(() => images.findIndex(image => image.id === active.value))
 const selected = computed(() => images[index.value])
 const origin = shallowRef<DOMRect>()
-let touch: { x: number; y: number } | undefined
+let touch: { id: number; x: number; y: number } | undefined
 function show(image: GalleryImage, event: MouseEvent) { origin.value = (event.currentTarget as HTMLElement).getBoundingClientRect(); active.value = image.id }
 function step(delta: number) { if (images.length) active.value = images[(index.value + delta + images.length) % images.length]!.id }
-function release(event: TouchEvent) {
-  const changed = event.changedTouches[0]
-  if (!touch || !changed) return
-  const delta = changed.clientX - touch.x
-  if (Math.abs(delta) > 42 && Math.abs(delta) > Math.abs(changed.clientY - touch.y)) step(delta > 0 ? -1 : 1)
+function press(event: PointerEvent) {
+  if (event.pointerType === 'mouse' || !event.isPrimary) return
+  touch = { id: event.pointerId, x: event.clientX, y: event.clientY }
+}
+function release(event: PointerEvent) {
+  if (!touch || touch.id !== event.pointerId) return
+  const delta = event.clientX - touch.x
+  if (event.type === 'pointerup' && Math.abs(delta) > 42 && Math.abs(delta) > Math.abs(event.clientY - touch.y)) step(delta > 0 ? -1 : 1)
   touch = undefined
 }
 </script>
@@ -23,7 +26,7 @@ function release(event: TouchEvent) {
   <div class="gallery"><button v-for="image in images" :key="image.id" type="button" :aria-label="image.alt" aria-haspopup="dialog" @click="show(image,$event)"><img :src="image.thumbnail ?? image.src" :alt="image.alt" loading="lazy" :width="image.width" :height="image.height" /></button></div>
   <DialogSurface :open="Boolean(selected)" :label="label" kind="viewer" :origin="origin" @close="active = null" @keydown.left.prevent="step(-1)" @keydown.right.prevent="step(1)">
     <template v-if="selected"><header><span>{{ index + 1 }} / {{ images.length }}</span><button type="button" aria-label="Close viewer" @click="active = null">×</button></header>
-      <img class="full" :src="selected.src" :alt="selected.alt" @touchstart.passive="event => { const start = event.touches[0]; if (start) touch = { x: start.clientX, y: start.clientY } }" @touchend="release" />
+      <img class="full" :src="selected.src" :alt="selected.alt" @pointerdown="press" @pointerup="release" @pointercancel="release" />
       <footer><button type="button" aria-label="Previous image" @click="step(-1)">←</button><span aria-live="polite">{{ selected.caption ?? selected.alt }}</span><button type="button" aria-label="Next image" @click="step(1)">→</button></footer>
     </template>
   </DialogSurface>

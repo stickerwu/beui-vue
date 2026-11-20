@@ -1,6 +1,15 @@
 import { expect, test } from '@playwright/test'
 import { openDemo } from './open-demo'
 
+test('gallery links select distinct agents examples and preserve the URL when switching', async ({ page }) => {
+  await openDemo(page,'agent-activity?variant=agents/agent-trace')
+  const demo = page.locator('.beui-demo')
+  await expect(demo.locator('[data-example-variant]')).toHaveAttribute('data-example-variant','agent-trace')
+  await demo.getByRole('combobox',{name:'Example'}).selectOption('tool-calls')
+  await expect(page).toHaveURL(/variant=tool-calls/)
+  await expect(demo.locator('[data-example-variant]')).toHaveAttribute('data-example-variant','tool-calls')
+})
+
 test('composer submits on Enter and preserves Shift+Enter and focus', async ({ page }) => {
   await openDemo(page, 'prompt-input')
   const prompt = page.getByRole('textbox', { name: 'Prompt', exact: true })

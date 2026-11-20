@@ -25,7 +25,7 @@ function next() {
   <ButtonBase v-if="current" :variant="variant" :size="size" :aria-label="current.ariaLabel ?? current.label" @click="next">
     <span class="swap" aria-hidden="true"><AnimatePresence :initial="false">
       <motion.span :key="current.id" class="layer" :initial="reduced ? false : {opacity:0,y:animation==='roll' ? '85%' : 0,scale:animation==='blur' ? .9 : 1,filter:'blur(2px)'}" :animate="{opacity:1,y:0,scale:1,filter:'blur(0px)'}" :exit="{opacity:0,y:!reduced && animation==='roll' ? '-85%' : 0,transition:{duration:reduced ? 0 : .14}}" :transition="reduced ? {duration:0} : spring">
-        <slot name="icon" :item="current" /><template v-if="!iconOnly"><template v-if="animation === 'cascade' && !reduced"><motion.span v-for="(letter,index) in Array.from(current.label)" :key="index" class="letter" :initial="{opacity:0,y:'105%'}" :animate="{opacity:1,y:0}" :transition="{...spring,delay:index*.025}">{{ letter }}</motion.span></template><slot v-else :item="current">{{ current.label }}</slot></template>
+        <slot name="icon" :item="current" /><template v-if="!iconOnly"><template v-if="animation === 'cascade'"><motion.span v-for="(letter,index) in Array.from(current.label)" :key="index" class="letter" :initial="reduced ? false : {opacity:0,y:'105%'}" :animate="{opacity:1,y:0}" :transition="reduced ? {duration:0} : {...spring,delay:index*.025}">{{ letter }}</motion.span></template><slot v-else :item="current">{{ current.label }}</slot></template>
       </motion.span>
     </AnimatePresence></span>
   </ButtonBase>

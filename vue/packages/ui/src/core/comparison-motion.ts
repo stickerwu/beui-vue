@@ -6,20 +6,17 @@ export function useComparisonMotion(frame: Ref<HTMLElement | null>, current: Rea
   const position = useMotionValue(current.value)
   const width = useMotionValue(0)
   const height = useMotionValue(0)
-  const pull = useTransform(useVelocity(position), [-250, 250], [-1, 1])
-  const bend = useSpring(pull, { stiffness: 200, damping: 15, mass: 0.3 })
   const motionAllowed = useMotionValue(reduce.value ? 0 : 1)
-  const trail = useTransform(() => motionAllowed.get() * bend.get() * .12 * height.get())
-  const clipPath = useTransform(() => {
-    const center = position.get() * width.get() / 100
-    const end = center - trail.get()
-    const depth = height.get()
-    if (!width.get() || !depth) return `inset(0 ${100 - position.get()}% 0 0)`
-    return `path("M0 0 L${end} 0 Q${center + trail.get()} ${depth / 2} ${end} ${depth} L0 ${depth} Z")`
+  const pull = useTransform(useVelocity(position), [-250, 0, 250], [-1, 0, 1])
+  const bend = useSpring(useTransform(() => motionAllowed.get() * pull.get()), { stiffness: 200, damping: 15, mass: 0.3 })
+  const clipPath = useTransform([position,bend,width,height], ([value,amount,span,depth]: number[]) => {
+    if (!span || !depth) return `inset(0 ${100 - value}% 0 0)`
+    const center = value * span / 100
+    const trail = amount * .12 * depth
+    return `path("M0 0 L${center - trail} 0 Q${center + trail} ${depth / 2} ${center - trail} ${depth} L0 ${depth} Z")`
   })
-  const curve = useTransform(() => {
-    const lag = width.get() ? trail.get() / width.get() * 100 : 0
-    const center = position.get()
+  const curve = useTransform([position,bend,width,height], ([center,amount,span,depth]: number[]) => {
+    const lag = span ? amount * .12 * depth / span * 100 : 0
     return `M${center - lag} 0 Q${center + lag} 50 ${center - lag} 100`
   })
   const line = shallowRef(curve.get())
@@ -33,12 +30,6 @@ export function useComparisonMotion(frame: Ref<HTMLElement | null>, current: Rea
   let hintRunning = false
   let inView = false
   let smooth = false
-  let pendingGlide: number | undefined
-
-  function cancelPendingGlide() {
-    if (pendingGlide !== undefined) cancelAnimationFrame(pendingGlide)
-    pendingGlide = undefined
-  }
 
   function stopHint() {
     hintPlayed = true
@@ -57,19 +48,15 @@ export function useComparisonMotion(frame: Ref<HTMLElement | null>, current: Rea
 
   watch(current, value => {
     stopHint()
-    cancelPendingGlide()
     position.stop()
     if (reduce.value) position.jump(value)
-    else if (smooth) pendingGlide = requestAnimationFrame(() => {
-      pendingGlide = undefined
-      animate(position, value, glideSpring)
-    })
+    else if (smooth) animate(position, value, glideSpring)
     else position.set(value)
     smooth = false
   }, { flush: 'sync' })
   watch([reduce, canHint], () => {
     motionAllowed.set(reduce.value ? 0 : 1)
-    if (reduce.value || !canHint()) { cancelPendingGlide(); stopHint(); position.jump(current.value) }
+    if (reduce.value || !canHint()) { stopHint(); position.jump(current.value) }
     else playHint()
   })
   onMounted(() => {
@@ -86,6 +73,6 @@ export function useComparisonMotion(frame: Ref<HTMLElement | null>, current: Rea
     }, { threshold: .6 })
     visibility.observe(frame.value)
   })
-  onBeforeUnmount(() => { cancelPendingGlide(); resize?.disconnect(); visibility?.disconnect(); position.stop() })
+  onBeforeUnmount(() => { resize?.disconnect(); visibility?.disconnect(); position.stop() })
   return { clipPath, line, position, dividerX, beforeOpacity, afterOpacity, stopHint, glide: (next: boolean) => { smooth = next } }
 }

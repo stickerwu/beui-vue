@@ -199,7 +199,7 @@ function columnWidth(column: TableColumn<Row>) {
 </template>
 
 <style scoped>
-.beui-table { width: 100%; min-width: 0; overflow: hidden; border: 1px solid #8884; border-radius: 12px; font: 14px/1.4 inherit; }
+.beui-table { width: 100%; min-width: 0; overflow: hidden; border: 1px solid #8884; border-radius: 12px; font-size: 14px; line-height: 1.4; }
 .table-scroll { overflow: auto; overscroll-behavior: contain; }.table-scroll:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }
 .beui-table table { display: table; margin: 0; table-layout: fixed; border-collapse: separate; border-spacing: 0; overflow: visible; font-size: 14px; }
 .beui-table th,.beui-table td { box-sizing: border-box; overflow: hidden; border: 0; border-bottom: 1px solid #8883; padding: 0 10px; white-space: nowrap; text-overflow: ellipsis; }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useMediaQuery } from '@vueuse/core'
+import { useMountedMedia } from '../core/mounted-media'
 import { computed, onBeforeUnmount, onMounted, shallowRef, useId } from 'vue'
 import DialogSurface from './DialogSurface.vue'
 
@@ -7,7 +7,7 @@ interface Destination { id: string; label: string; icon?: string; children?: rea
 const { items, label = 'Workspace', shortcut = true, collapsible = 'icon' } = defineProps<{ items: readonly Destination[]; label?: string; shortcut?: boolean; collapsible?: 'icon'|'offcanvas'|'none' }>()
 const active = defineModel<string>()
 const open = defineModel<boolean>('open', { default: true })
-const small = useMediaQuery('(max-width: 767px)')
+const small = useMountedMedia('(max-width: 767px)')
 const mobileOpen = shallowRef(false)
 const expanded = shallowRef('')
 const uid = useId()

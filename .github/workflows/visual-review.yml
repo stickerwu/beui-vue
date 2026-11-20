@@ -1,0 +1,40 @@
+name: Capture Vue visual comparisons
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.28.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+          cache-dependency-path: vue/pnpm-lock.yaml
+      - run: bun install --frozen-lockfile
+      - working-directory: vue
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+          pnpm docs:build
+          pnpm exec playwright install --with-deps chromium
+          pnpm test:parity
+          pnpm test:gallery
+          pnpm test:motion
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: visual-comparisons-${{ github.sha }}
+          path: |
+            vue/.artifacts/gallery
+            vue/.artifacts/parity
+            vue/.artifacts/motion-review

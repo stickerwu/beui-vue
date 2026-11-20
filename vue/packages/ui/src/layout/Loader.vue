@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useReducedMotion } from 'motion-v'
+import { useMountedMedia } from '../core/mounted-media'
 import { computed, onMounted, shallowRef, watchEffect } from 'vue'
 
 const frames = {
@@ -13,7 +13,7 @@ type Variant = keyof typeof frames | 'spinner'|'dots'|'bars'|'dot-matrix'|'dithe
 const { variant = 'spinner', size = 32, speed = 1, label = 'Loading', scramble = 'LOADING', paused = false } = defineProps<{
   variant?: Variant; size?: number; speed?: number; label?: string; scramble?: string; paused?: boolean
 }>()
-const reduce = useReducedMotion()
+const reduce = useMountedMedia('(prefers-reduced-motion: reduce)')
 const tick = shallowRef(0)
 const glyphs = computed(() => frames[variant as keyof typeof frames])
 const terminal = computed(() => {
