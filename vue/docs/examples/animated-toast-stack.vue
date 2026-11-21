@@ -47,8 +47,8 @@ onBeforeUnmount(() => { for (const timer of timers) window.clearTimeout(timer) }
 
 <style scoped>
 .toast-demo { min-height: 18rem; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; }
-.copy { text-align: center; font-size: .875rem; } .copy strong { font-weight: 500; color: var(--beui-foreground); }
-.copy p { max-width: 24rem; margin: .5rem auto 0; font-size: .75rem; line-height: 1.25rem; color: var(--beui-muted-foreground); }
+.copy { display: flex; flex-direction: column; align-items: center; gap: .5rem; text-align: center; } .copy strong { display: block; font-size: .875rem; line-height: 1.25rem; font-weight: 500; color: var(--beui-foreground); }
+.copy p { max-width: 24rem; margin: 0; padding: 0; font-size: .75rem; line-height: 1.25rem; color: var(--beui-muted-foreground); }
 .row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .5rem; }
 .row button { font: inherit; font-size: .75rem; font-weight: 500; padding: 0 1rem; height: 2.25rem; border-radius: 999px; border: 1px solid transparent; cursor: pointer; }
 .action { display: inline-flex; align-items: center; gap: .5rem; color: var(--beui-foreground); background: var(--beui-card); border-color: var(--beui-border) !important; }

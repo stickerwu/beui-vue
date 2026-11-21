@@ -1,13 +1,13 @@
 import { expect, test } from '@playwright/test'
-import { openDemo } from './open-demo'
+import { exampleFrame, openDemo } from './open-demo'
 
-test('gallery links select distinct agents examples and preserve the URL when switching', async ({ page }) => {
-  await openDemo(page,'agent-activity?variant=agents/agent-trace')
-  const demo = page.locator('.beui-demo')
-  await expect(demo.locator('[data-example-variant]')).toHaveAttribute('data-example-variant','agent-trace')
-  await demo.getByRole('combobox',{name:'Example'}).selectOption('tool-calls')
-  await expect(page).toHaveURL(/variant=tool-calls/)
-  await expect(demo.locator('[data-example-variant]')).toHaveAttribute('data-example-variant','tool-calls')
+test('pages with several examples show each one in its own pinned frame', async ({ page }) => {
+  await openDemo(page,'agent-activity')
+  for (const variant of ['streaming-text','reasoning-steps','web-search','tool-calls','mixed-activity','agent-trace']) {
+    const frame = exampleFrame(page, variant)
+    await expect(frame.locator('[data-example-variant]')).toHaveAttribute('data-example-variant', variant)
+    await expect(frame.getByRole('combobox',{name:'Example'})).toHaveCount(0)
+  }
 })
 
 test('composer submits on Enter and preserves Shift+Enter and focus', async ({ page }) => {
@@ -18,14 +18,24 @@ test('composer submits on Enter and preserves Shift+Enter and focus', async ({ p
   await expect(prompt).toHaveValue('Document this component\n')
   await prompt.press('Enter')
   await expect(prompt).toBeFocused()
-  await expect(page.getByRole('status').filter({ hasText: 'Document this component' })).toBeVisible()
+  await expect(page.getByRole('status').filter({ hasText: 'Prompt sent to the selected model.' })).toBeVisible()
 })
 
 test('tool approval exposes parameters and reports the user decision', async ({ page }) => {
   await openDemo(page, 'tool-approval')
   const demo = page.locator('.beui-demo')
+  await expect(demo.getByRole('button', { name: 'View details' })).toHaveAttribute('aria-expanded', 'true')
+  await expect(demo.getByText('bun test tests/a11y.test.tsx')).toBeVisible()
+  await expect(demo.getByRole('status')).toHaveText('Approval required')
   await demo.getByRole('button', { name: 'Allow once' }).press('Enter')
-  await expect(demo.getByRole('status')).toContainText('Approved')
+  // The decision is announced through the status region as it moves through the approval states.
+  await expect(demo.getByRole('status')).toHaveText('Approving')
+  await expect(demo.getByRole('status')).toHaveText('Completed', { timeout: 10_000 })
+  await expect(demo.getByRole('button', { name: 'Allow once' })).toHaveCount(0)
+  await demo.getByRole('button', { name: 'Replay' }).press('Enter')
+  await expect(demo.getByRole('status')).toHaveText('Approval required')
+  await demo.getByRole('button', { name: 'Deny' }).press('Enter')
+  await expect(demo.getByRole('status')).toHaveText('Denied')
 })
 
 test('answer feedback can be toggled with the keyboard', async ({ page }) => {
@@ -37,16 +47,27 @@ test('answer feedback can be toggled with the keyboard', async ({ page }) => {
   await expect(helpful).toHaveAttribute('aria-pressed', 'false')
 })
 
-test('resource tree navigation and renaming preserve focus', async ({ page }) => {
+test('resource tree navigation and renaming preserve focus', async ({ page, isMobile }) => {
   await openDemo(page, 'ai-sidebar')
-  const folder = page.getByRole('treeitem', { name: 'Workspace', exact: true })
+  // On a phone the sidebar is a modal sheet that starts closed; the header trigger opens it.
+  if (isMobile) {
+    await page.locator('.beui-demo').getByRole('button', { name: 'Toggle sidebar' }).click()
+    await expect(page.getByRole('dialog', { name: 'Workspace resources' })).toBeVisible()
+  }
+  // Each row's name also carries its "Actions for …" menu button, so match on the label prefix.
+  const folder = page.getByRole('treeitem', { name: /^Platform/ })
+  await expect(folder).toHaveAttribute('aria-expanded', 'true')
   await folder.focus()
+  // The folder is open, so ArrowRight steps into its first child and ArrowLeft returns to it.
+  const file = page.getByRole('treeitem', { name: /^API migration/ })
   await folder.press('ArrowRight')
-  const file = page.getByRole('treeitem', { name: 'Design notes', exact: true })
+  await expect(file).toBeFocused()
+  await file.press('ArrowLeft')
+  await expect(folder).toBeFocused()
   await folder.press('ArrowDown')
   await expect(file).toBeFocused()
   await file.press('F2')
-  await page.getByRole('textbox', { name: 'Rename Design notes' }).fill('Release notes')
-  await page.getByRole('textbox', { name: 'Rename Design notes' }).press('Enter')
-  await expect(page.getByRole('treeitem', { name: 'Release notes', exact: true })).toBeFocused()
+  await page.getByRole('textbox', { name: 'Rename API migration' }).fill('Migration plan')
+  await page.getByRole('textbox', { name: 'Rename API migration' }).press('Enter')
+  await expect(page.getByRole('treeitem', { name: /^Migration plan/ })).toBeFocused()
 })

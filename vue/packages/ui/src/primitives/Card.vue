@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { motion, useReducedMotion } from 'motion-v'
+import { motion } from 'motion-v'
+import { useReducedMotion } from '../core/reduced-motion'
 import { onBeforeUnmount, shallowRef, watch } from 'vue'
 import { pressSpring } from '../core/motion'
 import type { CardSize, CardVariant } from './state'
@@ -36,14 +37,14 @@ onBeforeUnmount(release)
 .be-card[data-size=compact] { --be-card-inset: 1rem; }
 .be-card[data-variant=muted] { border-color: transparent; background: var(--beui-muted); }
 .be-card[data-interactive] { cursor: pointer; }
-@media (hover:hover) { .be-card[data-interactive]:hover { border-color: var(--beui-muted-foreground); } }
+@media (hover:hover) { .be-card[data-interactive]:hover { border-color: color-mix(in srgb, var(--beui-foreground) 12%, transparent); } }
 .be-card[data-selected], .be-card[data-selected]:hover { border-color: var(--beui-primary); box-shadow: 0 0 0 1px var(--beui-primary); }
 .be-card[data-interactive]:has(:focus-visible) { outline: 2px solid var(--beui-foreground); outline-offset: 2px; }
 .be-card-header, .be-card-footer, .be-card-content { padding-inline: var(--be-card-inset, 1.5rem); }
 .be-card-header { display: grid; grid-auto-rows: min-content; align-items: start; gap: .375rem; }
 .be-card-header:has(.be-card-action) { grid-template-columns: 1fr auto; }
-.be-card-title { margin: 0; color: var(--beui-foreground); font-size: 15px; line-height: 1.375; font-weight: 600; }
-.be-card-description { margin: 0; color: var(--beui-muted-foreground); font-size: .875rem; line-height: 1.625; }
+.be-card .be-card-title { margin: 0; padding: 0; border: 0; letter-spacing: normal; color: var(--beui-foreground); font-size: 15px; line-height: 1.375; font-weight: 600; }
+.be-card .be-card-description { margin: 0; color: var(--beui-muted-foreground); font-size: .875rem; line-height: 1.625; }
 .be-card-action { display: flex; grid-column: 2; grid-row: 1 / span 2; align-items: center; justify-self: end; }
 .be-card-content { font-size: .875rem; }
 .be-card-footer { display: flex; align-items: center; gap: .5rem; }

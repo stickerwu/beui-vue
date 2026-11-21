@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted, onBeforeUnmount, shallowRef, useId, useTemplateRef, watchEffect } from 'vue'
-import { motion, useReducedMotion } from 'motion-v'
+import { computed, onMounted, onBeforeUnmount, shallowRef, useId, useTemplateRef, watch, watchEffect } from 'vue'
+import { AnimatePresence, motion } from 'motion-v'
+import { useReducedMotion } from '../core/reduced-motion'
+import TextShimmer from '../effects/TextShimmer.vue'
+import { easeInOut, swapSpring } from '../core/motion'
 import { useLineChart } from './chart-model'
 import { seriesPaths, type Point } from './chart-geometry'
 import { useChartMotion } from './use-chart-motion'
@@ -61,6 +64,14 @@ const placeholder = computed(() => seriesPaths(Array.from({ length: 16 }, (_, st
   const fraction = step / 15
   return { x: left + fraction * innerWidth.value, y: top + innerHeight.value * (0.62 - fraction * 0.18 + Math.sin(fraction * Math.PI * 3) * 0.07) }
 }), 'monotone', height).line)
+// Roll the pill's label up when moving right and down when moving left.
+const direction = shallowRef(1)
+watch(() => (index.value >= 0 && !loading.value ? index.value : null), (next, previous) => {
+  if (next !== null && previous !== null && previous !== undefined) direction.value = next < previous ? -1 : 1
+})
+const EXIT = { opacity: 0, transition: { duration: 0.1, ease } } as const
+const FADE = { duration: 0.16, ease } as const
+const bandWidth = computed(() => Math.max(80, innerWidth.value * 0.28))
 const edgeFraction = computed(() => Math.min(0.08, 32 / Math.max(1, innerWidth.value)))
 let resizeObserver: ResizeObserver | undefined
 let intersection: IntersectionObserver | undefined
@@ -134,18 +145,37 @@ function nativeInput(event: Event) {
             <stop :stop-color="row.color" :stop-opacity="paths.length > 1 ? .14 : .28" /><stop offset="1" :stop-color="row.color" stop-opacity="0" />
           </linearGradient>
         </defs>
-        <g v-if="showGrid" class="axis">
-          <line v-for="tick in domain.ticks" :key="tick" :x1="left" :x2="left + innerWidth" :y1="yAt(tick)" :y2="yAt(tick)" stroke="currentColor" :stroke-opacity="tick === 0 ? .3 : .12" />
-        </g>
-        <g :mask="`url(#${id}-mask)`">
-          <path v-if="loading" class="placeholder" :d="placeholder" fill="none" stroke="currentColor" :stroke-width="strokeWidth" />
-          <g v-else :clip-path="`url(#${id}-clip)`">
+        <AnimatePresence v-if="showGrid" :initial="false">
+          <motion.line v-for="tick in domain.ticks" :key="tick" tabindex="-1" class="axis" :x1="left" :x2="left + innerWidth" y1="0" y2="0" stroke="currentColor" :stroke-opacity="tick === 0 ? .3 : .12"
+            :initial="{ opacity: 0, y: yAt(tick) }" :animate="{ opacity: 1, y: yAt(tick) }" :exit="EXIT" :transition="{ opacity: FADE, default: glide }" />
+        </AnimatePresence>
+        <g v-if="!empty" :mask="`url(#${id}-mask)`">
+          <motion.g tabindex="-1" :clip-path="`url(#${id}-clip)`" :initial="false" :animate="{ opacity: loading ? 0 : 1 }" :transition="{ duration: .15, ease }">
             <g v-for="row in paths" :key="row.id" class="series" :opacity="hidden.includes(row.id) ? 0 : hovered && !hidden.includes(hovered) && hovered !== row.id ? .2 : 1">
               <path v-if="props.variant === 'area'" :d="row.area" :fill="`url(#${row.gradient})`" />
               <path :d="row.line" fill="none" :stroke="row.color" :stroke-width="strokeWidth" stroke-linecap="round" stroke-linejoin="round" />
             </g>
-          </g>
+          </motion.g>
         </g>
+        <AnimatePresence>
+          <motion.g v-if="loading" key="placeholder" tabindex="-1" class="axis" :initial="{ opacity: 0 }" :animate="{ opacity: 1 }" :exit="{ opacity: 0, transition: { duration: .12, ease } }" :transition="{ duration: .2, ease }">
+            <defs>
+              <linearGradient :id="`${id}-band`" x1="0" x2="1" y1="0" y2="0">
+                <stop offset="0" stop-color="white" stop-opacity="0" /><stop offset=".5" stop-color="white" /><stop offset="1" stop-color="white" stop-opacity="0" />
+              </linearGradient>
+              <mask :id="`${id}-pulse`" maskUnits="userSpaceOnUse" :x="left - bandWidth" y="0" :width="innerWidth + bandWidth * 2" :height="top * 2 + innerHeight">
+                <motion.rect tabindex="-1" x="0" y="0" :width="bandWidth" :height="top * 2 + innerHeight" :fill="`url(#${id}-band)`" :initial="{ x: left - bandWidth }" :animate="{ x: left + innerWidth }"
+                  :transition="{ duration: 1.6, ease: easeInOut, repeat: Infinity, repeatDelay: .35 }" />
+              </mask>
+            </defs>
+            <!-- Shares the plot's edge fade, so the handoff to real lines keeps its silhouette. -->
+            <g :mask="`url(#${id}-mask)`">
+              <motion.path tabindex="-1" :d="placeholder" fill="none" stroke="currentColor" :stroke-width="strokeWidth" stroke-linecap="round" :initial="{ strokeOpacity: .22 }"
+                :animate="reduced ? { strokeOpacity: [.22, .45, .22] } : { strokeOpacity: .22 }" :transition="reduced ? { duration: 1.8, ease: easeInOut, repeat: Infinity } : undefined" />
+              <path v-if="!reduced" :d="placeholder" fill="none" stroke="currentColor" stroke-opacity=".75" :stroke-width="strokeWidth" stroke-linecap="round" :mask="`url(#${id}-pulse)`" />
+            </g>
+          </motion.g>
+        </AnimatePresence>
         <g v-if="inspecting">
           <motion.line x1="0" x2="0" :y1="top" :y2="height - 8" :stroke="`url(#${id}-cross)`" :initial="{ x: crossX, opacity: 0 }" :animate="{ x: crossX, opacity: 1 }" :transition="{ x: glide, opacity: { duration: .12 } }" />
           <motion.g v-for="mark in markers" :key="mark.id" :initial="{ x: mark.x, y: mark.y, opacity: 0, scale: .5 }" :animate="{ x: mark.x, y: mark.y, opacity: 1, scale: 1 }" :transition="{ default: glide, opacity: { duration: .12 } }">
@@ -153,10 +183,17 @@ function nativeInput(event: Event) {
           </motion.g>
         </g>
       </svg>
-      <div v-if="width && !loading && !empty" aria-hidden="true" class="axis-labels">
-        <span v-for="tick in domain.ticks" :key="tick" class="value-tick" :style="{ top: `${yAt(tick)}px`, width: `${left - 8}px` }">{{ tickText(tick) }}</span>
-      </div>
-      <output v-if="loading" class="centered">{{ props.loadingLabel ?? messages.loading }}<span v-if="props.loadingLabel === ''" class="sr-only">{{ messages.loadingStatus }}</span></output>
+      <motion.div v-if="width && !empty" aria-hidden="true" class="axis-labels" :initial="false" :animate="{ opacity: loading ? 0 : 1 }" :transition="{ duration: .15, ease }">
+        <AnimatePresence :initial="false">
+          <motion.span v-for="tick in domain.ticks" :key="tick" class="value-tick" :style="{ width: `${left - 8}px` }" :initial="{ opacity: 0, y: yAt(tick) }" :animate="{ opacity: 1, y: yAt(tick) }"
+            :exit="EXIT" :transition="{ opacity: FADE, default: glide }"><span class="tick-y">{{ tickText(tick) }}</span></motion.span>
+        </AnimatePresence>
+      </motion.div>
+      <AnimatePresence>
+        <motion.output v-if="loading" key="loading" class="loading" :initial="{ opacity: 0 }" :animate="{ opacity: 1 }" :exit="{ opacity: 0, y: reduced ? 0 : 8, transition: { duration: .18, ease } }" :transition="{ duration: .2, ease }">
+          <TextShimmer v-if="props.loadingLabel ?? messages.loading">{{ props.loadingLabel ?? messages.loading }}</TextShimmer><span v-else class="sr-only">{{ messages.loadingStatus }}</span>
+        </motion.output>
+      </AnimatePresence>
       <div ref="host" class="inspection" :style="{ left: `${left}px`, top: `${top}px` }">
         <input v-if="!loading && !empty" class="inspector" type="range" :min="0" :max="count - 1" step="1" :value="cursor"
           :aria-label="messages.inspect.replace('{label}', label)" :aria-valuetext="activeText" :aria-describedby="inspecting ? tooltipId : undefined"
@@ -165,12 +202,21 @@ function nativeInput(event: Event) {
           @pointercancel="pressing = false; pointerFocus = false; open = false" @keydown="keydown" @input="nativeInput" />
       </div>
     </div>
-    <div v-if="!empty" aria-hidden="true" class="categories">
-      <template v-if="width && !loading">
+    <motion.div v-if="!empty" aria-hidden="true" class="categories" :initial="false" :animate="{ opacity: loading ? 0 : 1 }" :transition="{ duration: .15, ease }">
+      <template v-if="width">
         <span v-for="column in columnLabels" :key="column.category" class="tick" :style="{ left: `${column.position}px`, opacity: inspecting && Math.abs(column.position - crossX) < 40 ? 0 : undefined }">{{ column.category }}</span>
-        <motion.div v-if="inspecting" class="pill-position" :initial="{ x: crossX, opacity: 0 }" :animate="{ x: crossX, opacity: 1 }" :transition="{ x: glide, opacity: { duration: .12 } }"><span class="pill">{{ data.categories[cursor] }}</span></motion.div>
+        <AnimatePresence>
+          <motion.div v-if="inspecting" key="pill" class="pill-position" :initial="{ x: crossX, opacity: 0 }" :animate="{ x: crossX, opacity: 1 }" :exit="{ opacity: 0, transition: { duration: .1, ease } }" :transition="{ x: glide, opacity: { duration: .12 } }">
+            <span class="pill">
+              <AnimatePresence mode="popLayout" :initial="false">
+                <motion.span :key="data.categories[cursor]" class="pill-label" :initial="{ y: reduced ? 0 : direction * 10, opacity: 0 }" :animate="{ y: 0, opacity: 1 }"
+                  :exit="{ y: reduced ? 0 : direction * -10, opacity: 0 }" :transition="reduced ? { duration: .12 } : swapSpring">{{ data.categories[cursor] }}</motion.span>
+              </AnimatePresence>
+            </span>
+          </motion.div>
+        </AnimatePresence>
       </template>
-    </div>
+    </motion.div>
   </div>
 </template>
 
@@ -180,20 +226,18 @@ function nativeInput(event: Event) {
 .drawing { position: absolute; inset: 0; overflow: visible; }
 .axis,.value-tick,.tick { color: var(--beui-chart-muted, var(--beui-muted-foreground)); }
 .axis-labels { position: absolute; inset: 0; pointer-events: none; }
-.value-tick { position: absolute; left: 0; text-align: right; transform: translateY(-50%); font: 11px/1.5 ui-monospace, monospace; font-variant-numeric: tabular-nums; }
-.centered { position: absolute; inset: 0; display: grid; place-items: center; font: inherit; font-size: 13px; opacity: .72; }
+.value-tick { position: absolute; top: 0; left: 0; white-space: nowrap; font: 11px/1.3333 var(--font-geist-mono, 'Geist Mono Variable', ui-monospace, monospace); font-variant-numeric: tabular-nums; }
+.tick-y { display: block; text-align: right; transform: translateY(-50%); }
+.centered { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; margin: 0; font-size: 14px; line-height: 20px; color: var(--beui-muted-foreground); }
+.loading { position: absolute; left: 44px; right: 16px; top: 12px; bottom: 8px; display: flex; align-items: center; justify-content: center; pointer-events: none; font-size: 12px; line-height: 1.3333; color: var(--beui-muted-foreground); }
 .inspection { position: absolute; right: 16px; bottom: 8px; border-radius: 3px; }
 .inspection:has(.inspector:focus-visible) { outline: 2px solid var(--beui-chart-ring, color-mix(in srgb, currentColor 12%, transparent)); outline-offset: 4px; }
 .inspector { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; touch-action: pan-y; cursor: crosshair; }
 .categories { height: 20px; margin-top: 8px; }
 .tick { position: absolute; top: 2px; transform: translateX(-50%); white-space: nowrap; font-size: 11px; line-height: 1.5; transition: opacity 150ms; }
 .pill-position { position: absolute; left: 0; top: 0; pointer-events: none; }
-.pill { display: block; transform: translateX(-50%); white-space: nowrap; border-radius: 1rem; padding: 2px 8px; font-size: 11px; font-weight: 500; line-height: 16px; color: var(--beui-chart-bg, var(--beui-background)); background: var(--beui-chart-fg, var(--beui-foreground)); }
+.pill { display: block; overflow: hidden; transform: translateX(-50%); white-space: nowrap; border-radius: 1rem; padding: 2px 8px; font-size: 11px; font-weight: 500; line-height: 16px; color: var(--beui-chart-bg, var(--beui-background)); background: var(--beui-chart-fg, var(--beui-foreground)); }
+.pill-label { display: block; }
 .series { transition: opacity 180ms ease-out; }
-.placeholder { opacity: .35; }
 .sr-only { position: absolute; clip-path: inset(50%); width: 1px; height: 1px; overflow: hidden; }
-@media (prefers-reduced-motion: no-preference) {
-  .placeholder { animation: pulse 1600ms ease-in-out infinite alternate; }
-}
-@keyframes pulse { to { opacity: .65; } }
 </style>

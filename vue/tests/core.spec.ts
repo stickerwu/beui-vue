@@ -4,12 +4,29 @@ import { openDemo } from './open-demo'
 
 test('button forwards keyboard activation and keeps disabled controls inert', async ({ page }) => {
   await openDemo(page, 'button-base')
-  const button = page.getByRole('button', { name: 'Continue', exact: true })
-  await button.focus()
-  await button.press('Enter')
-  await expect(page.getByRole('status').filter({ hasText: 'Continue pressed' })).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Disabled', exact: true })).toBeDisabled()
+  const buttons = page.locator('.beui-demo button')
+  await expect(buttons).toHaveCount(10)
+  await expect(page.getByRole('button', { name: 'Continue', exact: true })).toBeEnabled()
   await expect(page.getByRole('button', { name: 'Delete', exact: true })).toHaveAccessibleName('Delete')
+  const continueButton = page.getByRole('button', { name: 'Continue', exact: true })
+  await continueButton.focus()
+  await expect(continueButton).toBeFocused()
+  // The alert page wires ButtonBase's click event to real state: "Show alert" is disabled while the
+  // alert is open, and activating it from the keyboard once it is enabled reopens the alert.
+  await openDemo(page, 'alert')
+  const show = page.getByRole('button', { name: 'Show alert', exact: true })
+  const alert = page.getByText('A little heads up', { exact: true })
+  await expect(alert).toBeVisible()
+  await expect(show).toBeDisabled()
+  await show.click({ force: true })
+  await expect(show).toBeDisabled()
+  await page.getByRole('button', { name: 'Dismiss alert' }).press('Enter')
+  await expect(alert).toHaveCount(0)
+  await expect(show).toBeEnabled()
+  await expect(show).toBeFocused()
+  await show.press('Enter')
+  await expect(page.getByText('A little heads up', { exact: true })).toBeVisible()
+  await expect(show).toBeDisabled()
 })
 
 test('tabs move focus, wrap, and expose only the selected panel', async ({ page }) => {

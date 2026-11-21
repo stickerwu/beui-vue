@@ -1,31 +1,75 @@
 <script setup lang="ts">
-import { computed, onMounted, shallowRef, watch } from 'vue'
-import { useReducedMotion } from 'motion-v'
+import { AnimatePresence, motion } from 'motion-v'
+import { useReducedMotion } from '../core/reduced-motion'
+import { computed, onMounted, onBeforeUnmount, shallowRef, useId, watch } from 'vue'
+import { easeOut, swapSpring } from '../core/motion'
+import TextScramble from '../effects/TextScramble.vue'
+import Loader from '../layout/Loader.vue'
 import type { Labels } from './shared'
-const props = withDefaults(defineProps<{ phrases?: string[], variant?: 'cascade' | 'swap' | 'scramble', interval?: number, shimmerDuration?: number, labels?: Labels }>(), { variant: 'cascade', interval: 2400, shimmerDuration: 1.8 })
+
+const CASCADE_STAGGER = 0.025
+const props = withDefaults(defineProps<{ phrases?: string[], variant?: 'cascade' | 'swap' | 'scramble', interval?: number, shimmerDuration?: number, labels?: Labels }>(), { variant: 'cascade', interval: 1800, shimmerDuration: 2.2 })
 const reduce = useReducedMotion()
 const index = shallowRef(0)
-const scramble = shallowRef('')
-const phrases = computed(() => props.phrases?.length ? props.phrases : [props.labels?.phraseThinking ?? 'Thinking', props.labels?.phraseReading ?? 'Reading the context', props.labels?.phraseConnecting ?? 'Connecting the details', props.labels?.phraseForming ?? 'Forming a response'])
-const phrase = computed(() => `${phrases.value[index.value % phrases.value.length]}…`)
+const statusId = useId()
+const safePhrases = computed(() => props.phrases?.length ? props.phrases : [props.labels?.phraseThinking ?? 'Thinking', props.labels?.phraseReading ?? 'Reading the context', props.labels?.phraseConnecting ?? 'Connecting the details', props.labels?.phraseForming ?? 'Forming a response'])
+const phrase = computed(() => safePhrases.value[index.value % safePhrases.value.length])
+const longest = computed(() => safePhrases.value.reduce((best, current) => current.length > best.length ? current : best))
+const shimmerStyle = computed(() => ({ '--rt-dur': `${props.shimmerDuration}s` }))
+const characters = computed(() => Array.from(`${phrase.value}…`))
+
+let timer: ReturnType<typeof setInterval> | undefined
 onMounted(() => {
-  watch(() => [props.interval, phrases.value] as const, (_, __, clean) => {
-    index.value = 0
-    const timer = setInterval(() => { index.value = (index.value + 1) % phrases.value.length }, Math.max(250, props.interval))
-    clean(() => clearInterval(timer))
-  }, { immediate: true })
-  watch([phrase, () => props.variant, reduce], ([target, variant, reduced], _, clean) => {
-    if (variant !== 'scramble' || reduced) { scramble.value = target; return }
-    let revealed = 0
-    const glyphs = '░▒/+≡<>*'
-    const timer = setInterval(() => {
-      revealed += 2
-      scramble.value = Array.from(target, (char, position) => position < revealed || char === ' ' ? char : glyphs[(position + revealed) % glyphs.length]).join('')
-      if (revealed >= target.length) clearInterval(timer)
-    }, 26)
-    clean(() => clearInterval(timer))
+  watch([() => props.interval, () => safePhrases.value.length], ([interval, count], _, cleanup) => {
+    if (count < 2) return
+    timer = setInterval(() => { index.value = (index.value + 1) % count }, Math.max(600, interval))
+    cleanup(() => clearInterval(timer))
   }, { immediate: true })
 })
+onBeforeUnmount(() => clearInterval(timer))
 </script>
-<template><span class="be-reason" role="status" :aria-label="labels?.reasoning ?? 'Reasoning'" :style="{ '--be-shimmer-time': `${shimmerDuration}s` }"><span class="be-reason-mark" aria-hidden="true"><slot name="indicator">✳</slot></span><span :key="phrase" aria-hidden="true" :class="`be-reason-${variant}`"><template v-if="variant === 'cascade'"><i v-for="(char, position) in [...phrase]" :key="position" :style="{ animationDelay: `${position * 14}ms` }">{{ char }}</i></template><template v-else>{{ variant === 'scramble' ? (scramble || phrase) : phrase }}</template></span></span></template>
-<style scoped>.be-reason{display:inline-flex;align-items:center;gap:.55rem;color:var(--beui-muted-foreground);font:500 .875rem/1.5 system-ui}.be-reason-mark{animation:be-reason-spin var(--be-shimmer-time) linear infinite}.be-reason-cascade i{display:inline-block;white-space:pre;font-style:normal;animation:be-reason-rise .26s ease-out both}.be-reason-swap{animation:be-reason-rise .28s ease-out}.be-reason-scramble{font-family:ui-monospace,monospace}@keyframes be-reason-rise{from{opacity:0;transform:translateY(4px)}}@keyframes be-reason-spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.be-reason :is(i,span){animation:none}}</style>
+
+<template>
+  <span class="rt" role="status" aria-live="polite" :aria-labelledby="statusId">
+    <span aria-hidden="true" class="rt-indicator"><slot name="indicator"><Loader variant="ascii-line" :size="14" :speed="0.8" :label="labels?.reasoning ?? 'Reasoning'" /></slot></span>
+    <span aria-hidden="true" class="rt-stage">
+      <span class="rt-measure">{{ longest }}…</span>
+      <template v-if="variant === 'cascade'">
+        <span v-if="reduce" class="rt-phrase rt-shimmer" style="white-space:pre" :style="shimmerStyle">{{ phrase }}…</span>
+        <AnimatePresence v-else :initial="false">
+          <motion.span :key="phrase" class="rt-phrase" style="white-space:pre" initial="initial" animate="animate" exit="exit">
+            <motion.span
+              v-for="(character, position) in characters" :key="position" class="rt-char rt-shimmer" :style="shimmerStyle"
+              :initial="{ opacity: 0, y: '100%' }"
+              :animate="{ opacity: 1, y: '0%', transition: { ...swapSpring, delay: position * CASCADE_STAGGER } }"
+              :exit="{ opacity: 0, y: '-100%', transition: { duration: 0.14, ease: easeOut, delay: position * CASCADE_STAGGER * 0.45 } }"
+            >{{ character }}</motion.span>
+          </motion.span>
+        </AnimatePresence>
+      </template>
+      <TextScramble v-else-if="variant === 'scramble'" :text="`${phrase}…`" class="rt-phrase rt-shimmer rt-tabular" :style="shimmerStyle" />
+      <AnimatePresence v-else :initial="false">
+        <motion.span
+          :key="phrase" class="rt-phrase rt-shimmer" style="white-space:nowrap" :style="shimmerStyle"
+          :initial="reduce ? { opacity: 0 } : { opacity: 0, y: 3 }" :animate="reduce ? { opacity: 1 } : { opacity: 1, y: 0 }" :exit="reduce ? { opacity: 0 } : { opacity: 0, y: -3 }"
+          :transition="{ duration: reduce ? 0.12 : 0.2, ease: easeOut }"
+        >{{ phrase }}…</motion.span>
+      </AnimatePresence>
+    </span>
+    <span :id="statusId" class="rt-sr">{{ phrase }}</span>
+  </span>
+</template>
+
+<style scoped>
+.rt { display: inline-flex; align-items: center; gap: .5rem; font-size: .875rem; line-height: 1.25rem; font-weight: 500; color: var(--beui-muted-foreground); }
+.rt-indicator { display: inline-flex; width: .75rem; height: .75rem; flex: none; align-items: center; justify-content: center; }
+.rt-stage { display: grid; overflow: hidden; text-align: left; }
+.rt-measure { visibility: hidden; grid-column: 1; grid-row: 1; white-space: nowrap; }
+.rt-phrase { grid-column: 1; grid-row: 1; justify-self: start; display: inline-block; }
+.rt-char { display: inline-block; white-space: pre; will-change: opacity, transform; }
+.rt-tabular { font-variant-numeric: tabular-nums; }
+.rt-shimmer { background-size: 200% 100%; background-clip: text; -webkit-background-clip: text; color: transparent; animation: rt-shimmer var(--rt-dur, 2.2s) linear infinite; background-image: linear-gradient(110deg, var(--beui-muted-foreground) 30%, var(--beui-foreground) 50%, var(--beui-muted-foreground) 70%); }
+.rt-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+@keyframes rt-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .rt-shimmer { animation: none !important; } }
+</style>

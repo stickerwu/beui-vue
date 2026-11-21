@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { motion, useReducedMotion } from 'motion-v'
+import { motion } from 'motion-v'
+import { useReducedMotion } from './core/reduced-motion'
 import { computed, shallowRef, useTemplateRef } from 'vue'
 import { useComparisonMotion } from './core/comparison-motion'
 import { pressSpring } from './core/motion'

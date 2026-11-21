@@ -1,25 +1,57 @@
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, onMounted, useId } from 'vue'
-import AgentDisclosure from './AgentDisclosure.vue'
+import { motion } from 'motion-v'
+import { useReducedMotion } from '../core/reduced-motion'
+import { computed, nextTick, onBeforeUnmount, onMounted, useId } from 'vue'
+import { swapSpring } from '../core/motion'
 import { useOpenState } from '../primitives/state'
-import { sourceUrl, type CitationItem, type Labels } from './shared'
+import AgentIcon from './AgentIcon.vue'
+import AgentReveal from './AgentReveal.vue'
+import CitationList from './CitationList.vue'
+import { citationTargetId, type CitationItem, type Labels } from './shared'
+
 const props = withDefaults(defineProps<{ citations: CitationItem[], title?: string, open?: boolean, defaultOpen?: boolean, idPrefix?: string, labels?: Labels }>(), { open: undefined, defaultOpen: false })
 const emit = defineEmits<{ 'update:open': [value: boolean], openChange: [value: boolean] }>()
 const { open, setOpen } = useOpenState(() => props.open, props.defaultOpen, next => { emit('update:open', next); emit('openChange', next) })
-const id = useId()
+const reduce = useReducedMotion()
+const baseId = useId()
+const contentId = `${baseId}-content`
+const prefix = computed(() => props.idPrefix ?? `citation-${baseId}`)
+
 async function jump(event: Event) {
   const target = (event as CustomEvent<string>).detail
-  if (!props.citations.some(item => `${props.idPrefix ?? id}-${item.id}` === target)) return
+  if (!props.citations.some(item => citationTargetId(prefix.value, item.id) === target)) return
+  event.preventDefault()
   setOpen(true)
   await nextTick()
-  document.getElementById(target)?.focus()
+  const row = document.getElementById(target)
+  row?.focus({ preventScroll: true })
+  row?.scrollIntoView({ block: 'nearest' })
 }
 onMounted(() => document.addEventListener('beui:citation', jump))
 onBeforeUnmount(() => document.removeEventListener('beui:citation', jump))
 </script>
+
 <template>
-  <AgentDisclosure :open="open" @update:open="setOpen"><template #title><span class="be-source-stack" aria-hidden="true"><i v-for="item in citations.slice(0,3)" :key="item.id">{{ (item.domain ?? item.title).slice(0,1).toUpperCase() }}</i></span>{{ title ?? labels?.title ?? 'Sources' }} <span class="be-agent-muted">{{ citations.length }}</span></template>
-    <ol class="be-source-list"><li v-for="(item,index) in citations" :id="`${idPrefix ?? id}-${item.id}`" :key="item.id" tabindex="-1"><span class="be-source-index">{{ index + 1 }}</span><component :is="sourceUrl(item.url) ? 'a' : 'span'" :href="sourceUrl(item.url)" :target="sourceUrl(item.url) ? '_blank' : undefined" rel="noopener noreferrer"><slot name="source" :item="item">{{ item.title }}<small v-if="item.domain">{{ item.domain }}</small></slot></component></li></ol>
-  </AgentDisclosure>
+  <div class="cs-root">
+    <button type="button" class="cs-trigger" :aria-expanded="open" :aria-controls="contentId" @click="setOpen(!open)">
+      <AgentIcon name="BookOpenText" :size="16" />
+      <span class="cs-title">{{ title ?? labels?.title ?? 'Sources' }}</span>
+      <span class="cs-count">{{ citations.length }}</span>
+      <motion.span aria-hidden="true" class="cs-chevron" :initial="false" :animate="{ rotate: open ? 180 : 0 }" :transition="reduce ? { duration: 0 } : swapSpring"><AgentIcon name="ChevronDown" :size="14" /></motion.span>
+    </button>
+    <AgentReveal :id="contentId" :open="open">
+      <CitationList :citations="citations" :id-prefix="prefix" class="cs-list"><template v-if="$slots.source" #source="scope"><slot name="source" v-bind="scope" /></template></CitationList>
+    </AgentReveal>
+  </div>
 </template>
-<style scoped>.be-source-list{list-style:none;margin:0;padding:.25rem .75rem .75rem}.be-source-list li{display:flex;align-items:center;gap:.65rem;padding:.4rem;border-radius:.5rem}.be-source-list li:focus{outline:2px solid var(--beui-ring)}.be-source-list small{display:block;color:var(--beui-muted-foreground)}.be-source-index,.be-source-stack i{display:inline-grid;place-items:center;min-width:1.35rem;height:1.35rem;background:var(--beui-muted);border-radius:50%;font-size:.7rem;font-style:normal}.be-source-stack{display:flex}.be-source-stack i+i{margin-left:-.3rem;border:1px solid var(--beui-background)}</style>
+
+<style scoped>
+.cs-root { width: 100%; font-size: .875rem; line-height: 1.25rem; }
+.cs-trigger { display: flex; min-height: 2rem; align-items: center; gap: .5rem; margin-left: -.25rem; padding: 0 .25rem; border: 0; border-radius: .5rem; background: none; font: inherit; text-align: left; color: var(--beui-muted-foreground); cursor: pointer; outline: none; transition: color .15s; }
+.cs-trigger:hover { color: var(--beui-foreground); }
+.cs-trigger:focus-visible { box-shadow: 0 0 0 2px var(--beui-ring); }
+.cs-title { font-weight: 500; }
+.cs-count { border-radius: 9999px; background: var(--beui-muted); padding: .125rem .375rem; font-size: 10px; line-height: 1rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.cs-chevron { display: inline-flex; color: color-mix(in oklab, var(--beui-muted-foreground) 60%, transparent); }
+.cs-list { margin-top: .25rem; }
+</style>

@@ -12,5 +12,10 @@ export function demoPath(slug: string): string {
 
 export async function openDemo(page: Page, slug: string) {
   await page.goto(demoPath(slug), {waitUntil:'domcontentloaded'})
-  await page.locator('.beui-demo[data-ready="true"]').waitFor()
+  await page.locator('.beui-demo[data-ready="true"]').first().waitFor()
+}
+
+/** The demo frame for one example on a page that shows each example in its own block. */
+export function exampleFrame(page: Page, variant: string) {
+  return page.locator(`.beui-demo[data-variant="${variant}"]`)
 }

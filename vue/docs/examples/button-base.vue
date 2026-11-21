@@ -1,37 +1,30 @@
 <script setup lang="ts">
 import { ButtonBase } from 'beui-vue'
-import { shallowRef } from 'vue'
-
-const message = shallowRef('')
-function report(label: string) { message.value = `${label} pressed` }
 </script>
 
 <template>
   <div class="button-demo">
     <div class="row">
-      <ButtonBase @click="report('Continue')">Continue <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></ButtonBase>
-      <ButtonBase variant="secondary" @click="report('Download')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4h16v-4"/></svg> Download</ButtonBase>
-      <ButtonBase variant="outline" @click="report('Outline')">Outline</ButtonBase>
-      <ButtonBase variant="ghost" @click="report('Ghost')">Ghost</ButtonBase>
+      <ButtonBase variant="primary" size="md">Continue <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg></ButtonBase>
+      <ButtonBase variant="secondary" size="md"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="m7 10 5 5 5-5" /><path d="M12 15V3" /></svg>Download</ButtonBase>
+      <ButtonBase variant="outline" size="md">Outline</ButtonBase>
+      <ButtonBase variant="ghost" size="md">Ghost</ButtonBase>
     </div>
     <div class="row">
-      <ButtonBase size="sm" @click="report('Small')">Small</ButtonBase>
-      <ButtonBase @click="report('Medium')">Medium</ButtonBase>
-      <ButtonBase size="lg" @click="report('Large')">Large</ButtonBase>
-      <ButtonBase size="icon" variant="secondary" aria-label="Delete" @click="report('Delete')"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M9 6V3h6v3m3 0-1 15H7L6 6m4 4v7m4-7v7"/></svg></ButtonBase>
+      <ButtonBase variant="primary" size="sm">Small</ButtonBase>
+      <ButtonBase variant="primary" size="md">Medium</ButtonBase>
+      <ButtonBase variant="primary" size="lg">Large</ButtonBase>
+      <ButtonBase variant="secondary" size="icon" aria-label="Delete"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18" /><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" /><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" /><path d="M10 11v6" /><path d="M14 11v6" /></svg></ButtonBase>
     </div>
     <div class="row">
-      <ButtonBase ripple @click="report('Ripple')">Ripple</ButtonBase>
-      <ButtonBase variant="outline" ripple @click="report('Tap me')">Tap me</ButtonBase>
-      <ButtonBase disabled variant="ghost">Disabled</ButtonBase>
+      <ButtonBase variant="primary" size="md" ripple>Ripple</ButtonBase>
+      <ButtonBase variant="outline" size="md" ripple>Tap me</ButtonBase>
     </div>
-    <output class="feedback" role="status">{{ message }}</output>
   </div>
 </template>
 
 <style scoped>
-.button-demo { display: grid; justify-items: center; gap: 1.5rem; width: 100%; }
+.button-demo { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
 .row { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .75rem; }
-.row svg { width: 1rem; height: 1rem; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; fill: none; }
-.feedback { min-height: 1em; color: var(--beui-muted-foreground); font-size: .75rem; }
+.row svg { width: 1rem; height: 1rem; flex: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
 </style>

@@ -1,64 +1,199 @@
 <script setup lang="ts">
-import { AnimatePresence, motion, useReducedMotion, type PanInfo } from 'motion-v'
-import { computed, onBeforeUnmount, useTemplateRef } from 'vue'
+import { AnimatePresence, motion, type PanInfo } from 'motion-v'
+import { useReducedMotion } from './reduced-motion'
+import { computed, h, onBeforeUnmount, useSlots, type FunctionalComponent, type VNodeChild } from 'vue'
 import { easeOut, toastSpring } from './motion'
-import { toastFocusChanged, type AnimatedToast, type ToastStatus } from './toasts'
+import { toastFocusChanged, type AnimatedToast, type ToastClassNames, type ToastStatus } from './toasts'
 
-const { toast, index, dismissLabel, dismiss } = defineProps<{
-  toast: AnimatedToast; index: number; dismissLabel: string; dismiss?: (id: string) => void
+const props = defineProps<{
+  toast: AnimatedToast
+  index: number
+  dismissLabel: string
+  dismiss?: (id: string) => void
+  classNames?: ToastClassNames
+  icons?: Partial<Record<ToastStatus, VNodeChild>>
 }>()
 defineSlots<{ default?(props: { toast: AnimatedToast }): unknown; icon?(props: { toast: AnimatedToast; status: ToastStatus }): unknown }>()
+
+const Content: FunctionalComponent<{ value: VNodeChild }> = ({ value }) => value
+Content.props = ['value']
+
+// Lucide's own path data: the React original renders the icon components at
+// 14px, so the shapes and stroke weight are kept exactly rather than redrawn.
+const ICON_NODES: Record<ToastStatus, readonly (readonly [string, Record<string, string>])[]> = {
+  neutral: [
+    ['path', { d: 'M10.268 21a2 2 0 0 0 3.464 0' }],
+    ['path', { d: 'M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326' }],
+  ],
+  info: [
+    ['circle', { cx: '12', cy: '12', r: '10' }],
+    ['path', { d: 'M12 16v-4' }],
+    ['path', { d: 'M12 8h.01' }],
+  ],
+  loading: [['path', { d: 'M21 12a9 9 0 1 1-6.219-8.56' }]],
+  success: [['path', { d: 'M20 6 9 17l-5-5' }]],
+  error: [
+    ['circle', { cx: '12', cy: '12', r: '10' }],
+    ['line', { x1: '12', x2: '12', y1: '8', y2: '12' }],
+    ['line', { x1: '12', x2: '12.01', y1: '16', y2: '16' }],
+  ],
+}
+
+const StatusIcon: FunctionalComponent<{ status: ToastStatus }> = ({ status }) => h(
+  'svg',
+  {
+    viewBox: '0 0 24 24',
+    class: 'be-glyph',
+    'aria-hidden': 'true',
+    fill: 'none',
+    stroke: 'currentColor',
+    'stroke-width': 2,
+    'stroke-linecap': 'round',
+    'stroke-linejoin': 'round',
+  },
+  ICON_NODES[status].map(([tag, attrs]) => h(tag, attrs)),
+)
+StatusIcon.props = ['status']
+
 const reduce = useReducedMotion()
-const item = useTemplateRef<{ $el: HTMLElement }>('item')
-const status = computed(() => toast.status ?? 'neutral')
-const canDismiss = computed(() => Boolean(dismiss) && toast.dismissible !== false)
-const contentFrom = computed(() => reduce.value ? { opacity: 0 } : { opacity: 0, y: 8, filter: 'blur(6px)' })
-const contentTo = computed(() => reduce.value ? { opacity: 1 } : { opacity: 1, y: 0, filter: 'blur(0px)' })
-const swapTransition = { duration: .28, ease: easeOut }
-const icons: Record<ToastStatus, string> = {
-  neutral: 'M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 20a2 2 0 0 0 4 0',
-  success: 'm4 12 5 5L20 6', loading: 'M20 12a8 8 0 1 1-8-8',
-  info: 'M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0M12 11v6m0-10v.5',
-  error: 'M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0M12 7v6m0 3v.5',
-}
-function dragEnd(_event: PointerEvent, info: PanInfo) {
-  if (canDismiss.value && (Math.abs(info.offset.x) > 72 || Math.abs(info.velocity.x) > 520)) dismiss?.(toast.id)
-}
-function blur(event: FocusEvent) {
-  if (!(event.currentTarget as HTMLElement).contains(event.relatedTarget as Node | null)) toastFocusChanged(toast, false)
-}
-onBeforeUnmount(() => {
-  if (item.value?.$el) item.value.$el.inert = true
-  toastFocusChanged(toast, false)
+const slots = useSlots()
+
+const status = computed(() => props.toast.status ?? 'neutral')
+const canDismiss = computed(() => Boolean(props.dismiss) && props.toast.dismissible !== false)
+// Truthiness, not presence: an empty description or a falsy action renders
+// nothing, so the row keeps its compact centred layout.
+const hasDetails = computed(() => Boolean(props.toast.description || props.toast.action))
+const customIcon = computed(() => props.icons?.[status.value] ?? props.toast.icon)
+const hasIconSlot = computed(() => Boolean(slots.icon))
+
+// The title is part of the swap key in the original (`String(children)`), so a
+// title change re-runs the content transition while a status-only update
+// swaps the content too, and a description edit alone does not.
+const titleKey = computed(() => {
+  const title = props.toast.title
+  return typeof title === 'string' || typeof title === 'number' ? String(title) : ''
 })
+const contentKey = computed(() => `${props.toast.id}-${status.value}-${titleKey.value}`)
+
+// Content swaps in place — icon glyph and the title block both trade on the
+// same 0.28s curve, entering from below and leaving upward.
+const CONTENT_TRANSITION = { duration: 0.28, ease: easeOut }
+const CONTENT_IN = { opacity: 0, y: 8, filter: 'blur(6px)' }
+const CONTENT_OUT = { opacity: 0, y: -8, filter: 'blur(6px)' }
+// The glyph swap scales as well: it grows from 0.8 and shrinks to 0.9, so a
+// status change reads as one element trading with another.
+const ICON_IN = { opacity: 0, y: 8, scale: 0.8, filter: 'blur(6px)' }
+const ICON_OUT = { opacity: 0, y: -8, scale: 0.9, filter: 'blur(6px)' }
+const REST = { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }
+
+const enter = computed(() => (reduce.value
+  ? { opacity: 0 }
+  : { opacity: 0, y: 22, scale: 0.96, filter: 'blur(10px)' }))
+const rest = computed(() => (reduce.value
+  ? { opacity: 1 }
+  : { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }))
+const leave = computed(() => (reduce.value
+  ? { opacity: 0 }
+  : { opacity: 0, x: 32, scale: 0.96, filter: 'blur(8px)', transition: { duration: 0.18, ease: easeOut } }))
+
+function dragEnd(_event: PointerEvent, info: PanInfo) {
+  if (!canDismiss.value) return
+  // Either a long enough pull or a fast enough flick dismisses; anything less
+  // springs back to the stack.
+  if (Math.abs(info.offset.x) > 72 || Math.abs(info.velocity.x) > 520) props.dismiss?.(props.toast.id)
+}
+
+// A keyboard user who reaches a toast's action should not be raced by its
+// countdown, so focus pauses the timer and leaving resumes what was left.
+function onFocusIn() {
+  toastFocusChanged(props.toast, true)
+}
+function onFocusOut(event: FocusEvent) {
+  const next = event.relatedTarget
+  if (next instanceof Node && (event.currentTarget as HTMLElement | null)?.contains(next)) return
+  toastFocusChanged(props.toast, false)
+}
+onBeforeUnmount(() => toastFocusChanged(props.toast, false))
 </script>
 
 <template>
-  <motion.li ref="item" class="be-toast" :data-status="status" :style="{ zIndex: 20 - index }" :layout="!reduce"
-    :initial="reduce ? { opacity: 0 } : { opacity: 0, y: 22, scale: .96, filter: 'blur(10px)' }"
-    :animate="reduce ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }"
-    :exit="reduce ? { opacity: 0 } : { opacity: 0, x: 32, scale: .96, filter: 'blur(8px)', transition: { duration: .18, ease: easeOut } }"
-    :transition="reduce ? { duration: .15 } : toastSpring" :drag="canDismiss && !reduce ? 'x' : false" :drag-constraints="{ left: 0, right: 0 }" :drag-elastic=".18"
-    @drag-end="dragEnd" @focusin="toastFocusChanged(toast, true)" @focusout="blur">
-    <div class="be-toast-surface">
+  <motion.li
+    class="be-toast"
+    :class="classNames?.item"
+    :style="{ zIndex: 20 - index }"
+    :layout="!reduce"
+    :initial="enter"
+    :animate="rest"
+    :exit="leave"
+    :transition="toastSpring"
+    :drag="canDismiss && !reduce ? 'x' : false"
+    :drag-constraints="{ left: 0, right: 0 }"
+    :drag-elastic="0.18"
+    @drag-end="dragEnd"
+    @focusin="onFocusIn"
+    @focusout="onFocusOut">
+    <div class="be-toast-surface" :class="classNames?.surface">
       <slot :toast="toast">
-        <div class="be-toast-row" :data-detail="Boolean(toast.description || toast.action)">
-          <div class="be-toast-icon" aria-hidden="true">
+        <div class="be-toast-row" :data-detail="hasDetails || undefined">
+          <motion.span class="be-toast-icon" :class="classNames?.iconWrap" :layout="!reduce" :data-status="status">
             <AnimatePresence :initial="false" mode="popLayout">
-              <motion.span :key="status" class="be-icon-inner" :initial="contentFrom" :animate="contentTo" :exit="{ opacity: 0 }" :transition="swapTransition">
-                <slot name="icon" :toast="toast" :status="status"><svg viewBox="0 0 24 24" class="be-glyph" :data-spin="status === 'loading'"><path :d="icons[status]" /></svg></slot>
+              <motion.span
+                :key="status"
+                class="be-icon-inner"
+                :initial="reduce ? { opacity: 0 } : ICON_IN"
+                :animate="reduce ? { opacity: 1 } : REST"
+                :exit="reduce ? { opacity: 0 } : ICON_OUT"
+                :transition="CONTENT_TRANSITION">
+                <span v-if="status === 'loading'" class="be-spin">
+                  <Content v-if="customIcon !== undefined" :value="customIcon" />
+                  <slot v-else-if="hasIconSlot" name="icon" :toast="toast" :status="status" />
+                  <StatusIcon v-else :status="status" />
+                </span>
+                <template v-else>
+                  <Content v-if="customIcon !== undefined" :value="customIcon" />
+                  <slot v-else-if="hasIconSlot" name="icon" :toast="toast" :status="status" />
+                  <StatusIcon v-else :status="status" />
+                </template>
               </motion.span>
             </AnimatePresence>
-          </div>
-          <div class="be-toast-body">
+          </motion.span>
+
+          <div class="be-toast-body" :class="classNames?.content">
             <AnimatePresence :initial="false" mode="popLayout">
-              <motion.div :key="`${status}-${toast.title}`" :initial="contentFrom" :animate="contentTo" :exit="{ opacity: 0 }" :transition="swapTransition">
-                <p class="be-title">{{ toast.title }}</p><p v-if="toast.description" class="be-description">{{ toast.description }}</p>
+              <motion.div
+                :key="contentKey"
+                :initial="reduce ? { opacity: 0 } : CONTENT_IN"
+                :animate="reduce ? { opacity: 1 } : { opacity: 1, y: 0, filter: 'blur(0px)' }"
+                :exit="reduce ? { opacity: 0 } : CONTENT_OUT"
+                :transition="CONTENT_TRANSITION">
+                <p class="be-title" :class="classNames?.title"><Content :value="toast.title" /></p>
+                <p v-if="toast.description" class="be-description" :class="classNames?.description">
+                  <Content :value="toast.description" />
+                </p>
               </motion.div>
             </AnimatePresence>
-            <button v-if="toast.action" class="be-action" type="button" @click="toast.action.onClick(toast)">{{ toast.action.label }}</button>
+
+            <button
+              v-if="toast.action"
+              type="button"
+              class="be-action"
+              :class="classNames?.action"
+              @click="toast.action?.onClick(toast)">
+              <Content :value="toast.action.label" />
+            </button>
           </div>
-          <button v-if="canDismiss" class="be-close" type="button" :aria-label="dismissLabel" @click="dismiss?.(toast.id)"><svg class="be-glyph" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" /></svg></button>
+
+          <button
+            v-if="canDismiss"
+            type="button"
+            class="be-close"
+            :class="classNames?.close"
+            :aria-label="dismissLabel"
+            @click="dismiss?.(toast.id)">
+            <svg viewBox="0 0 24 24" class="be-glyph" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 6 6 18" /><path d="m6 6 12 12" />
+            </svg>
+          </button>
         </div>
       </slot>
     </div>
@@ -66,24 +201,54 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-.be-toast { position: relative; pointer-events: auto; touch-action: pan-y; list-style: none; margin: 0; }
-.be-toast[inert] { pointer-events: none; }
-.be-toast-surface { overflow: hidden; padding: .75rem; border-radius: 1rem; border: 1px solid var(--beui-border); background: color-mix(in srgb, var(--beui-card) 95%, transparent); color: var(--beui-foreground); box-shadow: 0 20px 30px -12px rgb(0 0 0 / .22); backdrop-filter: blur(16px); }
-.be-toast-row { display: flex; align-items: center; gap: .75rem; } .be-toast-row[data-detail=true] { align-items: flex-start; }
-.be-toast-icon, .be-close { display: inline-grid; place-items: center; width: 1.75rem; height: 1.75rem; flex: none; border-radius: 50%; }
-.be-toast-icon { position: relative; background: var(--beui-muted); color: var(--beui-muted-foreground); }
-.be-toast-row[data-detail=true] .be-toast-icon { margin-top: .125rem; }
-.be-toast:is([data-status=info],[data-status=loading]) .be-toast-icon { color: var(--beui-primary); }
-.be-toast[data-status=success] .be-toast-icon { color: #00835a; background: rgb(16 185 129 / .13); }
-.be-toast[data-status=error] .be-toast-icon { color: var(--beui-destructive); background: color-mix(in srgb, var(--beui-destructive) 12%, transparent); }
-.be-icon-inner { display: inline-flex; } .be-glyph { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
-.be-toast-body { position: relative; flex: 1; min-width: 0; } .be-title,.be-description { margin: 0; text-align: start; }
-.be-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .875rem; line-height: 1.25rem; font-weight: 500; }
-.be-description { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; margin-top: .125rem; color: var(--beui-muted-foreground); font-size: .75rem; line-height: 1rem; }
-.be-action, .be-close { border: 0; cursor: pointer; font: inherit; color: var(--beui-muted-foreground); }
-.be-close { background: transparent; } .be-action { border-radius: 999px; background: var(--beui-muted); margin-top: .5rem; padding: .25rem .75rem; font-size: .75rem; color: var(--beui-foreground); }
-.be-close:hover, .be-action:hover { background: var(--beui-muted); color: var(--beui-foreground); }
-.be-action:focus-visible, .be-close:focus-visible { outline: 2px solid var(--beui-ring); }
-@media (prefers-reduced-motion: no-preference) { .be-glyph[data-spin=true] { animation: be-spin 1s linear infinite; } }
+.be-toast { position: relative; pointer-events: auto; will-change: transform; list-style: none; margin: 0; touch-action: pan-y; }
+.be-toast-surface {
+  position: relative; overflow: hidden; box-sizing: border-box;
+  padding: .75rem; border: 1px solid var(--beui-border); border-radius: 1rem;
+  background: color-mix(in srgb, var(--beui-card) 95%, transparent);
+  color: var(--beui-foreground);
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / .25);
+  -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px);
+}
+.be-toast-row { display: flex; align-items: center; gap: .75rem; }
+.be-toast-row[data-detail] { align-items: flex-start; }
+.be-toast-icon {
+  position: relative; display: inline-flex; flex: none; align-items: center; justify-content: center;
+  width: 1.75rem; height: 1.75rem; border-radius: 999px;
+  color: var(--beui-muted-foreground);
+  background: color-mix(in srgb, var(--beui-muted) 60%, transparent);
+}
+.be-toast-row[data-detail] .be-toast-icon { margin-top: .125rem; }
+.be-toast-icon[data-status=info], .be-toast-icon[data-status=loading] { color: var(--beui-primary); background: var(--beui-muted); }
+.be-toast-icon[data-status=success] { color: #059669; background: color-mix(in srgb, #10b981 10%, transparent); }
+:global(.dark .be-toast-icon[data-status=success]) { color: #34d399; }
+.be-toast-icon[data-status=error] { color: var(--beui-destructive); background: color-mix(in srgb, var(--beui-destructive) 10%, transparent); }
+.be-icon-inner { display: inline-flex; }
+.be-spin { display: inline-flex; }
+.be-glyph { width: .875rem; height: .875rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.be-toast-body { position: relative; flex: 1 1 0%; min-width: 0; }
+.be-title, .be-description { margin: 0; text-align: start; }
+.be-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .875rem; line-height: 1.25rem; font-weight: 500; color: var(--beui-foreground); }
+.be-description {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden;
+  margin-top: .125rem; font-size: .75rem; line-height: 1rem; color: var(--beui-muted-foreground);
+}
+.be-action {
+  display: inline-flex; align-items: center; height: 1.75rem; margin-top: .5rem; padding: 0 .75rem;
+  border: 0; border-radius: 999px; cursor: pointer;
+  background: color-mix(in srgb, var(--beui-muted) 80%, transparent);
+  color: var(--beui-foreground); font: inherit; font-size: .75rem; font-weight: 500;
+  transition: background-color .15s;
+}
+.be-action:hover { background: var(--beui-muted); }
+.be-close {
+  display: inline-flex; flex: none; align-items: center; justify-content: center;
+  width: 1.75rem; height: 1.75rem; padding: 0; border: 0; border-radius: 999px;
+  background: transparent; color: var(--beui-muted-foreground); cursor: pointer;
+  transition: background-color .15s, color .15s;
+}
+.be-close:hover { background: color-mix(in srgb, var(--beui-muted) 80%, transparent); color: var(--beui-foreground); }
+.be-toast :is(button):focus-visible { outline: 2px solid var(--beui-ring); outline-offset: 2px; }
+@media (prefers-reduced-motion: no-preference) { .be-spin { animation: be-spin 1s linear infinite; } }
 @keyframes be-spin { to { transform: rotate(360deg); } }
 </style>

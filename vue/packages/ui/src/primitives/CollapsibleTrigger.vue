@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import { motion } from 'motion-v'
+import { useReducedMotion } from '../core/reduced-motion'
 import { computed, type Component } from 'vue'
-import { useCollapsible } from './state'
+import { layoutSpring, useCollapsible } from './state'
 
 const props = defineProps<{ disabled?: boolean, render?: Component | 'button' }>()
 const emit = defineEmits<{ click: [event: MouseEvent] }>()
 const { open, disabled, triggerId, contentId, toggle } = useCollapsible()
+const reduce = useReducedMotion()
 const unavailable = computed(() => props.disabled || disabled.value)
 function activate(event: MouseEvent) {
   emit('click', event)
@@ -13,7 +16,7 @@ function activate(event: MouseEvent) {
 </script>
 
 <template>
-  <component :is="render || 'button'" :id="triggerId" type="button" :disabled="unavailable" :aria-expanded="open" :aria-controls="contentId" data-slot="collapsible-trigger" :data-disabled="unavailable || undefined" :data-state="open ? 'open' : 'closed'" :class="{ 'be-collapse-trigger': !render }" @click="activate"><slot /></component>
+  <component :is="render || motion.button" :id="triggerId" :layout="render ? undefined : reduce ? false : 'position'" :transition="render ? undefined : { layout: layoutSpring }" type="button" :disabled="unavailable" :aria-expanded="open" :aria-controls="contentId" data-slot="collapsible-trigger" :data-disabled="unavailable || undefined" :data-state="open ? 'open' : 'closed'" :class="{ 'be-collapse-trigger': !render }" @click="activate"><slot /></component>
 </template>
 
 <style scoped>

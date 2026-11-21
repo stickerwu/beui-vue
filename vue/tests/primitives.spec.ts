@@ -33,8 +33,24 @@ test('collapsible names its region, then restores focus on an internal close', a
   await trigger.press('Space')
   const region = page.getByRole('region', { name: 'More details' })
   await expect(region).toHaveAttribute('id', (await trigger.getAttribute('aria-controls'))!)
-  await region.getByRole('button', { name: 'Close details' }).press('Enter')
+  await expect(trigger).toHaveAttribute('aria-expanded', 'true')
+  await expect(region).toContainText('Keep extra information tucked away')
+  // The demo content has nothing focusable, so add a control the way an app would
+  // (an internal "close" action) and make sure focus is not stranded when it closes the region.
+  await region.evaluate((node, triggerName) => {
+    const close = document.createElement('button')
+    close.type = 'button'
+    close.textContent = 'Close details'
+    close.addEventListener('click', () => {
+      for (const button of document.querySelectorAll('button')) if (button.textContent?.includes(triggerName)) button.click()
+    })
+    node.firstElementChild!.append(close)
+  }, 'More details')
+  const close = region.getByRole('button', { name: 'Close details' })
+  await close.focus()
+  await close.press('Enter')
   await expect(trigger).toBeFocused()
+  await expect(trigger).toHaveAttribute('aria-expanded', 'false')
   await expect(region).toHaveCount(0)
 })
 

@@ -1,10 +1,54 @@
 <script setup lang="ts">
-import {onMounted,onBeforeUnmount,ref,watch} from 'vue'
-const {value,duration=1.2,startOnView=true,format=(number:number)=>Math.round(number).toLocaleString('en-US')}=defineProps<{value:number;duration?:number;startOnView?:boolean;format?:(value:number)=>string}>()
-const shown=ref(value),host=ref<HTMLElement>(); let active=false, frame=0, observer:IntersectionObserver|undefined
-function play(target:number){cancelAnimationFrame(frame);if(matchMedia('(prefers-reduced-motion:reduce)').matches||duration<=0){shown.value=target;return}const start=performance.now(),initial=shown.value;function tick(now:number){const progress=Math.min(1,(now-start)/(duration*1000));shown.value=initial+(target-initial)*(1-(1-progress)**3);if(progress<1)frame=requestAnimationFrame(tick)}frame=requestAnimationFrame(tick)}
-function enter(){active=true;observer?.disconnect();play(value)}
-onMounted(()=>{shown.value=0;if(startOnView&&host.value&&'IntersectionObserver' in window&&!matchMedia('(prefers-reduced-motion:reduce)').matches){observer=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting))enter()});observer.observe(host.value)}else enter()})
-watch(()=>value,next=>{if(active)play(next)});onBeforeUnmount(()=>{observer?.disconnect();cancelAnimationFrame(frame)})
+import { animate, useInView } from 'motion-v'
+import { useReducedMotion } from '../core/reduced-motion'
+import { onBeforeUnmount, shallowRef, useTemplateRef, watch } from 'vue'
+import { easeOut } from '../core/motion'
+
+const props = withDefaults(defineProps<{
+  value: number
+  duration?: number
+  format?: (n: number) => string
+  className?: string
+  startOnView?: boolean
+}>(), {
+  duration: 1.2,
+  startOnView: true,
+  format: (n: number) => Math.round(n).toLocaleString(),
+})
+
+const target = useTemplateRef<HTMLElement>('target')
+const inView = useInView(target, { once: true, amount: .6 })
+const reduce = useReducedMotion()
+const display = shallowRef(0)
+// Tween from wherever the last run settled, so a value change counts up from
+// the shown number instead of restarting at zero.
+let from = 0
+let controls: ReturnType<typeof animate> | undefined
+
+function run() {
+  controls?.stop()
+  if (props.startOnView && !inView.value) return
+  if (reduce.value) {
+    from = props.value
+    display.value = props.value
+    return
+  }
+  controls = animate(from, props.value, {
+    duration: props.duration,
+    ease: easeOut,
+    onUpdate: value => (display.value = value),
+  })
+  from = props.value
+}
+
+watch([() => props.value, () => props.duration, inView, () => props.startOnView, reduce], run, { immediate: true })
+onBeforeUnmount(() => controls?.stop())
 </script>
-<template><span ref="host" style="font-variant-numeric:tabular-nums">{{ format(shown) }}</span></template>
+
+<template>
+  <span ref="target" class="be-animated-number" :class="className">{{ format(display) }}</span>
+</template>
+
+<style scoped>
+.be-animated-number { font-variant-numeric: tabular-nums; }
+</style>

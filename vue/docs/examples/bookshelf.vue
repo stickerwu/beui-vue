@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Bookshelf } from 'beui-vue'
+import { Bookshelf, Switch } from 'beui-vue'
 const selected = ref<string | null>('middlemarch')
 const sound = ref(true)
 const books = [
@@ -16,5 +16,17 @@ const books = [
   { id:'odyssey', title:'The Odyssey', author:'Homer', color:'#7a3b2e', thickness:46 },
 ]
 </script>
-<template><div class="demo"><Bookshelf v-model="selected" :books="books" :sound="sound" /><p>Click a book to pull it out. Arrow keys browse the shelf.</p><label><input v-model="sound" type="checkbox"> Sound</label></div></template>
-<style scoped>.demo { width:100%; text-align:center; } p,label { font-size:.8rem; color:var(--beui-muted-foreground); }</style>
+<template>
+  <div class="demo">
+    <Bookshelf v-model="selected" :books="books" :sound="sound" class="shelf" />
+    <p>Click a book to pull it out. Arrow keys browse the shelf.</p>
+    <Switch v-model:checked="sound" label="Sound" class="sound" />
+  </div>
+</template>
+<style scoped>
+.demo { display:flex; width:100%; flex-direction:column; align-items:center; gap:.75rem; padding:1.5rem; box-sizing:border-box; }
+.shelf { width:100%; }
+p { margin:0; font-size:.75rem; line-height:1rem; color:var(--beui-muted-foreground); }
+.sound { transform:scale(.85); transform-origin:center; }
+.sound :deep(label) { font-size:.875rem; }
+</style>

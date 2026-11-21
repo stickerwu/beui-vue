@@ -1,11 +1,16 @@
+/**
+ * `tone` picks the chain badge colour from the theme: `primary`, `secondary`, `accent`, `muted`,
+ * `destructive`, or `primary/80` / `destructive/80` for the softened variants.
+ */
 export interface SwapChain { id:string, name:string, symbol:string, tone?:string }
+export type SwapTokenSide = 'from'|'to'
 export interface SwapToken { id:string, symbol:string, name:string, chainId:string, address?:string, balance?:number, usd?:number, trending?:boolean, popular?:boolean }
 
 export const swapChains: SwapChain[] = [
-  {id:'eth',name:'Ethereum',symbol:'Ξ'}, {id:'sol',name:'Solana',symbol:'◎'},
-  {id:'base',name:'Base',symbol:'B'}, {id:'arb',name:'Arbitrum',symbol:'A'},
-  {id:'op',name:'Optimism',symbol:'O'}, {id:'poly',name:'Polygon',symbol:'P'},
-  {id:'bnb',name:'BNB',symbol:'B'}, {id:'avax',name:'Avalanche',symbol:'A'},
+  {id:'eth',tone:'primary',name:'Ethereum',symbol:'Ξ'}, {id:'sol',tone:'secondary',name:'Solana',symbol:'◎'},
+  {id:'base',tone:'accent',name:'Base',symbol:'B'}, {id:'arb',tone:'muted',name:'Arbitrum',symbol:'A'},
+  {id:'op',tone:'destructive',name:'Optimism',symbol:'O'}, {id:'poly',tone:'primary/80',name:'Polygon',symbol:'P'},
+  {id:'bnb',tone:'secondary',name:'BNB',symbol:'B'}, {id:'avax',tone:'destructive/80',name:'Avalanche',symbol:'A'},
 ]
 
 export const swapTokens: SwapToken[] = [
@@ -30,3 +35,23 @@ export const swapTokens: SwapToken[] = [
   {id:'bnb-bnb',symbol:'BNB',name:'BNB',chainId:'bnb',balance:0,usd:620},
   {id:'avax-avax',symbol:'AVAX',name:'Avalanche',chainId:'avax',balance:0,usd:38},
 ]
+
+export function isValidAddress(value: string) {
+  if (/^0x[0-9a-fA-F]{40}$/.test(value)) return true
+  return /\.(eth|sol|bnb)$/.test(value) && value.length > 5
+}
+
+export function truncateAddress(value: string) {
+  return value.startsWith('0x') && value.length === 42 ? `${value.slice(0, 6)}...${value.slice(-4)}` : value
+}
+
+export function sanitizeAmount(value: string) {
+  const cleaned = value.replace(/[^0-9.]/g, '')
+  const parts = cleaned.split('.')
+  return parts.length <= 1 ? cleaned : `${parts[0]}.${parts.slice(1).join('')}`
+}
+
+export function formatAmount(value: number, max = 6) {
+  if (!Number.isFinite(value) || value === 0) return '0'
+  return value.toLocaleString(undefined, { maximumFractionDigits: value >= 1000 ? 2 : max })
+}

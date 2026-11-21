@@ -22,14 +22,46 @@ export { default as AttachmentUpload } from './AttachmentUpload.vue'
 export { default as FileUpload } from './UploadSurface.vue'
 export { default as PredictionMarketCard } from './PredictionMarketCard.vue'
 export { default as PredictionMarket } from './PredictionMarket.vue'
+export type { PredictionMarketMode, PredictionMarketOutcome, PredictionMarketOrderValue, PredictionMarketQuote, PredictionMarketClassNames } from './PredictionMarket.vue'
+export type { PredictionMarketCardOutcome, PredictionMarketCardSelection } from './PredictionMarketCard.vue'
+export { predictionMarketCardMessages, predictionMarketMessages, notFoundMessages } from './messages'
+export type { PredictionMarketCardMessages, PredictionMarketMessages, NotFoundMessages } from './messages'
 export { default as WalletCard } from './WalletCard.vue'
 export { default as OTPInput } from './OTPInput.vue'
 export { default as SignUpForm } from './SignUpForm.vue'
+export { passwordStrength } from './SignUpForm.vue'
+export type { SignUpValues, SignUpErrors, SignUpStatus, SignUpFormClassNames } from './SignUpForm.vue'
+export { signUpFormMessages, otpInputMessages, walletCardMessages } from './messages'
+export type { SignUpFormMessages, OTPInputMessages, WalletCardMessages } from './messages'
 export { default as CardDealer } from './CardDealer.vue'
+export { cardDealerMessages, type CardDealerMessages } from './messages'
+export { notificationStackMessages, type NotificationStackMessages } from './messages'
 export { default as BloomMenu } from './BloomMenu.vue'
 export { default as FeedbackWidget } from './FeedbackWidget.vue'
 export * from './not-found'
 export type { TournamentTeam, TournamentSide, TournamentMatch, TournamentRound } from './tournament'
 export type { SwapChain, SwapToken } from './swap-assets'
-export type { UploadItem, UploadProps } from './uploads'
+export type {
+  UploadItem,
+  UploadProps,
+  FileUploadItem,
+  FileUploadStatus,
+  FileUploadVariant,
+  FileUploadClassNames,
+  AttachmentUploadItem,
+  AttachmentUploadKind,
+  AttachmentUploadStatus,
+  AttachmentRejectReason,
+  AttachmentUploadClassNames,
+} from './uploads'
+export type { FileUploadProps } from './UploadSurface.vue'
+export type { AttachmentUploadProps } from './AttachmentUpload.vue'
+export { createFileUploadItem } from './uploads'
+export { fileUploadMessages, attachmentUploadMessages } from './messages'
+export type { FileUploadMessages, AttachmentUploadMessages } from './messages'
 export type { WeekAvailability, DayAvailability, DayKey, TimeRange } from './scheduler-model'
+export type { CardDealerCard, CardDealerZone } from './CardDealer.vue'
+export type { MorphingSearchItem } from './MorphingSearch.vue'
+export type { OverflowActionItem, OverflowActionsSize, OverflowActionsClassNames } from './OverflowActions.vue'
+export { feedbackWidgetMessages } from './messages'
+export type { FeedbackWidgetMessages } from './messages'

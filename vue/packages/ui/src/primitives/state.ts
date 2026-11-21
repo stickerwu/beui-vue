@@ -1,4 +1,4 @@
-import { computed, inject, shallowRef, type ComputedRef, type InjectionKey } from 'vue'
+import { computed, inject, shallowRef, type ComputedRef, type InjectionKey, type ShallowRef } from 'vue'
 
 export const layoutSpring = { type: 'spring', stiffness: 360, damping: 32, mass: 0.6 } as const
 export type AlertVariant = 'default' | 'info' | 'success' | 'warning' | 'destructive'
@@ -21,6 +21,10 @@ export function useOpenState(controlled: () => boolean | undefined, initial: boo
 export const aspectKey: InjectionKey<{ ratio: ComputedRef<number>, animated: ComputedRef<boolean> }> = Symbol('AspectRatio')
 export const alertKey: InjectionKey<{
   open: ComputedRef<boolean>, variant: ComputedRef<AlertVariant>, dismissLabel: ComputedRef<string>,
+  /** False from the commit that starts the exit; gates interaction and a11y. */
+  isPresent: ShallowRef<boolean>,
+  /** Static id on the animated surface, so the exit can find the retained node. */
+  surfaceId: string,
   setOpen: (next: boolean) => void, dismiss: () => void
 }> = Symbol('Alert')
 export const collapsibleKey: InjectionKey<{

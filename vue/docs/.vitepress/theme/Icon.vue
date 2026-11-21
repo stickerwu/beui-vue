@@ -1,0 +1,67 @@
+<script setup lang="ts">
+import { computed } from 'vue'
+
+const props = withDefaults(defineProps<{
+  name: string
+  size?: number | string
+  strokeWidth?: number
+}>(), {
+  size: 16,
+  strokeWidth: 1.75,
+})
+
+const paths: Record<string, string[]> = {
+  'arrow-right': ['M5 12h14', 'm12 5 7 7-7 7'],
+  'arrow-up-right': ['M7 17 17 7', 'M7 7h10v10'],
+  'arrow-left': ['M19 12H5', 'm12 19-7-7 7-7'],
+  'arrow-down': ['M12 5v14', 'm19 12-7 7-7-7'],
+  check: ['m20 6-11 11-5-5'],
+  copy: ['M9 9h11v11H9z', 'M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1'],
+  search: ['M21 21l-4.34-4.34', 'M19 11a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z'],
+  code: ['m16 18 6-6-6-6', 'm8 6-6 6 6 6'],
+  'chevron-down': ['m6 9 6 6 6-6'],
+  'chevron-right': ['m9 18 6-6-6-6'],
+  external: ['M15 3h6v6', 'M10 14 21 3', 'M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5'],
+  sun: ['M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z', 'M12 2v2', 'M12 20v2', 'm4.93 4.93 1.42 1.42', 'm17.65 17.65 1.42 1.42', 'M2 12h2', 'M20 12h2', 'm6.35 17.65-1.42 1.42', 'm19.07 4.93-1.42 1.42'],
+  moon: ['M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6.25 6.25 0 0 0 8.268 8.268c.344-.215.825-.004.803.401Z'],
+  monitor: ['M4 3h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z', 'M12 17v4', 'M8 21h8'],
+  menu: ['M4 6h16', 'M4 12h16', 'M4 18h16'],
+  close: ['M18 6 6 18', 'm6 6 12 12'],
+  grid: ['M3 3h7v7H3z', 'M14 3h7v7h-7z', 'M14 14h7v7h-7z', 'M3 14h7v7H3z'],
+  bot: ['M12 8V4H8', 'M6 8h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2Z', 'M2 12v4', 'M22 12v4', 'M9 13v2', 'M15 13v2'],
+  shapes: ['m5 3 4 7H1z', 'M16 3h5v5h-5z', 'M21 17a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z', 'M2 14h7v7H2z'],
+  blocks: ['M3 3h7v7H3z', 'M14 3h7v7h-7z', 'M14 14h7v7h-7z', 'M3 14h7v7H3z'],
+  chart: ['M3 3v18h18', 'M8 16V9', 'M13 16V5', 'M18 16v-3'],
+  casino: ['M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z', 'M7 7h.01', 'M17 7h.01', 'M7 17h.01', 'M17 17h.01', 'M12 12h.01'],
+  file: ['M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z', 'M14 2v6h6', 'M8 13h8', 'M8 17h6'],
+  circle: ['M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z'],
+  sparkles: ['m12 3 1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2Z', 'M20 2v4', 'M18 4h4'],
+  play: ['m9 5 12 7-12 7Z'],
+}
+
+const iconPaths = computed(() => paths[props.name] ?? paths.circle)
+</script>
+
+<template>
+  <svg
+    class="beui-icon"
+    :width="size"
+    :height="size"
+    viewBox="0 0 24 24"
+    :fill="name === 'github' ? 'currentColor' : 'none'"
+    :stroke="name === 'github' ? 'none' : 'currentColor'"
+    :stroke-width="strokeWidth"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path
+      v-if="name === 'github'"
+      d="M12 .75a11.25 11.25 0 0 0-3.558 21.922c.563.104.77-.244.77-.542 0-.268-.01-1.155-.016-2.094-3.13.68-3.79-1.328-3.79-1.328-.512-1.3-1.25-1.646-1.25-1.646-1.022-.7.077-.686.077-.686 1.13.08 1.724 1.16 1.724 1.16 1.005 1.724 2.636 1.225 3.278.937.102-.728.393-1.225.715-1.507-2.5-.285-5.13-1.25-5.13-5.56 0-1.229.44-2.232 1.16-3.02-.117-.285-.503-1.43.11-2.98 0 0 .945-.302 3.094 1.153a10.79 10.79 0 0 1 5.632 0c2.147-1.455 3.09-1.152 3.09-1.152.615 1.549.229 2.694.112 2.979.722.788 1.158 1.791 1.158 3.02 0 4.32-2.633 5.272-5.142 5.55.404.35.764 1.035.764 2.085 0 1.506-.014 2.72-.014 3.09 0 .3.202.652.774.541A11.252 11.252 0 0 0 12 .75Z"
+    />
+    <template v-else>
+      <path v-for="(path, index) in iconPaths" :key="index" :d="path" />
+    </template>
+  </svg>
+</template>

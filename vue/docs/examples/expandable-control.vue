@@ -1,8 +1,24 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { ExpandableControl } from 'beui-vue'
-const tags = ref(['Design','Motion'])
-function add() { if (!tags.value.includes('New tag')) tags.value.push('New tag') }
+import { LucideIcon } from './layout-icons'
 </script>
-<template><div class="tags"><ExpandableControl label="Add tag" @activate="add"/><ExpandableControl v-for="tag in tags" :key="tag" :label="tag" :action-label="`Remove ${tag}`" variant="chip" @remove="tags=tags.filter(value => value!==tag)" /></div></template>
-<style scoped>.tags { display:flex; flex-wrap:wrap; align-items:center; gap:.5rem; }</style>
+
+<template>
+  <div class="stack">
+    <div class="row">
+      <ExpandableControl label="Notifications">
+        <template #icon><LucideIcon name="Bell" :size="16" /></template>
+      </ExpandableControl>
+    </div>
+    <div class="row">
+      <ExpandableControl variant="chip" label="React" action-label="Remove React">
+        <template #actionIcon><LucideIcon name="X" :size="14" /></template>
+      </ExpandableControl>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.stack { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
+.row { display: flex; align-items: center; gap: .5rem; }
+</style>

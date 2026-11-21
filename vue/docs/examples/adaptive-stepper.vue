@@ -1,7 +1,16 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { AdaptiveStepper } from 'beui-vue'
-const quantity = ref(1)
+
+const guests = ref(2)
 </script>
-<template><div class="quantity"><label>Quantity</label><AdaptiveStepper v-model="quantity" :min="0" :max="5" /></div></template>
-<style scoped>.quantity { display:grid; justify-items:center; gap:.7rem; } label { font-size:.8rem; color:var(--beui-muted-foreground); }</style>
+
+<template>
+  <div class="stage">
+    <AdaptiveStepper v-model="guests" :min="0" :max="3" label="Guests" />
+  </div>
+</template>
+
+<style scoped>
+.stage { display: flex; min-height: 320px; width: 100%; align-items: center; justify-content: center; padding: 0 1rem; box-sizing: border-box; }
+</style>

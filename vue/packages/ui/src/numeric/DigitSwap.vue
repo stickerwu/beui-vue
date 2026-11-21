@@ -1,9 +1,104 @@
 <script setup lang="ts">
-const {value, direction = 'up', duration = .18, stagger = .006, suffixLength = 0, animationKey} = defineProps<{
-  value: number | string; direction?: 'up' | 'down'; duration?: number; stagger?: number; suffixLength?: number; animationKey?: string | number
+import { AnimatePresence, motion } from 'motion-v'
+import { useReducedMotion } from '../core/reduced-motion'
+import { computed } from 'vue'
+import { easeOut } from '../core/motion'
+
+export type DigitSwapDirection = 'up' | 'down'
+
+const props = defineProps<{
+  /** Numeric or masked value rendered in fixed character slots. */
+  value: string | number
+  /** Replays every glyph when the value itself contains unchanged characters. */
+  animationKey?: string | number
+  /** Direction the next glyph enters from. */
+  direction?: DigitSwapDirection
+  /** Per-glyph transition duration in seconds. */
+  duration?: number
+  /** Delay in seconds between neighbouring glyphs. */
+  stagger?: number
+  /** Number of final characters that receive `suffixClassName`. */
+  suffixLength?: number
+  className?: string
+  glyphClassName?: string
+  suffixClassName?: string
 }>()
+const { direction = 'up', duration = .18, stagger = .006, suffixLength = 0 } = props
+const reduceMotion = useReducedMotion() ?? computed(() => false)
+const reduce = computed(() => Boolean(reduceMotion.value))
+
+const text = computed(() => String(props.value))
+const suffixStart = computed(() => Math.max(0, text.value.length - Math.max(0, suffixLength)))
+
+const glyphs = computed(() =>
+  Array.from(text.value, (character, position) => ({ character, id: `glyph-${position}`, position })),
+)
+
+/**
+ * The slots clip with `clip-path`, which — unlike `overflow: hidden` — leaves
+ * the text baseline alone. An invisible in-flow copy of each character gives
+ * the slot its natural width (punctuation) or a fixed 1ch cell (digits).
+ */
+const enter = computed(() => ({
+  opacity: 0,
+  transform: reduce.value ? 'none' : `translateY(${direction === 'up' ? '45%' : '-45%'})`,
+}))
+const visible = { opacity: 1, transform: 'translateY(0%)' }
+const exit = computed(() => ({
+  opacity: 0,
+  transform: reduce.value ? 'none' : `translateY(${direction === 'up' ? '-45%' : '45%'})`,
+}))
+
+function glyphKey(glyph: { id: string; character: string }) {
+  return props.animationKey === undefined ? `${glyph.id}-${glyph.character}` : `${glyph.id}-${glyph.character}-${props.animationKey}`
+}
+function glyphTransition(glyph: { position: number }) {
+  return {
+    duration: reduce.value ? Math.min(duration, .12) : duration,
+    delay: reduce.value ? 0 : glyph.position * stagger,
+    ease: easeOut,
+  }
+}
 </script>
-<template><span class="be-digit" :aria-label="String(value)" :data-direction="direction" :style="{'--duration': `${duration}s`}"><span v-for="(char,index) in String(value)" :key="String(value).length-index" class="slot" aria-hidden="true" :style="{'--delay': `${index*stagger}s`}"><span class="reserve">{{ char }}</span><Transition name="digit"><span :key="index >= String(value).length-suffixLength ? 'suffix' : `${animationKey ?? ''}-${char}`" class="glyph">{{ char }}</span></Transition></span></span></template>
+
+<template>
+  <span class="be-digit-swap" :class="className" :data-direction="direction">
+    <span class="be-digit-swap-spoken">{{ text }}</span>
+    <span aria-hidden="true" class="be-digit-swap-row">
+      <template v-for="glyph in glyphs" :key="glyph.id">
+        <span v-if="glyph.character === ' '" class="be-digit-swap-space" />
+        <span
+          v-else
+          class="be-digit-swap-glyph"
+          :class="/\d/.test(glyph.character) && 'be-digit-swap-digit'"
+        >
+          <span class="be-digit-swap-reserve">{{ glyph.character }}</span>
+          <AnimatePresence :initial="false">
+            <motion.span
+              :key="glyphKey(glyph)"
+              class="be-digit-swap-glyph-text"
+              :class="[glyphClassName, glyph.position >= suffixStart ? suffixClassName : undefined]"
+              :initial="enter"
+              :animate="visible"
+              :exit="exit"
+              :transition="glyphTransition(glyph)"
+            >
+              {{ glyph.character }}
+            </motion.span>
+          </AnimatePresence>
+        </span>
+      </template>
+    </span>
+  </span>
+</template>
+
 <style scoped>
-.be-digit{display:inline-flex;font-variant-numeric:tabular-nums;--travel:45%}.be-digit[data-direction=down]{--travel:-45%}.slot{position:relative;display:inline-block;overflow:clip;white-space:pre}.reserve{visibility:hidden}.glyph{position:absolute;inset:0}.digit-enter-active,.digit-leave-active{transition:transform var(--duration) cubic-bezier(.16,1,.3,1) var(--delay),opacity var(--duration) var(--delay)}.digit-enter-from{transform:translateY(var(--travel));opacity:0}.digit-leave-to{transform:translateY(calc(-1 * var(--travel)));opacity:0}@media(prefers-reduced-motion:reduce){.digit-enter-active,.digit-leave-active{transition:none}}
+.be-digit-swap { display: inline-flex; align-items: baseline; white-space: nowrap; }
+.be-digit-swap-spoken { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.be-digit-swap-row { display: inline-flex; align-items: baseline; }
+.be-digit-swap-space { display: inline-block; width: .7ch; }
+.be-digit-swap-glyph { position: relative; display: inline-block; height: 1.1em; flex: none; line-height: 1.1em; clip-path: inset(0); }
+.be-digit-swap-digit { width: 1ch; text-align: center; }
+.be-digit-swap-reserve { visibility: hidden; }
+.be-digit-swap-glyph-text { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; line-height: 1; }
 </style>

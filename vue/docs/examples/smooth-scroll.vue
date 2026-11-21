@@ -1,12 +1,41 @@
-<script setup lang="ts">
-import { SmoothScroll, ScrollProgress, ScrollTo } from 'beui-vue'
+<script lang="ts">
+import { useSmoothScroll } from 'beui-vue'
+import { defineComponent, h } from 'vue'
+import { LucideIcon } from './layout-icons'
+
+/** The scroll-to-top control, built on `useSmoothScroll()` like the upstream preview. */
+const ScrollTopButton = defineComponent({
+  name: 'ScrollTopButton',
+  setup() {
+    const api = useSmoothScroll()
+    return () => h('button', { type: 'button', class: 'top', 'aria-label': 'Scroll to top', onClick: () => api?.scrollTo(0) }, [h(LucideIcon, { name: 'ArrowUp', size: 16 })])
+  },
+})
 </script>
+
+<script setup lang="ts">
+import { SmoothScroll } from 'beui-vue'
+
+// In production <SmoothScroll> wraps the page (root). Here it runs in contained
+// mode (root=false) so the box itself smooth-scrolls, and the button uses
+// useSmoothScroll() to glide back to the top.
+const SECTIONS = Array.from({ length: 16 }, (_, index) => index + 1)
+</script>
+
 <template>
-  <SmoothScroll class="reader" :root="false">
-    <div class="sticky"><ScrollProgress :fixed="false" :spring="false" /></div>
-    <section id="smooth-start"><small>01</small><h3>Smooth scroll</h3><ScrollTo to="#smooth-finish" :duration=".65">Jump to the last section ↓</ScrollTo></section>
-    <section><small>02</small><h3>In motion</h3></section>
-    <section id="smooth-finish"><small>03</small><h3>Last section</h3><ScrollTo to="#smooth-start" :duration=".65">Back to start ↑</ScrollTo></section>
+  <SmoothScroll :root="false" class="box">
+    <div class="sections">
+      <div v-for="n in SECTIONS" :key="n" class="section">Section {{ n }}</div>
+    </div>
+    <ScrollTopButton />
   </SmoothScroll>
 </template>
-<style scoped>.reader { width:100%; height:17rem; border:1px solid var(--beui-border); border-radius:1rem; } .sticky { position:sticky; top:0; z-index:2; } section { box-sizing:border-box; min-height:17rem; padding:2rem; display:flex; align-items:start; flex-direction:column; justify-content:center; border-bottom:1px solid var(--beui-border); } section:nth-of-type(2) { background:var(--beui-muted); } button { cursor:pointer; text-decoration:underline; } small { color:var(--beui-muted-foreground); }</style>
+
+<style scoped>
+.box { height: 16rem; width: 100%; max-width: 32rem; box-sizing: border-box; overflow-y: auto; border: 1px solid var(--beui-border); border-radius: 1rem; background: var(--beui-card); scrollbar-width: none; }
+.box::-webkit-scrollbar { display: none; }
+.sections { display: flex; flex-direction: column; gap: .75rem; padding: 1rem; }
+.section { border-radius: .5rem; background: color-mix(in srgb, var(--beui-muted) 60%, transparent); padding: 1rem .75rem; font-size: .875rem; line-height: 1.25rem; color: var(--beui-muted-foreground); }
+.box :deep(.top) { position: sticky; bottom: .75rem; left: calc(100% - 3rem); z-index: 10; display: grid; width: 2.25rem; height: 2.25rem; place-items: center; padding: 0; border: 1px solid var(--beui-border); border-radius: 9999px; background: color-mix(in srgb, var(--beui-background) 80%, transparent); color: var(--beui-foreground); backdrop-filter: blur(8px); cursor: pointer; transition: background-color .15s; }
+.box :deep(.top:hover) { background: var(--beui-background); }
+</style>

@@ -13,6 +13,10 @@ const variant = shallowRef<keyof typeof messages>('info')
 const open = shallowRef(true)
 const showButton = shallowRef<HTMLButtonElement | null>(null)
 const message = computed(() => messages[variant.value])
+// ButtonBase renders its own <button>; the alert needs that element to hand focus back to.
+function captureShow(instance: unknown) {
+  showButton.value = (instance as { $el?: HTMLButtonElement } | null)?.$el ?? null
+}
 function select(value: string) {
   variant.value = value as keyof typeof messages
   open.value = true
@@ -21,20 +25,19 @@ function select(value: string) {
 
 <template>
   <div class="alert-demo">
-    <Tabs :model-value="variant" :items="items" :labels="{ list: 'Alert variant' }" @update:model-value="select" />
+    <Tabs class="tabs" :model-value="variant" :items="items" :labels="{ list: 'Alert variant' }" @update:model-value="select" />
     <Alert v-model:open="open" :variant="variant" :return-focus-ref="showButton">
       <AlertIcon /><AlertContent>
         <AlertTitle>{{ message.title }}</AlertTitle><AlertDescription>{{ message.description }}</AlertDescription>
         <AlertAction v-if="variant === 'destructive'"><ButtonBase size="sm" variant="outline" @click="select('success')">Try again</ButtonBase></AlertAction>
       </AlertContent><AlertClose />
     </Alert>
-    <button ref="showButton" type="button" :disabled="open" @click="open = true">Show alert</button>
+    <ButtonBase :ref="captureShow" variant="ghost" size="sm" :disabled="open" @click="open = true">Show alert</ButtonBase>
   </div>
 </template>
 
 <style scoped>
 .alert-demo { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; width: 100%; max-width: 28rem; }
-.alert-demo > button { padding: .4rem .75rem; border-radius: 999px; font: inherit; font-size: .75rem; cursor: pointer; }
-.alert-demo > button:focus-visible { outline: 2px solid var(--beui-ring); }
-.alert-demo > button:disabled { opacity: .5; cursor: default; }
+.tabs { width: 100%; }
+.alert-demo :deep(.be-trigger) { padding: 6px 12px; font-size: .75rem; line-height: 1rem; }
 </style>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, shallowRef } from 'vue'
-import { LineChart, Tabs } from 'beui-vue'
+import { ButtonBase, LineChart, Tabs } from 'beui-vue'
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 const variant = shallowRef<'line' | 'area'>('area')
@@ -34,12 +34,12 @@ onBeforeUnmount(() => clearTimeout(timer))
 <template>
   <div class="chart-example">
     <div class="chart-heading">
-      <div><strong>Monthly revenue</strong><p>Demo data, in thousands of dollars</p></div>
+      <div><p class="title">Monthly revenue</p><p class="sub">Demo data, in thousands of dollars</p></div>
       <div class="chart-actions">
         <Tabs :items="[{ value: 'line', label: 'Line' }, { value: 'area', label: 'Area' }]" :model-value="variant" :labels="{ list: 'Chart style' }"
           @update:model-value="variant = $event === 'line' ? 'line' : 'area'" />
-        <button type="button" :disabled="loading" @click="regenerate">New data</button>
-        <button type="button" :disabled="loading" @click="reload">Reload</button>
+        <ButtonBase variant="ghost" size="sm" :disabled="loading" @click="regenerate">New data</ButtonBase>
+        <ButtonBase variant="ghost" size="sm" :disabled="loading" @click="reload">Reload</ButtonBase>
       </div>
     </div>
     <LineChart :series="series" :categories="months" :variant="variant" :status="loading ? 'loading' : 'ready'"
@@ -48,13 +48,12 @@ onBeforeUnmount(() => clearTimeout(timer))
 </template>
 
 <style scoped>
-.chart-example { width: 100%; max-width: 48rem; margin: auto; }
+.chart-example { width: 100%; max-width: 48rem; margin: auto; display: grid; gap: 20px; }
 .chart-heading, .chart-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
-.chart-heading { justify-content: space-between; gap: 12px; margin-bottom: 20px; }
-.chart-heading strong { font-size: 14px; }
-.chart-heading p { margin: 2px 0 0; font-size: 12px; line-height: 1.5; opacity: .7; }
+.chart-heading { justify-content: space-between; gap: 12px; }
+.chart-heading > div:first-child { display: grid; gap: 4px; }
+.chart-heading p { margin: 0; }
+.chart-heading .title { font-size: 14px; line-height: 20px; font-weight: 500; color: var(--beui-foreground); }
+.chart-heading .sub { font-size: 12px; line-height: 16px; color: var(--beui-muted-foreground); }
 .chart-actions { --beui-primary: var(--beui-background); --beui-primary-foreground: var(--beui-foreground); }
-.chart-actions button { border-radius: 18px; font: 500 12px/1.4 inherit; font-size: 12px; min-height: 28px; padding: 3px 9px; cursor: pointer; }
-.chart-actions button[aria-pressed='true'] { background: var(--vp-c-bg, Canvas); box-shadow: 0 1px 4px #0002; }
-.chart-actions button:disabled { opacity: .5; }
 </style>

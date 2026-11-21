@@ -59,10 +59,12 @@ test('an open book follows keyboard browsing and closes with Escape', async ({ p
 test('local scrolling provider scrolls the reader when reduced motion is enabled', async ({ page }) => {
   await page.emulateMedia({ reducedMotion:'reduce' })
   await openDemo(page,'smooth-scroll')
-  await page.getByRole('button',{ name:'Jump to the last section' }).click()
-  await expect.poll(() => page.locator('.reader').evaluate(element => element.scrollTop)).toBeGreaterThan(300)
-  await page.getByRole('button',{ name:'Back to start' }).click()
-  await expect.poll(() => page.locator('.reader').evaluate(element => element.scrollTop)).toBe(0)
+  // The demo is a contained scroll box whose only control is the useSmoothScroll() "Scroll to top" button.
+  const box = page.locator('.beui-demo .box')
+  await box.evaluate(element => { element.scrollTop = element.scrollHeight })
+  await expect.poll(() => box.evaluate(element => element.scrollTop)).toBeGreaterThan(300)
+  await page.getByRole('button',{ name:'Scroll to top' }).click()
+  await expect.poll(() => box.evaluate(element => element.scrollTop)).toBe(0)
 })
 
 test('horizontal swiping moves the lightbox on a touch screen', async ({ page, isMobile }) => {

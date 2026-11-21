@@ -1,18 +1,116 @@
-<script setup lang="ts">
-import { nextTick, useTemplateRef, watch } from 'vue'
-import DialogSurface from './DialogSurface.vue'
-
-const view = defineModel<string | null>('viewId', { default: null })
-const { label = 'Options' } = defineProps<{ label?: string }>()
-const body = useTemplateRef('body')
-watch(view, async (next, previous) => {
-  if (!next || !previous || !body.value) return
-  const before = body.value.offsetHeight
-  await nextTick()
-  if (!body.value || matchMedia('(prefers-reduced-motion: reduce)').matches) return
-  body.value.animate([{ height: `${before}px`, opacity: .65 }, { height: `${body.value.offsetHeight}px`, opacity: 1 }], { duration: 260, easing: 'cubic-bezier(.16,1,.3,1)' })
-  body.value.focus({ preventScroll: true })
-})
+<script lang="ts">
+/** English defaults. Override per instance with `labels`. */
+export const morphingModalMessages = { close: 'Close modal' }
+export type MorphingModalMessages = typeof morphingModalMessages
 </script>
-<template><DialogSurface :open="view !== null" :label="label" @close="view = null"><div ref="body" class="body" tabindex="-1"><slot :view="view" :close="() => view = null" /></div></DialogSurface></template>
-<style scoped>.body { overflow: hidden; outline: none; }</style>
+
+<script setup lang="ts">
+import { AnimatePresence, motion } from 'motion-v'
+import { useReducedMotion } from '../core/reduced-motion'
+import { computed, nextTick, onMounted, shallowRef, useId, useTemplateRef, watch } from 'vue'
+import { easeOut, panelSpring } from '../core/motion'
+import MorphingModalView from './MorphingModalView.vue'
+import PresenceGate from './PresenceGate.vue'
+import { elementOf, focusablesIn, useBodyLock, useFocusTrap } from './overlay-kit'
+
+defineOptions({ inheritAttrs: false })
+const props = withDefaults(defineProps<{
+  /** "bottom" anchors to the viewport bottom (mobile-like). "center" centers vertically. */
+  placement?: 'bottom' | 'center'
+  /** Accessible name for the dialog. Without it, the dialog is named by the first heading in the current view. */
+  label?: string
+  labels?: Partial<MorphingModalMessages>
+}>(), { placement: 'bottom' })
+/** Which view is currently shown. `null` closes the modal. */
+const viewId = defineModel<string | null>('viewId', { default: null })
+const emit = defineEmits<{ close: [] }>()
+const t = computed(() => ({ ...morphingModalMessages, ...props.labels }))
+const open = computed(() => viewId.value !== null)
+const reduce = useReducedMotion()
+const panel = useTemplateRef<unknown>('panel')
+const uid = useId()
+const headingId = shallowRef<string>()
+// The last real view: while the modal fades out the view id is already null,
+// but the leaving panel keeps showing the view it had.
+const shown = shallowRef(viewId.value ?? '')
+watch(viewId, next => { if (next !== null) shown.value = next })
+
+function close() {
+  viewId.value = null
+  emit('close')
+}
+// Focus moves into the panel on open, Tab stays inside it, Escape closes, and
+// focus returns to the opener on close.
+useFocusTrap(() => open.value, () => elementOf(panel.value), { onEscape: close })
+useBodyLock(() => open.value)
+
+// The current view, not the one still fading out under it.
+function currentView() {
+  const views = Array.from(elementOf(panel.value)?.querySelectorAll<HTMLElement>('[data-view]') ?? [])
+  return views.find(element => element.dataset.view === viewId.value)
+}
+// Name the dialog by the current view's first heading unless a label is set.
+async function nameDialog() {
+  await nextTick()
+  if (!viewId.value || props.label) return
+  const heading = currentView()?.querySelector<HTMLElement>('h1, h2, h3, h4, h5, h6')
+  if (heading && !heading.id) heading.id = `${uid}-${viewId.value}-title`
+  headingId.value = heading?.id
+}
+// The focused control leaves with the old view, so a view change hands focus to
+// the first control of the new one.
+watch(viewId, async (next, previous) => {
+  void nameDialog()
+  if (!next || !previous || previous === next) return
+  await nextTick()
+  const element = elementOf(panel.value)
+  const active = document.activeElement
+  if (!element || (active && active !== document.body && !element.contains(active))) return
+  ;(focusablesIn(currentView() ?? null)[0] ?? element).focus({ preventScroll: true })
+}, { flush: 'post' })
+watch(() => open.value, isOpen => { if (isOpen) void nameDialog() }, { flush: 'post' })
+onMounted(() => { if (open.value) void nameDialog() })
+
+const enterY = computed(() => (reduce.value ? 0 : props.placement === 'bottom' ? 40 : 20))
+const enterScale = computed(() => (reduce.value ? 1 : 0.97))
+</script>
+
+<template>
+  <!-- Mounted only while open, and while open the chrome is two fixed siblings:
+       the backdrop carries the scrim colour, and the layer that positions the
+       panel sits inset off every edge. Both hang off `PresenceGate`. -->
+  <AnimatePresence :initial="false">
+    <PresenceGate v-if="open" key="backdrop" v-slot="{ gate }">
+      <motion.button type="button" class="be-mm-backdrop" :aria-label="t.close" tabindex="-1"
+        :initial="{ opacity: 0 }" :animate="{ opacity: 1 }" :exit="{ opacity: 0 }" :transition="{ duration: 0.2, ease: easeOut }"
+        :inert="gate.inert" :style="gate.style" @click="close" />
+    </PresenceGate>
+    <PresenceGate v-if="open" key="panel-layer" v-slot="{ isPresent }">
+      <!-- The layer itself never takes pointer events, so it carries `inert` alone. -->
+      <div class="be-mm-layer" :class="placement === 'bottom' ? 'be-mm-bottom' : 'be-mm-center'" :inert="!isPresent">
+        <motion.div ref="panel" class="be-mm-panel" :class="$attrs.class" role="dialog" aria-modal="true" :aria-label="label"
+          :aria-labelledby="label ? undefined : headingId" tabindex="-1" layout
+          :initial="{ opacity: 0, y: enterY, scale: enterScale }" :animate="{ opacity: 1, y: 0, scale: 1 }"
+          :exit="{ opacity: 0, y: enterY, scale: reduce ? 1 : 0.98, transition: { duration: 0.18, ease: easeOut } }"
+          :transition="panelSpring" :inert="!isPresent" :style="{ pointerEvents: isPresent ? 'auto' : 'none' }">
+          <motion.div layout="position" class="be-mm-body" :transition="panelSpring">
+            <AnimatePresence mode="popLayout" :initial="false">
+              <MorphingModalView :key="shown" :view="shown">
+                <template #default="{ view }"><slot :view="view" :close="close" /></template>
+              </MorphingModalView>
+            </AnimatePresence>
+          </motion.div>
+        </motion.div>
+      </div>
+    </PresenceGate>
+  </AnimatePresence>
+</template>
+
+<style scoped>
+.be-mm-backdrop { pointer-events: auto; position: fixed; inset: 0; z-index: 80; padding: 0; border: 0; background: color-mix(in srgb, var(--beui-background) 5%, transparent); -webkit-backdrop-filter: blur(14px) saturate(140%); backdrop-filter: blur(14px) saturate(140%); cursor: default; }
+.be-mm-layer { pointer-events: none; position: fixed; inset: 1rem; z-index: 80; display: flex; justify-content: center; }
+.be-mm-bottom { align-items: flex-end; padding-bottom: 1rem; }
+.be-mm-center { align-items: center; }
+.be-mm-panel { pointer-events: auto; position: relative; box-sizing: border-box; width: 100%; max-width: 24rem; overflow: hidden; border: 1px solid var(--beui-border); border-radius: 1.5rem; background: var(--beui-background); color: var(--beui-foreground); box-shadow: 0 25px 50px -12px rgb(0 0 0 / .25); outline: none; will-change: transform; }
+.be-mm-body { padding: 1.25rem; }
+</style>

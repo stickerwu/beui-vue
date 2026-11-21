@@ -1,0 +1,50 @@
+/* Shared by the casino games (GameHistory, GameEyebrow, SoundToggle and the stages). Unscoped, gp- prefixed.
+   Mirrors the Tailwind classes of components/motion/casino/game-parts.tsx. */
+
+/* Primary for small text: a shade darker on light surfaces and lighter on dark ones, so 10-12px labels keep 4.5:1. */
+.gp-primary-text { color: color-mix(in oklab, var(--beui-primary) 75%, black); }
+:is(.dark, [data-beui-theme='dark']) .gp-primary-text { color: color-mix(in oklab, var(--beui-primary) 80%, white); }
+
+/* Readout colour per heat: neutral, then primary, then amber. */
+.gp-heat-text[data-heat='cool'] { color: var(--beui-foreground); }
+.gp-heat-text[data-heat='warm'] { color: var(--beui-primary); }
+.gp-heat-text[data-heat='hot'] { color: #b45309; }
+:is(.dark, [data-beui-theme='dark']) .gp-heat-text[data-heat='hot'] { color: #fbbf24; }
+
+/* History pills. */
+.gp-pill, .gp-history .gp-pill { flex: none; border-radius: 999px; padding: 2px 8px; font-size: 12px; line-height: 16px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.gp-pill[data-tier='cool'] { background: color-mix(in srgb, var(--beui-foreground) 5%, transparent); color: var(--beui-muted-foreground); }
+.gp-pill[data-tier='warm'] { background: color-mix(in srgb, var(--beui-primary) 10%, transparent); color: color-mix(in oklab, var(--beui-primary) 75%, black); }
+.gp-pill[data-tier='hot'] { background: rgb(245 158 11 / 15%); color: #b45309; }
+.gp-pill[data-tier='jackpot'] { background: rgb(217 70 239 / 15%); color: #a21caf; }
+:is(.dark, [data-beui-theme='dark']) .gp-pill[data-tier='warm'] { color: color-mix(in oklab, var(--beui-primary) 80%, white); }
+:is(.dark, [data-beui-theme='dark']) .gp-pill[data-tier='hot'] { color: #fbbf24; }
+:is(.dark, [data-beui-theme='dark']) .gp-pill[data-tier='jackpot'] { color: #e879f9; }
+
+.gp-history { display: flex; align-items: center; gap: 6px; margin: 0; padding: 0; list-style: none; overflow: hidden; -webkit-mask-image: linear-gradient(to right, black 85%, transparent); mask-image: linear-gradient(to right, black 85%, transparent); }
+.gp-history .gp-history-empty { font-size: 12px; line-height: 16px; color: var(--beui-muted-foreground); white-space: nowrap; }
+
+/* The small state label over a readout. */
+.gp-eyebrow.gp-eyebrow { display: flex; align-items: center; gap: 6px; height: 16px; min-width: 0; max-width: 100%; margin: 0; font-size: 11px; line-height: 16px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--beui-muted-foreground); transition: color .15s; }
+.gp-eyebrow[data-state='won'] { color: color-mix(in oklab, var(--beui-primary) 75%, black); }
+.gp-eyebrow[data-state='lost'] { color: #be123c; }
+:is(.dark, [data-beui-theme='dark']) .gp-eyebrow[data-state='won'] { color: color-mix(in oklab, var(--beui-primary) 80%, white); }
+:is(.dark, [data-beui-theme='dark']) .gp-eyebrow[data-state='lost'] { color: #fb7185; }
+.gp-eyebrow-icon { display: grid; place-items: center; flex: none; width: 14px; height: 14px; }
+.gp-eyebrow-dot { width: 6px; height: 6px; border-radius: 999px; background: var(--beui-primary); }
+.gp-eyebrow-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* The sound toggle: a quiet 32px icon button in a game card's header. */
+.gp-sound { display: inline-flex; flex: none; }
+.gp-sound .tip-anchor button.tip-trigger { display: grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 12px; background: transparent; color: var(--beui-muted-foreground); transition: background-color .15s, color .15s; }
+.gp-sound[data-on="true"] .tip-anchor button.tip-trigger { color: var(--beui-foreground); }
+.gp-sound .tip-anchor button.tip-trigger:hover { background: var(--beui-muted); color: var(--beui-foreground); }
+.gp-sound-icon { position: relative; display: inline-grid; place-items: center; width: 16px; height: 16px; overflow: hidden; }
+.gp-sound-icon > span { grid-area: 1 / 1; display: inline-flex; align-items: center; justify-content: center; }
+
+/* Secondary 40px round icon toggle (Mines, Plinko): GameToggleButton.vue. */
+.gp-toggle { display: inline-flex; flex: none; }
+.gp-toggle .tip-anchor button.tip-trigger { display: grid; place-items: center; box-sizing: border-box; width: 40px; height: 40px; padding: 0; border: 1px solid var(--beui-border); border-radius: 999px; background: var(--beui-card); color: var(--beui-muted-foreground); transition: background-color .15s, color .15s, transform .1s; }
+.gp-toggle[data-on="true"] .tip-anchor button.tip-trigger { color: var(--beui-foreground); }
+.gp-toggle .tip-anchor button.tip-trigger:active { transform: scale(.96); }
+.gp-toggle .tip-anchor button.tip-trigger:focus-visible { outline: 2px solid var(--beui-ring); outline-offset: 3px; }

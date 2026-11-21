@@ -1,14 +1,131 @@
-<script setup lang="ts">
-import { computed,onMounted,onBeforeUnmount,ref } from 'vue'
-const {value,pad=1,decimals=0,duration=.9,stagger=.04,startOnView=true,prefix='',suffix='',locale=false,format,blur=false,digitClassName} = defineProps<{
- value:number;pad?:number;decimals?:number;duration?:number;stagger?:number;startOnView?:boolean;prefix?:string;suffix?:string;locale?:boolean|string;format?:(value:number)=>string;blur?:boolean;digitClassName?:string
-}>()
-const text = computed(()=>format?.(value) ?? new Intl.NumberFormat(typeof locale==='string'?locale:'en-US',{useGrouping:!!locale,minimumIntegerDigits:Math.min(21,Math.max(1,pad)),minimumFractionDigits:decimals,maximumFractionDigits:decimals}).format(value))
-const host=ref<HTMLElement>(), armed=ref(true), entered=ref(false)
-let observer:IntersectionObserver|undefined, timer:ReturnType<typeof setTimeout>|undefined
-function enter(){armed.value=true;observer?.disconnect();timer=setTimeout(()=>entered.value=true,1000*(duration+text.value.length*stagger))}
-onMounted(()=>{if(!startOnView||matchMedia('(prefers-reduced-motion:reduce)').matches||!host.value||!('IntersectionObserver' in window)){enter();return} armed.value=false;observer=new IntersectionObserver(entries=>{if(entries.some(entry=>entry.isIntersecting))enter()});observer.observe(host.value)})
-onBeforeUnmount(()=>{observer?.disconnect();clearTimeout(timer)})
+<script lang="ts">
+/**
+ * English defaults for `NumberTicker`. The visible text is the formatted
+ * number; the const exists so callers can supply a spoken form per locale.
+ */
+export const numberTickerMessages = {
+  value: '{value}',
+}
+
+export type NumberTickerMessages = typeof numberTickerMessages
 </script>
-<template><span ref="host" class="be-ticker"><span class="spoken">{{ prefix }}{{ text }}{{ suffix }}</span><span aria-hidden="true">{{ prefix }}<template v-for="(char,index) in text" :key="text.length-index"><span v-if="/\d/.test(char)" class="digit" :class="digitClassName"><span class="reserve">{{ char }}</span><span class="column" :style="{transform:`translateY(-${armed ? Number(char)*1.1 : 0}em)`,transitionDuration:`${duration}s`,transitionDelay:`${entered?0:index*stagger}s`}"><span v-for="digit in 10" :key="digit" :class="{soft:blur && armed && digit-1 !== Number(char)}">{{ digit-1 }}</span></span></span><template v-else>{{ char }}</template></template>{{ suffix }}</span></span></template>
-<style scoped>.be-ticker{font-variant-numeric:tabular-nums}.spoken{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}.digit{display:inline-block;position:relative;clip-path:inset(0);width:1ch;height:1.1em;line-height:1.1;text-align:center}.reserve{visibility:hidden}.column{position:absolute;inset:0 0 auto;display:grid;transition:transform .9s cubic-bezier(.16,1,.3,1)}.column>span{height:1.1em}.soft{filter:blur(.06em)}@media(prefers-reduced-motion:reduce){.column{transition:none!important}}</style>
+
+<script setup lang="ts">
+import { useInView } from 'motion-v'
+import { computed, onBeforeUnmount, shallowRef, useTemplateRef, watch } from 'vue'
+import TickColumn from './TickColumn.vue'
+
+/** Height of one digit cell, in `em`. The rolling column repeats this ten times. */
+const DIGIT_HEIGHT_EM = 1.1
+
+const props = defineProps<{
+  value: number
+  /** Digits to pad to (left). */
+  pad?: number
+  /** Fraction digits to keep. The value is rounded before `format` runs. */
+  decimals?: number
+  /** Per-digit roll duration in seconds. */
+  duration?: number
+  /** Stagger between digits. */
+  stagger?: number
+  /** Render only after the element enters the viewport. */
+  startOnView?: boolean
+  prefix?: string
+  suffix?: string
+  /** Add a small blur during digit rolls. */
+  blur?: boolean
+  className?: string
+  digitClassName?: string
+  /** Locale group separators. `true` uses the runtime locale; a tag pins it. */
+  locale?: boolean | string
+  /** Custom formatter. */
+  format?: (value: number) => string
+}>()
+const { decimals = 0, duration = 0.9, stagger = 0.04, startOnView = true, blur = false } = props
+
+const root = useTemplateRef<HTMLElement>('root')
+const inView = useInView(root, { once: true, amount: 0.6 })
+const armed = shallowRef(!startOnView)
+const entered = shallowRef(false)
+let enteredTimer: ReturnType<typeof setTimeout> | undefined
+
+const text = computed(() => {
+  const places = Math.max(0, Math.floor(decimals))
+  const factor = 10 ** places
+  // Round before formatting so `format` sees the same number the slots render.
+  const rounded = Math.round(props.value * factor) / factor
+  const formatted = props.format
+    ? props.format(rounded)
+    : props.locale
+      ? rounded.toLocaleString(typeof props.locale === 'string' ? props.locale : undefined, {
+          minimumFractionDigits: places,
+          maximumFractionDigits: places,
+        })
+      : rounded.toFixed(places)
+  return props.pad ? formatted.padStart(props.pad, '0') : formatted
+})
+
+// Key by place value (position from the right): a changing digit keeps its
+// identity and rolls to the new value instead of remounting and replaying from
+// 0. Growing numbers add glyphs on the left without re-keying the ones, tens
+// and hundreds already on screen.
+const glyphs = computed(() => {
+  const chars = text.value.split('')
+  return chars.map((char, index) => ({ char, id: `g-${chars.length - 1 - index}` }))
+})
+
+const readableText = computed(() => `${props.prefix ?? ''}${text.value}${props.suffix ?? ''}`)
+
+watch(
+  armed,
+  value => {
+    // Stagger is an entrance flourish. Once the reveal has played, value
+    // changes roll every digit immediately — a per-digit delay on live updates
+    // reads as lag.
+    if (!value || entered.value) return
+    clearTimeout(enteredTimer)
+    enteredTimer = setTimeout(() => (entered.value = true), (duration + glyphs.value.length * stagger) * 1000)
+  },
+  { immediate: true },
+)
+
+watch(inView, value => {
+  if (startOnView && value) armed.value = true
+})
+
+onBeforeUnmount(() => clearTimeout(enteredTimer))
+</script>
+
+<template>
+  <span ref="root" class="be-ticker" :class="className">
+    <span class="be-ticker-spoken">{{ readableText }}</span>
+    <span aria-hidden="true" class="be-ticker-row">
+      <span v-if="prefix">{{ prefix }}</span>
+      <template v-for="(glyph, index) in glyphs" :key="glyph.id">
+        <span v-if="!/\d/.test(glyph.char)" class="be-ticker-char">{{ glyph.char }}</span>
+        <span
+          v-else
+          class="be-ticker-digit"
+          :class="digitClassName"
+          :style="{ height: `${DIGIT_HEIGHT_EM}em`, lineHeight: `${DIGIT_HEIGHT_EM}em`, width: '1ch' }"
+        >
+          <!-- The invisible in-flow digit gives the slot a real text baseline,
+               so it lines up with surrounding text; clip-path clips the rolling
+               column without moving that baseline the way overflow would. -->
+          <span class="be-ticker-slot-text">{{ armed ? glyph.char : 0 }}</span>
+          <TickColumn :digit="armed ? Number(glyph.char) : 0" :delay="entered ? 0 : index * stagger" :duration="duration" :blur="blur" />
+        </span>
+      </template>
+      <span v-if="suffix">{{ suffix }}</span>
+    </span>
+  </span>
+</template>
+
+<style scoped>
+.be-ticker { display: inline-flex; align-items: baseline; font-variant-numeric: tabular-nums; }
+.be-ticker-spoken { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.be-ticker-row { display: inline-flex; align-items: baseline; }
+.be-ticker-char { display: inline-block; }
+.be-ticker-digit { position: relative; display: inline-block; flex: none; text-align: center; clip-path: inset(0); }
+.be-ticker-slot-text { visibility: hidden; }
+</style>

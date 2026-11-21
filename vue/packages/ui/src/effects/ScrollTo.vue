@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { animate, useReducedMotion } from 'motion-v'
+import { animate } from 'motion-v'
+import { useReducedMotion } from '../core/reduced-motion'
 import { onBeforeUnmount } from 'vue'
 import { useSmoothScroll } from '../layout/scroll-context'
 

@@ -1,0 +1,23 @@
+/* Tailwind palette stops the agent components use, switched for dark mode. Scoped by the `be-ag` root class. */
+.be-ag {
+  --ag-blue: oklch(54.6% 0.245 262.881);
+  --ag-blue-500: oklch(62.3% 0.214 259.815);
+  --ag-green: oklch(59.6% 0.145 163.225);
+  --ag-green-500: oklch(69.6% 0.17 162.48);
+  --ag-rose: oklch(58.6% 0.253 17.585);
+  --ag-rose-500: oklch(64.5% 0.246 16.439);
+  --ag-amber: oklch(66.6% 0.179 58.318);
+  --ag-amber-500: oklch(76.9% 0.188 70.08);
+}
+:is(.dark, [data-beui-theme="dark"]) .be-ag {
+  --ag-blue: oklch(70.7% 0.165 254.624);
+  --ag-green: oklch(76.5% 0.177 163.223);
+  --ag-rose: oklch(71.2% 0.194 13.428);
+  --ag-amber: oklch(82.8% 0.189 84.429);
+}
+@keyframes be-ag-spin { to { transform: rotate(360deg); } }
+.be-ag-spin { animation: be-ag-spin 1s linear infinite; }
+@media (prefers-reduced-motion: reduce) { .be-ag-spin { animation: none; } }
+.be-ag-hide-scroll { scrollbar-width: none; }
+.be-ag-hide-scroll::-webkit-scrollbar { display: none; }
+.be-ag-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }

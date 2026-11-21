@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { motion, useReducedMotion } from 'motion-v'
+import { motion } from 'motion-v'
+import { useReducedMotion } from '../core/reduced-motion'
 import { computed, provide } from 'vue'
 import { aspectKey, layoutSpring } from './state'
 

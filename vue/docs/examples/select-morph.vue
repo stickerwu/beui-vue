@@ -4,5 +4,5 @@ import { ref } from 'vue'
 const framework = ref('next')
 const options = [{ value: 'next', label: 'Next.js' }, { value: 'remix', label: 'Remix' }, { value: 'astro', label: 'Astro' }, { value: 'vite', label: 'Vite' }]
 </script>
-<template><SelectMorph v-model="framework" class="framework" :options="options" label="Pick a framework" /></template>
-<style scoped>.framework { max-width: 14rem; }</style>
+<template><div class="framework"><SelectMorph v-model="framework" :options="options" placeholder="Pick a framework" /></div></template>
+<style scoped>.framework { width: 14rem; }</style>

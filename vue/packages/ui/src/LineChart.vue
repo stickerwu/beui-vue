@@ -41,6 +41,5 @@ const { data, loading, label, valueText, messages } = provideLineChart(props, id
 
 <style scoped>
 .line-chart { position: relative; min-width: 0; width: 100%; display: flow-root; }
-.line-chart:not([aria-busy]) { padding-block-end: 12px; }
 .data-equivalent { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 </style>

@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import { motion, useReducedMotion } from 'motion-v'
+import { motion } from 'motion-v'
+import { useReducedMotion } from './core/reduced-motion'
 import { shallowRef } from 'vue'
 import { easeOut, pressSpring } from './core/motion'
+import { useMountedMedia } from './core/mounted-media'
 
-const { variant = 'primary', size = 'md', pressScale = 0.93, ripple = false, disabled = false, type = 'button', href } = defineProps<{
+const { variant = 'primary', size = 'md', pressScale = 0.93, ripple = false, disabled = false, type = 'button', href, hover = true } = defineProps<{
   variant?: 'primary' | 'secondary' | 'ghost' | 'outline'
   size?: 'sm' | 'md' | 'lg' | 'icon'
   pressScale?: number
+  /** Set false to drop the hover lift (stateful buttons keep only the press). */
+  hover?: boolean
   ripple?: boolean
   disabled?: boolean
   type?: 'button' | 'submit' | 'reset'
@@ -14,6 +18,8 @@ const { variant = 'primary', size = 'md', pressScale = 0.93, ripple = false, dis
 }>()
 const emit = defineEmits<{ click: [event: MouseEvent] }>()
 const reduce = useReducedMotion()
+// Hover lift is gated on a true hover device: touch fires a sticky phantom :hover on tap.
+const canHover = useMountedMedia('(hover: hover) and (pointer: fine)')
 const ripples = shallowRef<{ id: number; size: number; left: number; top: number }[]>([])
 let seed = 0
 
@@ -34,7 +40,7 @@ function activate(event: MouseEvent) {
   <component :is="href !== undefined ? motion.a : motion.button" class="be-button" :data-variant="variant" :data-size="size"
     :type="href === undefined ? type : undefined" :href="disabled ? undefined : href" :disabled="href === undefined ? disabled : undefined"
     :role="href !== undefined && disabled ? 'link' : undefined" :aria-disabled="href !== undefined && disabled || undefined"
-    :while-press="!reduce && !disabled ? { scale: pressScale } : undefined" :while-hover="!reduce && !disabled ? { scale: 1.02 } : undefined"
+    :while-press="!reduce && !disabled ? { scale: pressScale } : undefined" :while-hover="!reduce && hover && canHover && !disabled ? { scale: 1.02 } : undefined"
     :transition="pressSpring" @pointerdown="press" @click="activate">
     <span v-if="ripple" class="be-ripple-mask" aria-hidden="true">
       <motion.span v-for="drop in ripples" :key="drop.id" class="be-ripple"
@@ -55,8 +61,7 @@ function activate(event: MouseEvent) {
 .be-button[data-size=sm] { height: 2rem; padding: 0 .75rem; font-size: .75rem; gap: .375rem; }
 .be-button[data-size=lg] { height: 3rem; padding: 0 1.5rem; font-size: 1rem; }
 .be-button[data-size=icon] { height: 2rem; width: 2rem; padding: 0; border-radius: .5rem; }
-.be-button:focus-visible { outline: 2px solid var(--beui-ring); outline-offset: 3px; }
-.be-button:disabled, .be-button[aria-disabled=true] { opacity: .5; cursor: default; }
+.be-button:disabled, .be-button[aria-disabled=true] { opacity: .5; cursor: default; pointer-events: none; }
 .be-ripple-mask { position: absolute; inset: 0; pointer-events: none; overflow: hidden; border-radius: inherit; }
 .be-ripple { position: absolute; border-radius: 50%; background: currentColor; }
 @media (hover: hover) { .be-button[data-variant=primary]:hover { background: color-mix(in srgb, var(--beui-primary) 90%, transparent); } .be-button:is([data-variant=ghost], [data-variant=outline]):hover { color: var(--beui-foreground); background: color-mix(in srgb, var(--beui-muted) 60%, transparent); } }

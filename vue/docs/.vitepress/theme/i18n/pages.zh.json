@@ -1,0 +1,490 @@
+{
+  "bookshelf": {
+    "title": "Bookshelf",
+    "description": "用于展示书脊的书架。点击其中一本，它会滑出并以 3D 方式翻转露出封面，其余书脊自动让位；方向键可浏览，Esc 将其归位，开启减少动态效果时以淡出代替翻转。"
+  },
+  "dropdown-menu": {
+    "title": "Dropdown Menu",
+    "description": "可组合的下拉菜单，由触发器打开，带滑动高亮、沿对角线路径保持展开的子菜单、复选框与单选菜单项、快捷键以及完整的键盘支持。"
+  },
+  "before-after-slider": {
+    "title": "Before After Slider",
+    "description": "通过可拖动的分割线对比两张图片。可在画面任意位置拖拽或点击，支持方向键操作，触摸设备上仍保留页面的纵向滚动。"
+  },
+  "timeline": {
+    "title": "Timeline",
+    "description": "可拖拽的时间轴，围绕一个聚焦卡片展示按日期排列的事件。"
+  },
+  "alert": {
+    "title": "Animated Alert",
+    "description": "可组合的提示信息，带平滑的过渡效果。"
+  },
+  "collapsible": {
+    "title": "Animated Collapsible",
+    "description": "可展开的内容区域，展现过程平滑自然。"
+  },
+  "aspect-ratio": {
+    "title": "Aspect Ratio",
+    "description": "响应式媒体容器，宽高比切换带有平滑过渡。"
+  },
+  "arc-picker": {
+    "title": "Arc Picker",
+    "description": "环形文字选择器，支持顶部、底部、左侧或右侧弧线，滚轮移动顺滑，每次滚动都会实时选中对应项，一个始终存在的括号框会随每个标签放大或收缩。支持拖拽惯性、键盘输入、禁用选项、受控与非受控值、表单以及减少动态效果。"
+  },
+  "sortable-stack": {
+    "title": "Sortable List",
+    "description": "可组合的可排序列表，包含分组、条目、拖拽手柄、内容与撤销等部分，并提供一个共享状态的组合式函数。基于弹簧动画的布局、键盘重新排序、可供辅助技术读取的位置播报，以及受控或非受控的条目。"
+  },
+  "image-viewer": {
+    "title": "Image Viewer",
+    "description": "可组合的 Vue 图片查看器，适用于图库和附件预览，提供带动画的灯箱变体、自定义缩略图与控件、滑动与键盘导航、缩放与平移、无障碍焦点管理，以及受控或非受控的选中状态。"
+  },
+  "date-range-picker": {
+    "title": "Date Range Picker",
+    "description": "可组合的日期范围选择器，包含根节点、触发器、弹出层内容、日历、头部、网格、摘要、底部、清除与预设等部分，并提供一个共享状态的组合式函数。支持紧凑的内联与下拉两种组合方式、直接选择月份和年份，以及完整的键盘导航。"
+  },
+  "card": {
+    "title": "Card",
+    "description": "可组合的卡片，包含头部、标题、描述、操作、内容与底部等部分。支持描边或柔和底色、标准或紧凑间距，以及需主动开启的可选中状态（按下时有反馈），并可与 Checkbox、Radio 和 Button 组合使用。"
+  },
+  "color-picker": {
+    "title": "Color Picker",
+    "description": "可组合的颜色选择器，触发色块会变形为饱和度与亮度区域，拖动时每个滑块会浮起放大镜。包含色相与不透明度滑块、hex、RGB 和 HSL 输入框、吸管、预设色板、完整的键盘操作，以及受控或非受控的值。"
+  },
+  "color-selector": {
+    "title": "Animated Color Selector",
+    "description": "可组合的颜色色块，选中圆环以弹簧动画滑动，带按下反馈，沿用原生单选框的键盘导航，并支持受控或非受控状态。"
+  },
+  "pagination": {
+    "title": "Animated Pagination",
+    "description": "用于页码导航，当前页以胶囊高亮滑动，页码随可视窗口移动而滑动，省略号可一次跳转多页。"
+  },
+  "avatar-group": {
+    "title": "Animated Avatar Group",
+    "description": "相互叠放的群组头像，悬停时呈扇形展开，抬升并显示姓名 Tooltip，点击 +N 计数可展开显示全部成员。"
+  },
+  "breadcrumb": {
+    "title": "Animated Breadcrumb",
+    "description": "可组合的面包屑导航，路径切换柔和，过长的路径会折叠为可悬停的下拉菜单，支持自定义分隔符，并兼容路由链接。"
+  },
+  "tilt-card": {
+    "title": "Tilt Card",
+    "description": "悬停时产生 3D 透视倾斜，并根据光标位置移动高光。"
+  },
+  "button": {
+    "title": "Button",
+    "description": "带弹簧按压反馈的 Button，以及 StatefulButton、MagneticButton 和 MetallicButton 三种变体。"
+  },
+  "expanding-arrow-button": {
+    "title": "Animated CTA Buttons",
+    "description": "表现力强的 CTA 按钮，提供展开、长按和滑动三种交互。"
+  },
+  "expandable-control": {
+    "title": "Expandable Control",
+    "description": "点击展开的按钮与标签控件，借助共享布局的弹簧动画连续地展现文字标签或尾部操作。"
+  },
+  "adaptive-stepper": {
+    "title": "Adaptive Stepper",
+    "description": "可组合的数字步进器，外框尺寸固定，在最小值与最大值处自适应收窄，数值在步进之间以滚动方式切换。"
+  },
+  "marquee": {
+    "title": "Marquee",
+    "description": "无限横向或纵向滚动，悬停时暂停。"
+  },
+  "tabs": {
+    "title": "Tabs",
+    "description": "胶囊、分段或下划线三种样式的标签页，指示器通过 layoutId 共享布局并带弹簧动画，支持可选图标。"
+  },
+  "switch": {
+    "title": "Switch",
+    "description": "开关组件，滑块由弹簧动画驱动，带按压反馈。"
+  },
+  "input": {
+    "title": "Input",
+    "description": "文本输入框，支持标签、左右图标、可选的固定错误提示行，错误时抖动、成功时描绘对勾。"
+  },
+  "select": {
+    "title": "Select",
+    "description": "可组合的选择器基础组件，面板在同一段弹簧动画中从触发器展开，随后收拢为独立的胶囊形；另有 Morph 变体，触发器通过共享布局直接长成面板。"
+  },
+  "combobox": {
+    "title": "Combobox",
+    "description": "可搜索的组合框，带变形动画的浮层，支持分组过滤、键盘导航，以及受控或非受控状态。"
+  },
+  "multi-select": {
+    "title": "Multi Select",
+    "description": "可组合的多选基础组件，选项可搜索，已选标签可移除并有动画，面板会变形并自动避让边界。"
+  },
+  "checkbox": {
+    "title": "Checkbox",
+    "description": "表单选择控件，对勾以描线方式绘制，带弹簧按压反馈，并支持半选状态。"
+  },
+  "radio": {
+    "title": "Radio Group",
+    "description": "单选组，指示圆点通过 layoutId 共享布局滑动，并带弹簧按压反馈。"
+  },
+  "bottom-sheet": {
+    "title": "Bottom Sheet",
+    "description": "灵感来自 Vaul 的可拖拽底部弹层，支持吸附点、惯性和毛玻璃质感。"
+  },
+  "pull-to-refresh": {
+    "title": "Pull to Refresh",
+    "description": "接近原生体验的下拉刷新容器，带拖拽阻尼、阈值反馈，并处理异步刷新状态。"
+  },
+  "shared-layout-bg": {
+    "title": "Shared Layout Background",
+    "description": "一个胶囊形背景块，通过 Motion 的共享布局在悬停项之间滑动，进出时带模糊过渡。"
+  },
+  "bounce-sidebar": {
+    "title": "Bounce Sidebar",
+    "description": "竖向侧边栏，当前项圆点沿弧线以弹簧动画跳到下一个导航目标。"
+  },
+  "animated-sidebar": {
+    "title": "Animated Sidebar",
+    "description": "可组合的应用侧边栏，嵌套导航可变形，在桌面端折叠为带动画的图标栏，在移动端变为带焦点管理的抽屉。"
+  },
+  "file-tree": {
+    "title": "File Tree",
+    "description": "可组合的文件与文件夹基础组件，分支展开带弹簧动画，选中项平滑滑动，并支持完整的键盘导航。"
+  },
+  "preview-rail": {
+    "title": "Preview Rail",
+    "description": "灵感来自 Codex 应用的导航栏，紧凑的刻度在悬停时形成金字塔形，并浮出目标位置预览。"
+  },
+  "dock": {
+    "title": "Dock",
+    "description": "macOS 风格的 Dock，操作可分组，当前项以胶囊高亮滑动。"
+  },
+  "tooltip": {
+    "title": "Tooltip",
+    "description": "可组合的提示浮层，在悬停、聚焦和点击时显示，带轻微的缩放与淡入淡出，自动避让边界并选择合适的方位与对齐方式，可显示可选箭头，指针移向提示内容时不会中途消失，同一时间只显示一个，仅键盘聚焦时显示，并可选跟随光标。"
+  },
+  "context-menu": {
+    "title": "Animated Context Menu",
+    "description": "可组合的右键菜单基础组件，以指针位置为原点裁剪变形展开，高亮行滑动跟随，支持复选与单选选项、键盘导航、首字母跳转以及长按唤起。"
+  },
+  "popover": {
+    "title": "Popover",
+    "description": "黏性弹出层，面板通过 SVG goo 滤镜从触发器渗出，液态连接的颈部拉伸直至断开，随后清晰的内容淡入覆盖其上；Morph 变体则从最靠近触发器的角开始，以一段同步的弹簧裁剪展开完整尺寸的面板。触发器可点击或悬停，支持受控或非受控。"
+  },
+  "morphing-modal": {
+    "title": "Morphing Modal",
+    "description": "类似 Family 应用的模态框。同一块面板在内部视图之间切换时平滑改变高度，内容以模糊交叉淡入淡出过渡。"
+  },
+  "center-morph-modal": {
+    "title": "Center Morph Modal",
+    "description": "可组合的模态框，完整尺寸的界面从正中心向四边展开，关闭时按同样路径收回，并带有内嵌的关闭控件。"
+  },
+  "text-animation": {
+    "title": "Text Animation",
+    "description": "文字动画基础组件，用于弹簧动画入场、彩色扫光、微光加载状态、字母级联切换和字符乱码效果。"
+  },
+  "number": {
+    "title": "Number Animation",
+    "description": "数字动画基础组件，用于数值递增、滚轮翻数和定宽数字位切换。"
+  },
+  "animated-badge": {
+    "title": "Animated Badge",
+    "description": "状态徽标，状态图标带过渡动画，带脉冲反馈，并提供多种紧凑尺寸。"
+  },
+  "action-swap": {
+    "title": "Action Swap",
+    "description": "用于以模糊动效切换文字和图标的 CTA 按钮与 slot 基础组件。"
+  },
+  "animated-toast-stack": {
+    "title": "Animated Toast Stack",
+    "description": "堆叠式轻提示，状态图标可变形，支持滑动关闭、操作按钮，动画会感知整体布局变化。"
+  },
+  "theme-toggle": {
+    "title": "Theme Toggle",
+    "description": "主题切换按钮，通过 View Transition API 重绘整个页面：以矩形或圆形 clip-path 揭示，或以类似百叶窗的条带铺开。"
+  },
+  "bouncy-accordion": {
+    "title": "Bouncy Accordion",
+    "description": "单开式折叠面板，使用带重量感的弹簧布局，支持图标行，内容展开对减少动态效果友好。"
+  },
+  "drawer": {
+    "title": "Drawer",
+    "description": "从左侧或右侧滑入的侧边面板，带弹簧动画、背景模糊、页面滚动锁定，并可按 Esc 关闭。"
+  },
+  "scroll-animation": {
+    "title": "Scroll Animation",
+    "description": "滚动驱动的动效：Lenis 平滑滚动 Provider，以及从中读取进度的阅读进度指示器。"
+  },
+  "range-slider": {
+    "title": "Range Slider",
+    "description": "滑块组件，带刻度点，滑块为竖条状，落到每个刻度时会回弹。支持拖拽与键盘操作，对减少动态效果友好。"
+  },
+  "wheel-picker": {
+    "title": "Wheel Picker",
+    "description": "iOS 风格的滚轮选择器：3D 鼓形基于原生惯性滚动，停在最近的刻度上，支持滚轮、拖拽和键盘操作。可并排组合成日期和时间选择器，对减少动态效果友好。"
+  },
+  "table": {
+    "title": "Table",
+    "description": "虚拟化数据表格，在 1 万行以上仍保持流畅，支持表头排序、行选择、列宽调整与列排序，以及吸顶表头。动效克制，对减少动态效果友好。"
+  },
+  "shader-background": {
+    "title": "Shader Background",
+    "description": "Canvas shader 背景（网格渐变、颗粒、扭曲、波浪、Voronoi、点阵环绕等），通过一个带类型的 variant prop 切换。开启减少动态效果时，带动画的变体会静止。"
+  },
+  "cylinder-carousel": {
+    "title": "Cylinder Carousel",
+    "description": "轮播组件，各项排列在圆柱内侧，向中心退远、在边缘放大；可拖拽、滚动或使用方向键转动，滚动带弹簧滑行与吸附。开启减少动态效果时去掉滑行。"
+  },
+  "loader": {
+    "title": "Loader",
+    "description": "加载指示器，共 17 种变体：spinner、dots、bars、dot-matrix、dither、morph、comet、scramble、metaballs、newton、helix、percent，以及 5 种终端风格的 ASCII spinner。通过一个 size prop 统一缩放，颜色取自 currentColor，开启减少动态效果时所有位移动画改为平静的透明度脉冲。"
+  },
+  "line-chart": {
+    "title": "Line Chart",
+    "description": "折线图与面积图，随数据变化平滑变形，十字准线会吸附到数据点并显示数值提示。"
+  },
+  "bar-chart": {
+    "title": "Bar Chart",
+    "description": "分组、堆叠与水平柱状图，柱体生长、重新缩放和重排均使用弹簧动画。"
+  },
+  "sparkline": {
+    "title": "Sparkline",
+    "description": "紧凑的行内趋势图，适用于统计卡片和表格，带变化徽标与可选的数值读数。"
+  },
+  "sankey-chart": {
+    "title": "Sankey Chart",
+    "description": "各阶段之间带权重的流向图，入场时逐步绘出，并随数据变化变形。"
+  },
+  "treemap": {
+    "title": "Treemap",
+    "description": "按比例划分的矩形树图，随数据变化变形，悬停可查看数值与占比提示。"
+  },
+  "candlestick-chart": {
+    "title": "Candlestick Chart",
+    "description": "实时 OHLC K 线图，带成交量、最新价参考线和十字准线读数。"
+  },
+  "donut-chart": {
+    "title": "Donut Chart",
+    "description": "圆角环形占比图，中心读数与图例联动。"
+  },
+  "volume-profile": {
+    "title": "Volume Profile",
+    "description": "按价格分布成交量的动画图，突出显示控制点（POC）与价值区间。"
+  },
+  "status-bar": {
+    "title": "Status Bar",
+    "description": "动画状态历史条，以圆角分段展示，悬停可查看各时段提示。"
+  },
+  "composition-chart": {
+    "title": "Composition Chart",
+    "description": "堆叠柱状与面积占比图，带各时段提示和紧凑的交互式图例。"
+  },
+  "funnel-chart": {
+    "title": "Funnel Chart",
+    "description": "纵向与横向漏斗图，阶段之间以曲线连接，数字提示带动画。"
+  },
+  "liquidity-heatmap": {
+    "title": "Liquidity Heatmap",
+    "description": "横跨价格与时间的流动性热力带，带价格轨迹和深度提示。"
+  },
+  "bump-chart": {
+    "title": "Bump Chart",
+    "description": "排名变化图，名次之间以曲线相连，排名点可交互并有提示。"
+  },
+  "order-book": {
+    "title": "Order Book",
+    "description": "动画订单簿，展示买卖盘深度、价差与成交量对比。"
+  },
+  "heat-calendar": {
+    "title": "Heat Calendar",
+    "description": "可组合的活动日历，包含 Grid、Legend 和 Tooltip 三部分，支持受控的区间选择，日期基于 UTC 日历。传入每周的活跃强度即可可视化活跃度，并汇总所选区间。"
+  },
+  "returns-calendar": {
+    "title": "Returns Calendar",
+    "description": "可组合的月度收益日历，包含 Grid 和 Tooltip 两部分，支持受控的月份或年份选择，并可计算复利汇总。传入年份与各月百分比即可。"
+  },
+  "price-target-fan": {
+    "title": "Price Target Fan",
+    "description": "可组合的目标价图表，包含 Header、Plot、SVG、Axes、History、Targets、Now、Cursor 和 Tooltip 等部分。传入带日期的价格历史与目标价，即可用指针或键盘拖动查看，并自定义当前读数。"
+  },
+  "crash": {
+    "title": "Crash",
+    "description": "一款 Crash 游戏：纸飞机沿曲线把倍率越带越高，并随曲线斜率倾斜，速度场也随高度加速流动，直到回合在一个公平的随机点崩盘；可手动兑现，或设定自动目标，兑现点会张开降落伞，而飞机继续飞行，让你看到它本该崩盘的位置。崩盘时飞机化作漫天纸屑坠落，里程碑点亮读数，最近几局滑入历史条；崩盘点由服务端决定，可选合成音效，对减少动态效果友好。"
+  },
+  "mines": {
+    "title": "Mines",
+    "description": "一款 Mines 游戏：翻格寻找宝石，每颗宝石都会提升倍率，需要在踩中地雷前兑现；找到的宝石按顺序编号，胜率环显示下一次翻格的安全概率。回合结束时从最后一次翻格开始以涟漪效果揭示所有格子，随后抬出一张票据样式的结算卡，显示结果、统计数据和本次操作的小型回放；宝石、连击、地雷与兑现各有不同的合成音效，可用键盘游玩，对减少动态效果友好。"
+  },
+  "plinko": {
+    "title": "Plinko",
+    "description": "Plinko 弹珠盘：小球穿过一排排钉子，每次碰撞后向左或向右弹跳，最终落入底部槽位。钉子被击中时会闪光，槽位在落球时脉冲，可同时落下多个球；开启减少动态效果时小球直接落在目标槽位。"
+  },
+  "slide-game": {
+    "title": "Slide",
+    "description": "一款 Slide 游戏：设定投注额与目标倍率，一列用颜色区分倍率的卡片从舞台中央的两个指示标之间快速掠过，经过时呈现 3D 翻转，最后几张逐渐减速，把本局结果停在两标之间。能超过目标的卡片带有标记，中奖时指示标变为主色，未中则变红，最近几局汇入历史条；结果由服务端决定，可选刻度音效与中奖音效，对减少动态效果友好。"
+  },
+  "voice-orb": {
+    "title": "Voice Orb",
+    "description": "呼吸感液态语音可视化，带流动高光、可自定义色素，以及柔和且随声音起伏的轮廓。接受归一化音量、MotionValue 或调用方自有的音频分析器，离屏时暂停，并支持减少动态效果。"
+  },
+  "message-bubble": {
+    "title": "Message Bubble",
+    "description": "聚焦于对话的展示面板，带视觉色调、独立对齐、消息分组、可展开内容，以及可交互的链接或按钮。"
+  },
+  "message": {
+    "title": "Message",
+    "description": "可组合的对话基础组件，用于消息行、分组气泡、头像、元信息、实时标记，以及仅在挂载时播放的尾部弹出动画（用于新发送的消息行）。"
+  },
+  "message-scroller": {
+    "title": "Message Scroller",
+    "description": "能感知阅读位置的对话视口：流式输出时自动跟随最新内容，读者一旦滚动离开便交还控制权。"
+  },
+  "prompt-input": {
+    "title": "Prompt Input",
+    "description": "自动增高的 Agent 输入框，带提示操作、模型选择、键盘提交，以及发送与停止状态的过渡动画。"
+  },
+  "todo-list": {
+    "title": "Todo List",
+    "description": "可折叠的 Agent 任务计划，状态标记可变形，带完成数量、紧凑元信息和顺滑的列表更新。"
+  },
+  "code-block": {
+    "title": "Code Block",
+    "description": "语法高亮的代码面板，流式更新时保持稳定，支持行号、聚焦行、平滑跟随滚动以及复制反馈。"
+  },
+  "approval-card": {
+    "title": "Approval Card",
+    "description": "人在回路中的决策面板，用于审批、单选或多选问题、自定义回复以及多步确认流程。"
+  },
+  "file-diff": {
+    "title": "File Diff",
+    "description": "语法高亮的文件变更展示，可展开查看，逐行显示，带行号与实时变更统计，平滑跟随滚动，完成后自动收起。"
+  },
+  "tool-result": {
+    "title": "Tool Result",
+    "description": "轻量的执行结果展示，用于语法高亮的终端输出和请求响应，完成后收起为紧凑的完成状态。"
+  },
+  "streaming-response": {
+    "title": "Streaming Response",
+    "description": "稳定的响应展示面板，带完成后的操作区、已渲染内容和可展开的来源摘要。"
+  },
+  "image-generation": {
+    "title": "Image Generation",
+    "description": "稳定的图片生成面板，从排队、逐步细化到生成完成，全过程布局不跳动。"
+  },
+  "tool-approval": {
+    "title": "Tool Approval",
+    "description": "人在回路中的权限卡片，可查看工具详情，选择仅允许一次、记住授权或拒绝执行。"
+  },
+  "citations": {
+    "title": "Citations",
+    "description": "行内引用标记，配合可折叠、逐步渲染的参考来源列表，用于有据可查的 Agent 回复。"
+  },
+  "agent-activity": {
+    "title": "Agent Activity",
+    "description": "统一的自适应活动流，可承载推理过程、搜索、工具调用、结构化执行轨迹，或按时间顺序混合展示。"
+  },
+  "loading-states": {
+    "title": "Agent Loading States",
+    "description": "三种为 AI 界面设计的加载状态：闪烁的状态文字、实时的 Agent 进度，以及轮播的推理短语。"
+  },
+  "ai-sidebar": {
+    "title": "AI Sidebar",
+    "description": "可折叠的 AI 工作区侧边栏，用于文件夹、项目、文件和书签，支持键盘导航、乐观更新式的移动、行内重命名，以及可感知溢出空间的标签。"
+  },
+  "chat-app": {
+    "title": "Chat App",
+    "description": "完整的 Agent 对话工作区，组合了导航、消息、流式输出、规划、审批、工具、代码、diff、生成媒体、来源与提示输入。"
+  },
+  "infinite-masonry": {
+    "title": "Infinite Masonry",
+    "description": "响应式虚拟化瀑布流，会测量高度不一的卡片，并在用户接近末尾时加载更多数据。"
+  },
+  "notification-stack": {
+    "title": "Notification Stack",
+    "description": "紧凑的通知卡片，悬停、聚焦或点击时从堆叠摘要弹开为可读列表。"
+  },
+  "project-folder": {
+    "title": "Project Folder",
+    "description": "可交互的项目文件夹，悬停或聚焦时展开成扇形文件列表，再展开为带焦点管理的浮层，关闭时沿完整路径收回。"
+  },
+  "card-folder": {
+    "title": "Card Folder",
+    "description": "一张横向卡片插在缝线钱包口袋中，钱包向下压缩时卡片向前抬起；支持受控的开启状态、卡片详情可见性，以及独立的更多操作。"
+  },
+  "knockout-bracket": {
+    "title": "Fixtures",
+    "description": "两种风格的赛事对阵图动画：一种是分页浏览各轮的淘汰赛树状图，另一种是以冠军为中心环绕同一棵对阵树的圆盘。两者读取相同的轮次数组，同一份数据可绘制任一种。"
+  },
+  "availability-scheduler": {
+    "title": "Availability Scheduler",
+    "description": "每周可用时间编辑器，每天在可用与不可用之间以弹簧动画切换，时间段通过模糊滑动的动效添加和删除，时间从可滚动下拉框中选择，复制菜单可将设置克隆到其他日期。"
+  },
+  "swap": {
+    "title": "Multi-chain Swap",
+    "description": "跨链兑换组件，带链与代币选择器、变形视图、翻转与报价动画。"
+  },
+  "dynamic-island": {
+    "title": "Dynamic Island",
+    "description": "iOS 风格的灵动岛胶囊，在多项实时活动视图之间变形，外壳弹性缩放，内容模糊交叉淡入淡出。"
+  },
+  "command-palette": {
+    "title": "Command Palette",
+    "description": "⌘K 命令面板，支持模糊筛选、弹簧动画的活动行和毛玻璃质感。"
+  },
+  "morphing-search": {
+    "title": "Morphing Search",
+    "description": "搜索输入框或紧凑图标，点击或通过键盘快捷键唤起后，变形为毛玻璃质感的搜索结果面板。"
+  },
+  "expandable-action-bar": {
+    "title": "Expandable Action Bar",
+    "description": "紧凑的图标操作组，悬停或聚焦时借助共享布局动画展开为带文字的控件。"
+  },
+  "overflow-actions": {
+    "title": "Overflow Actions",
+    "description": "相连的胶囊操作栏，承载主要操作，并以弹簧动画展开更多控件。"
+  },
+  "expandable-tabs": {
+    "title": "Expandable Tabs",
+    "description": "图标标签栏，激活的标签展开为带文字的胶囊；其上方面板高度随之变形，切换时内容按方向滑动。"
+  },
+  "morphing-tabs": {
+    "title": "Morphing Tabs",
+    "description": "可重排的标签页，选中项会长成一块白色的内容面板，激活形状随标签移动滑动，并在面板切换之间做共享变形。"
+  },
+  "swipeable-list": {
+    "title": "Swipeable List",
+    "description": "移动端风格的列表行，向左或向右滑动可露出上下文操作按钮。"
+  },
+  "file-upload": {
+    "title": "File Upload",
+    "description": "两种文件上传模式：一种是附件工作区，用于混合文件、链接、音频和媒体；另一种是带重试与删除的进度队列。"
+  },
+  "prediction-market": {
+    "title": "Prediction Market",
+    "description": "动画预测市场列表卡片，带结果按钮、概率和收藏，另有交易面板，支持买入/卖出模式与滚动输入金额。"
+  },
+  "wallet-card": {
+    "title": "Wallet Card",
+    "description": "钱包概览卡片，账户切换器与搜索从触发处形变展开，余额级联显示并带实时变化胶囊和隐藏开关，可复制地址，并提供 Send / Deposit / Swap / Buy 操作。"
+  },
+  "otp-input": {
+    "title": "OTP Input",
+    "description": "一次性验证码输入框，焦点框滑动，每位数字滚动进入，出错时抖动，成功时描绘对勾。"
+  },
+  "signup-form": {
+    "title": "Sign Up Form",
+    "description": "组合式注册表单，字段在失去焦点后才提示错误，一旦修正立即清除；密码强度计按长度加权，支持显示密码，提交过程有完整的动画生命周期。"
+  },
+  "card-dealer": {
+    "title": "Card Dealer",
+    "description": "一个牌桌场景，包含背面朝上的牌堆、呈扇形展开的手牌和弃牌堆；卡片在两者之间划弧飞出并在飞行中翻转，整理手牌时彼此跳跃让位，悬停时抬起。由每张牌所在的区域驱动数据，支持自定义正反面、可用键盘操作手牌，并对减少动态效果友好。"
+  },
+  "bloom-menu": {
+    "title": "Bloom Menu",
+    "description": "按钮点击后变形展开为菜单，并以虹膜开孔效果从中心绽开，网格向各个方向展开，菜单项呈放射状错落出现。"
+  },
+  "feedback-widget": {
+    "title": "Feedback Widget",
+    "description": "角落的触发按钮，变形展开为反馈弹窗，可输入留言，并带发送、成功与重试的动画状态。"
+  },
+  "not-found": {
+    "title": "404 / Not Found",
+    "description": "五种风格的 404 页面动画：故障乱码、磁吸数字、光标聚光、扇形展开的卡片堆和打字机终端。"
+  }
+}

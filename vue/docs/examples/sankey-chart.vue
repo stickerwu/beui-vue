@@ -22,7 +22,12 @@ const links = computed(() => {
 })
 </script>
 
-<template><div class="chart-demo" style="max-width:48rem"><header><Tabs v-model="quarter" :items="quarters" variant="segment" :labels="{ list: 'Quarter' }" /></header>
+<template><div class="demo">
+  <Tabs v-model="quarter" :items="quarters" variant="segment" :labels="{ list: 'Quarter' }" />
   <SankeyChart :label="`Income statement, ${quarter.toUpperCase()}`" :nodes="nodes" :links="links" :format-value="value => `$${value.toLocaleString('en-US')}M`" />
 </div></template>
-<style scoped src="./chart-demo.css"></style>
+
+<style scoped>
+.demo { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; width: 100%; max-width: 48rem; margin-inline: auto; }
+.demo > :last-child { align-self: stretch; }
+</style>

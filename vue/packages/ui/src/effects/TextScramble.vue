@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useReducedMotion } from 'motion-v'
+import { useReducedMotion } from '../core/reduced-motion'
 import { onMounted, shallowRef, watch } from 'vue'
 
 const { text, duration, glyphs = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789#%&@$?/' } = defineProps<{ text: string; duration?: number; glyphs?: string }>()

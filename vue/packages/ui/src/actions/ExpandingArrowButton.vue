@@ -1,14 +1,112 @@
 <script setup lang="ts">
-import {useId} from 'vue'
-const symbol=useId()
+import { motion } from 'motion-v'
+import { useReducedMotion } from '../core/reduced-motion'
+import { shallowRef } from 'vue'
+import { useMountedMedia } from '../core/mounted-media'
+import { easeOut, layoutSpring, pressSpring } from '../core/motion'
+
+const props = defineProps<{
+  disabled?: boolean
+  className?: string
+  accentClassName?: string
+  labelClassName?: string
+}>()
+
+// Arrow glyphs fade down the row: the accent chip fills with repeated dotted
+// chevrons that are nearly opaque at the left and fade out to the right.
+const ARROW_OPACITY = [1, .78, .54, .32, .16] as const
+const reduce = useReducedMotion()
+// Touch devices fire a sticky phantom hover; only a real pointer may expand it.
+const canHover = useMountedMedia('(hover: hover) and (pointer: fine)')
+const hovered = shallowRef(false)
+const focused = shallowRef(false)
+const active = () => !props.disabled && ((canHover.value && hovered.value) || focused.value)
 </script>
+
 <template>
-  <button type="button" class="be-chevron">
-    <svg width="0" height="0" aria-hidden="true"><defs><g :id="symbol" fill="currentColor"><circle v-for="([left,top],index) in [[4,4],[10,9],[16,14],[10,19],[4,24]]" :key="index" :cx="left" :cy="top" r="2"/></g></defs></svg>
-    <span class="chip" aria-hidden="true"><svg v-for="(opacity,index) in [1,.78,.54,.32,.16]" :key="opacity" viewBox="0 0 20 28" :style="{'--alpha':opacity,'--delay':`${40+index*25}ms`}"><use :href="`#${symbol}`"/></svg></span>
-    <span class="text"><slot/></span>
-  </button>
+  <motion.button
+    type="button"
+    :disabled="disabled"
+    class="be-arrow-button"
+    :class="className"
+    :while-press="reduce || disabled ? undefined : { scale: .97 }"
+    :transition="pressSpring"
+    @mouseenter="hovered = true"
+    @mouseleave="hovered = false"
+    @focus="focused = true"
+    @blur="focused = false"
+  >
+    <!-- The accent pill grows from a 52px chip to fill the button. Layout size
+         keeps the corners and the inner row registered while it stretches. -->
+    <motion.span
+      layout="size"
+      aria-hidden="true"
+      class="be-arrow-accent"
+      :class="accentClassName"
+      :style="{ width: active() ? 'calc(100% - 12px)' : '52px', borderRadius: '16px' }"
+      :transition="reduce ? { duration: 0 } : layoutSpring"
+    >
+      <motion.span
+        class="be-arrow-glyph"
+        :animate="{ opacity: active() ? 0 : 1 }"
+        :transition="{ duration: reduce ? 0 : .1, ease: easeOut }"
+      >
+        <svg viewBox="0 0 20 28" fill="none" aria-hidden="true" class="be-arrow-chevron">
+          <circle cx="4" cy="4" r="2" fill="currentColor" /><circle cx="10" cy="9" r="2" fill="currentColor" />
+          <circle cx="16" cy="14" r="2" fill="currentColor" /><circle cx="10" cy="19" r="2" fill="currentColor" />
+          <circle cx="4" cy="24" r="2" fill="currentColor" />
+        </svg>
+      </motion.span>
+      <span class="be-arrow-row">
+        <motion.span
+          v-for="(opacity, index) in ARROW_OPACITY"
+          :key="opacity"
+          class="be-arrow-cell"
+          :animate="{ opacity: active() ? 1 : 0, transform: active() && !reduce ? 'translateX(0px)' : 'translateX(-6px)' }"
+          :transition="{
+            duration: reduce ? 0 : .18,
+            delay: active() && !reduce ? .04 + index * .025 : 0,
+            ease: easeOut,
+          }"
+          :style="{ color: `rgb(10 10 10 / ${opacity})` }"
+        >
+          <svg viewBox="0 0 20 28" fill="none" aria-hidden="true" class="be-arrow-chevron">
+            <circle cx="4" cy="4" r="2" fill="currentColor" /><circle cx="10" cy="9" r="2" fill="currentColor" />
+            <circle cx="16" cy="14" r="2" fill="currentColor" /><circle cx="10" cy="19" r="2" fill="currentColor" />
+            <circle cx="4" cy="24" r="2" fill="currentColor" />
+          </svg>
+        </motion.span>
+      </span>
+    </motion.span>
+    <motion.span
+      class="be-arrow-label"
+      :class="labelClassName"
+      :animate="{ opacity: active() ? 0 : 1, transform: active() && !reduce ? 'translateX(6px)' : 'translateX(0px)' }"
+      :transition="{ duration: reduce ? 0 : .12, ease: easeOut }"
+    >
+      <slot />
+    </motion.span>
+  </motion.button>
 </template>
+
 <style scoped>
-.be-chevron{position:relative;display:inline-flex;align-items:center;min-width:min(18rem,100%);height:4rem;padding:0 1.25rem 0 76px;border:0;border-radius:22px;background:#0a0a0a;color:white;cursor:pointer;font:500 1.125rem/1.2 inherit}.chip{position:absolute;inset:6px auto 6px 6px;width:52px;overflow:hidden;border-radius:16px;background:#bef264;color:#0a0a0a;display:flex;align-items:center;justify-content:space-around;transition:width .36s cubic-bezier(.16,1,.3,1)}.chip svg{flex:none;width:20px;height:28px;display:none}.chip svg:first-child{display:block}.text{transition:opacity .12s}.be-chevron:focus-visible .chip{width:calc(100% - 12px)}.be-chevron:focus-visible .chip svg{display:block;opacity:var(--alpha)}.be-chevron:focus-visible .text{opacity:0}@media(hover:hover){.be-chevron:enabled:hover .chip{width:calc(100% - 12px)}.be-chevron:enabled:hover .chip svg{display:block;opacity:var(--alpha);animation:appear .18s var(--delay) backwards}.be-chevron:enabled:hover .text{opacity:0}}@keyframes appear{from{opacity:0;transform:translateX(-6px)}}@media(prefers-reduced-motion:reduce){.chip,.text,.chip svg{transition:none!important;animation:none!important}}
+.be-arrow-button {
+  position: relative; display: inline-flex; align-items: center; box-sizing: border-box;
+  height: 4rem; min-width: 18rem; overflow: hidden; border: 0; border-radius: 22px; padding: .375rem;
+  background: #0a0a0a; color: #fff; font: inherit; cursor: pointer; user-select: none; outline: none;
+}
+.be-arrow-button:focus-visible { box-shadow: 0 0 0 2px var(--beui-background), 0 0 0 4px #bef264; }
+.be-arrow-button:disabled { pointer-events: none; opacity: .5; }
+.be-arrow-accent {
+  position: absolute; inset-block: .375rem; inset-inline-start: .375rem; z-index: 10;
+  overflow: hidden; background: #bef264; color: #0a0a0a;
+}
+.be-arrow-glyph { position: absolute; inset: 0; display: grid; place-items: center; }
+.be-arrow-row { position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-around; padding-inline: .75rem; }
+.be-arrow-cell { display: inline-grid; place-items: center; }
+.be-arrow-chevron { width: 1.25rem; height: 1.75rem; }
+.be-arrow-label {
+  position: relative; z-index: 0; margin-inline-start: 76px; margin-inline-end: 1.25rem;
+  white-space: nowrap; font-size: 1.125rem; font-weight: 500; letter-spacing: -.02em;
+}
 </style>

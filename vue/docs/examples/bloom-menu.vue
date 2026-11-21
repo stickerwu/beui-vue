@@ -1,6 +1,13 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { BloomMenu } from 'beui-vue'
-const selected = ref('')
 </script>
-<template><div><BloomMenu @select="selected=$event" /><output>{{ selected }}</output></div></template>
+
+<template>
+  <div class="bloom-demo">
+    <BloomMenu />
+  </div>
+</template>
+
+<style scoped>
+.bloom-demo { display: flex; box-sizing: border-box; width: 100%; min-height: 420px; align-items: flex-start; justify-content: center; padding-top: 6rem; }
+</style>

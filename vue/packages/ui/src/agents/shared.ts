@@ -1,8 +1,8 @@
-import { computed, onBeforeUnmount, shallowRef, type ComputedRef, type InjectionKey, type Ref, type ShallowRef } from 'vue'
+import { computed, onBeforeUnmount, shallowRef, type Component, type ComputedRef, type InjectionKey, type Ref, type ShallowRef } from 'vue'
 
 export type Labels = Partial<Record<string, string>>
 export type Option = { value: string, label: string, description?: string, disabled?: boolean }
-export type CitationItem = { id: string, title: string, domain?: string, url?: string }
+export type CitationItem = { id: string, title: string, domain?: string, url?: string, /** Replaces the URL favicon, e.g. a document icon for non-web sources. */ icon?: Component }
 export const sideKey: InjectionKey<Readonly<Ref<'start' | 'end'>>> = Symbol('message-side')
 
 export function useValue<Value>(controlled: () => Value | undefined, initial: Value, emit: (value: Value) => void): { value: ComputedRef<Value>, set: (value: Value) => void } {
@@ -37,4 +37,8 @@ export function useCopy() {
 export function sourceUrl(url?: string) {
   if (!url) return undefined
   try { return ['https:', 'http:'].includes(new URL(url).protocol) ? url : undefined } catch { return undefined }
+}
+
+export function citationTargetId(prefix: string, citationId: string) {
+  return `${prefix}-${citationId.replace(/[^a-zA-Z0-9_-]/g, '-')}`
 }

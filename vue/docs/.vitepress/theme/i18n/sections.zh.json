@@ -1,0 +1,27 @@
+{
+  "motion": {
+    "name": "组件",
+    "heading": "带动画的 Vue 组件",
+    "description": "浏览基于 Motion 构建、免费开源的 Vue 动画组件。把 TypeScript 源码复制进你的项目，自由定制每一处交互。"
+  },
+  "blocks": {
+    "name": "区块",
+    "heading": "带动画的界面区块",
+    "description": "组合完整的 Vue 界面，从命令面板、灵动岛到表单、导航与效率工具。"
+  },
+  "agents": {
+    "name": "AI Agents",
+    "heading": "面向 AI 界面的组件",
+    "description": "用带动画的 Vue 组件构建对话、流式响应与 Agent 工作流。"
+  },
+  "charts": {
+    "name": "图表",
+    "heading": "带动画的图表",
+    "description": "交互式 SVG 图表，布局响应式，数据对辅助技术可读，动效让数据变化易于跟随。"
+  },
+  "casino": {
+    "name": "游戏类",
+    "heading": "可交互的游戏组件",
+    "description": "为 Vue 重制的动画游戏界面，支持键盘操作与减少动态效果。"
+  }
+}

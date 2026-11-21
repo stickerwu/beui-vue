@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'motion-v'
+import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'motion-v'
+import { useReducedMotion } from '../core/reduced-motion'
 import { toRef, useTemplateRef, watchEffect } from 'vue'
 import { useSmoothScroll } from '../layout/scroll-context'
 

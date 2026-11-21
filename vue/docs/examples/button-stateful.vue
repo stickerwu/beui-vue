@@ -1,12 +1,39 @@
 <script setup lang="ts">
-import { ref, onBeforeUnmount } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
 import { StatefulButton } from 'beui-vue'
-const state = ref<'idle'|'loading'|'success'>('idle')
-let timer: ReturnType<typeof setTimeout>
-function save() {
-  state.value = 'loading'
-  timer = setTimeout(() => { state.value = 'success' }, 700)
+
+type ButtonState = 'idle' | 'loading' | 'success' | 'error'
+const okState = ref<ButtonState>('idle')
+const errState = ref<ButtonState>('idle')
+const timers = new Set<ReturnType<typeof setTimeout>>()
+
+function later(callback: () => void, delay: number) {
+  const id = setTimeout(() => { timers.delete(id); callback() }, delay)
+  timers.add(id)
 }
-onBeforeUnmount(() => clearTimeout(timer))
+function run(target: 'ok' | 'err') {
+  const state = target === 'ok' ? okState : errState
+  state.value = 'loading'
+  later(() => {
+    state.value = target === 'ok' ? 'success' : 'error'
+    later(() => { state.value = 'idle' }, 1800)
+  }, 1400)
+}
+onBeforeUnmount(() => timers.forEach(clearTimeout))
 </script>
-<template><StatefulButton :state="state" loading-text="保存中" success-text="已保存" @click="save">保存更改</StatefulButton></template>
+
+<template>
+  <div class="stateful-demo">
+    <StatefulButton :state="okState" variant="primary" size="md" loading-text="Saving" success-text="Saved" @click="run('ok')">
+      Save changes
+      <template #icon>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+      </template>
+    </StatefulButton>
+    <StatefulButton :state="errState" variant="secondary" size="md" loading-text="Submitting" error-text="Failed" @click="run('err')">Submit</StatefulButton>
+  </div>
+</template>
+
+<style scoped>
+.stateful-demo { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .75rem; }
+</style>

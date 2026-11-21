@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { motion, useReducedMotion } from 'motion-v'
+import { motion } from 'motion-v'
+import { useReducedMotion } from '../core/reduced-motion'
 import { layoutSpring, useCollapsible } from './state'
 const { open } = useCollapsible()
 const reduce = useReducedMotion()

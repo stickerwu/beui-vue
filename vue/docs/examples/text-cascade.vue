@@ -1,19 +1,14 @@
 <script setup lang="ts">
-import { ButtonBase, TextCascade } from 'beui-vue'
-import { onMounted, shallowRef, watch } from 'vue'
+import { TextCascade } from 'beui-vue'
+import { onBeforeUnmount, onMounted, shallowRef } from 'vue'
 const phrases = ['Install skills', 'Open settings', 'Ship updates']
 const index = shallowRef(0)
-const paused = shallowRef(false)
-function next() { index.value = (index.value + 1) % phrases.length }
-onMounted(() => {
-  const preference = window.matchMedia('(prefers-reduced-motion: reduce)')
-  paused.value = preference.matches
-  watch(paused, (stop, _, cleanup) => {
-    if (stop) return
-    const timer = window.setInterval(next, 2400)
-    cleanup(() => window.clearInterval(timer))
-  }, { immediate: true })
-})
+let timer: number | undefined
+onMounted(() => { timer = window.setInterval(() => { index.value = (index.value + 1) % phrases.length }, 2400) })
+onBeforeUnmount(() => window.clearInterval(timer))
 </script>
-<template><div class="cascade-demo"><TextCascade :text="phrases[index]!" /><div><ButtonBase variant="ghost" size="sm" @click="paused = !paused">{{ paused ? 'Play' : 'Pause' }}</ButtonBase><ButtonBase variant="secondary" size="sm" @click="next">Next phrase</ButtonBase></div></div></template>
-<style scoped>.cascade-demo { display: grid; justify-items: center; gap: 1.5rem; font-size: 1.125rem; font-weight: 500; }</style>
+<template><div class="cascade-demo"><p><TextCascade :text="phrases[index] ?? phrases[0]!" /></p></div></template>
+<style scoped>
+.cascade-demo { display: flex; width: 100%; justify-content: center; }
+p { margin: 0; font-size: 1.125rem; line-height: 1.75rem; font-weight: 500; color: var(--beui-foreground); }
+</style>

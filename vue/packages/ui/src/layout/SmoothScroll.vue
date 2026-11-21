@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type Lenis from 'lenis'
-import { useMotionValue, useReducedMotion } from 'motion-v'
+import { useMotionValue } from 'motion-v'
+import { useReducedMotion } from '../core/reduced-motion'
 import { computed, onMounted, provide, useTemplateRef, watchEffect } from 'vue'
 import { scrollKey, type SmoothScrollApi } from './scroll-context'
 
@@ -15,6 +16,10 @@ const progress = useMotionValue(0)
 const velocity = useMotionValue(0)
 const scrollY = useMotionValue(0)
 let engine: Lenis | undefined
+// Lenis loads lazily. A scroll asked for before it is ready waits for it, so the
+// engine, created at the old position, cannot snap a native glide back.
+let loading = false
+let pending: [number | HTMLElement, { offset?: number; duration?: number; immediate?: boolean }] | undefined
 
 const scrollTo: SmoothScrollApi['scrollTo'] = (target, options = {}) => {
   const source = container.value ?? window
@@ -24,6 +29,7 @@ const scrollTo: SmoothScrollApi['scrollTo'] = (target, options = {}) => {
   } else element = target
   if (element === null) return
   if (engine) { engine.scrollTo(element, { ...options, immediate: options.immediate || reduce.value || false }); return }
+  if (loading) { pending = [element, options]; return }
   const horizontal = orientation === 'horizontal'
   const current = container.value ? (horizontal ? container.value.scrollLeft : container.value.scrollTop) : (horizontal ? window.scrollX : window.scrollY)
   const axis = horizontal ? 'left' : 'top'
@@ -51,13 +57,26 @@ onMounted(() => watchEffect(cleanup => {
   }
   sync()
   source.addEventListener('scroll', sync, { passive: true })
-  if (!reduce.value && node) void import('lenis').then(({ default: LenisEngine }) => {
-    if (disposed) return
-    engine = new LenisEngine({ ...options, wrapper: source, content: root ? document.documentElement : node })
-    engine.on('scroll', instance => { progress.set(instance.progress); scrollY.set(instance.scroll); velocity.set(instance.velocity) })
-    source.removeEventListener('scroll', sync)
-  })
-  cleanup(() => { disposed = true; source.removeEventListener('scroll', sync); engine?.destroy(); engine = undefined })
+  if (!reduce.value && node) {
+    loading = true
+    void import('lenis').then(({ default: LenisEngine }) => {
+      if (disposed) return
+      engine = new LenisEngine({ ...options, wrapper: source, content: root ? document.documentElement : node })
+      engine.on('scroll', instance => { progress.set(instance.progress); scrollY.set(instance.scroll); velocity.set(instance.velocity) })
+      source.removeEventListener('scroll', sync)
+      loading = false
+      const queued = pending
+      pending = undefined
+      if (queued) engine.scrollTo(queued[0], { ...queued[1], immediate: queued[1].immediate || reduce.value || false })
+    }).catch(() => {
+      // No engine: fall back to the native path, including a scroll that was waiting.
+      loading = false
+      const queued = pending
+      pending = undefined
+      if (queued) scrollTo(queued[0], queued[1])
+    })
+  }
+  cleanup(() => { disposed = true; loading = false; pending = undefined; source.removeEventListener('scroll', sync); engine?.destroy(); engine = undefined })
 }))
 defineExpose({ progress, velocity, scrollY, scrollTo })
 </script>

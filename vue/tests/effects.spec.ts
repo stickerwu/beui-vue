@@ -9,14 +9,20 @@ test('scramble resolves the latest phrase when interrupted', async ({ page }) =>
   await expect(page.locator('[data-scramble-output]')).toHaveText('Preparing the update')
 })
 
-test('marquee pauses accessibly and only exposes the original track', async ({ page }) => {
+test('marquee pauses on hover and only exposes the original track', async ({ page, hasTouch }) => {
   await openDemo(page, 'marquee')
-  await page.getByRole('button', { name: 'Pause marquee' }).click()
   const original = page.locator('[data-marquee-track]').first()
-  await expect(original).toHaveCSS('animation-play-state', 'paused')
+  await expect(original).toHaveCSS('animation-play-state', 'running')
   await expect(page.locator('[data-marquee-track]').last()).toHaveAttribute('aria-hidden', 'true')
-  await page.getByRole('button', { name: 'Play marquee' }).click()
-  await expect(page.getByRole('button', { name: 'Pause marquee' })).toBeVisible()
+  // Hover-pause is gated on (hover: hover), as upstream's group-hover is: a touch screen has no hover,
+  // and a tap would otherwise leave the track stuck paused.
+  if (hasTouch) return
+  // The track never stops moving, so hover by coordinates instead of waiting for it to be stable.
+  const box = (await page.locator('[data-marquee-track]').first().locator('xpath=..').boundingBox())!
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
+  await expect(original).toHaveCSS('animation-play-state', 'paused')
+  await page.mouse.move(0, 0)
+  await expect(original).toHaveCSS('animation-play-state', 'running')
 })
 
 test('scroll-to moves the inner scroller and honors offsets', async ({ page }) => {

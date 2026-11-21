@@ -10,4 +10,4 @@ const presets = [
 ]
 </script>
 <template><div class="preview"><ColorPicker v-model="color" :presets="presets" label="Brand color" /></div></template>
-<style scoped>.preview { min-height: 22rem; display: flex; justify-content: center; align-items: flex-start; padding: 1rem; }</style>
+<style scoped>.preview { display: flex; min-height: 460px; width: 100%; justify-content: center; padding-top: .5rem; }</style>

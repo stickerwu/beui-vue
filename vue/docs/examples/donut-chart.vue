@@ -3,6 +3,7 @@ import { shallowRef } from 'vue'
 import { DonutChart } from 'beui-vue'
 
 const selected = shallowRef<string | null>(null)
+// Illustrative figures only.
 const segments = [
   { id: 'team', name: 'Team', color: '#2563eb', value: 42900 },
   { id: 'business', name: 'Business', color: '#38bdf8', value: 31250 },
@@ -14,9 +15,13 @@ const usd = (value: number) => value.toLocaleString('en-US', { style: 'currency'
 
 <template>
   <div class="plans">
-    <DonutChart label="Monthly revenue by plan" :labels="{ total: 'Monthly revenue' }" :segments="segments" :format-value="usd" :selected-id="selected" @select="selected = selected === $event ? null : $event" />
+    <DonutChart style="--donut-plot-width: 15rem" label="Monthly revenue by plan" :labels="{ total: 'Monthly revenue' }" :segments="segments" :format-value="usd" :selected-id="selected" @select="selected = selected === $event ? null : $event" />
     <p aria-live="polite">{{ selected ? `Filtering by ${segments.find(segment => segment.id === selected)?.name}` : 'Select a plan to filter' }}</p>
   </div>
 </template>
 
-<style scoped>.plans { width: 100%; max-width: 36rem; margin-inline: auto; }.plans p { margin: 12px 4px 0; color: var(--beui-muted-foreground); font-size: 12px; }</style>
+<style scoped>
+.plans { width: 100%; max-width: 36rem; }
+.plans > * + * { margin-top: 12px; }
+.plans p { margin: 12px 0 0; padding-inline: 4px; color: var(--beui-muted-foreground); font-size: 12px; line-height: 16px; }
+</style>

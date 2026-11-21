@@ -5,6 +5,13 @@ const phrases = ['Inspecting the repository', 'Running the checks', 'Preparing t
 const index = shallowRef(0)
 </script>
 <template>
-  <div class="scramble-demo"><TextScramble :text="phrases[index]!" /><ButtonBase variant="secondary" size="sm" @click="index = (index + 1) % phrases.length">Next phrase</ButtonBase></div>
+  <div class="scramble-demo">
+    <TextScramble :text="phrases[index]!" class="phrase" />
+    <ButtonBase variant="secondary" class="next" @click="index = (index + 1) % phrases.length">Next phrase</ButtonBase>
+  </div>
 </template>
-<style scoped>.scramble-demo { display: grid; justify-items: center; gap: 2rem; } .scramble-demo > span { font: 500 clamp(.92rem, 4vw, 1.25rem)/1.3 ui-monospace, monospace; }</style>
+<style scoped>
+.scramble-demo { display: flex; width: 100%; flex-direction: column; align-items: center; gap: 2rem; text-align: center; }
+.phrase { font-family: var(--font-mono, 'Geist Mono Variable', ui-monospace, monospace); font-size: 1.25rem; line-height: 1.75rem; font-weight: 500; color: var(--beui-foreground); }
+.next { height: 2.25rem; padding: 0 1rem; font-size: .75rem; }
+</style>

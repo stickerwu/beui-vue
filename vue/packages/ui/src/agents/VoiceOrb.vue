@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { useReducedMotion, type MotionValue } from 'motion-v'
+import { motion, useMotionValue, useSpring, useTransform, type MotionValue } from 'motion-v'
+import { useReducedMotion } from '../core/reduced-motion'
 import { onBeforeUnmount, onMounted, shallowRef, watchEffect } from 'vue'
+import { glideSpring } from '../core/motion'
 import { createOrbRenderer } from './orb-renderer'
 import type { Labels } from './shared'
 
@@ -12,38 +14,59 @@ const emit = defineEmits<{ error: [error: Error] }>()
 const reduce = useReducedMotion()
 const canvas = shallowRef<HTMLCanvasElement | null>(null)
 const failed = shallowRef(false)
+const level = (value: number) => Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : 0
+// The renderer reads a spring-smoothed level, so a jump in activity swells and settles instead of snapping.
+const target = useMotionValue(0)
+const smooth = useSpring(target, glideSpring)
+const transform = useTransform(smooth, value => `translate3d(0, ${-value * 2}px, 0) scale(${1 + value * 0.04}, ${1 - value * 0.018})`)
 let renderer: ReturnType<typeof createOrbRenderer> | undefined
 let samples: Uint8Array<ArrayBuffer> | undefined
-let energy = 0
+let source: AnalyserNode | null = null
+
 function error(failure: Error) { failed.value = true; emit('error', failure) }
 function read() {
-  let value = typeof props.activity === 'number' ? props.activity : props.activity.get()
   if (props.analyser && props.active && !reduce.value) {
-    if (samples?.length !== props.analyser.fftSize) samples = new Uint8Array(new ArrayBuffer(props.analyser.fftSize))
-    props.analyser.getByteTimeDomainData(samples)
-    value = Math.sqrt(samples.reduce((sum, byte) => sum + ((byte - 128) / 128) ** 2, 0) / samples.length) * 3
+    if (source !== props.analyser || samples?.length !== props.analyser.fftSize) { source = props.analyser; samples = new Uint8Array(new ArrayBuffer(props.analyser.fftSize)) }
+    props.analyser.getByteTimeDomainData(samples!)
+    let sum = 0
+    for (const byte of samples!) sum += ((byte - 128) / 128) ** 2
+    target.set(level(Math.sqrt(sum / samples!.length) * 3))
   }
-  energy += ((Number.isFinite(value) ? Math.min(1, Math.max(0, value)) : 0) - energy) * .2
-  const activity = props.active && !reduce.value ? energy : 0
-  if (canvas.value) canvas.value.style.transform = `translateY(${-activity * 2}px) scale(${1 + activity * .04}, ${1 - activity * .018})`
-  return { activity, colors: props.colors, speed: Math.max(0, props.speed), animated: props.active && !reduce.value && (props.speed > 0 || !!props.analyser) }
+  return {
+    activity: props.active && !reduce.value ? level(smooth.get()) : 0,
+    colors: props.colors,
+    speed: Number.isFinite(props.speed) ? Math.max(0, props.speed) : 1,
+    animated: props.active && !reduce.value && (props.speed > 0 || !!props.analyser),
+  }
 }
 watchEffect(onCleanup => {
   const input = props.activity
-  void [props.active, props.speed, props.colors, props.analyser, reduce.value]
-  if (typeof input !== 'number') onCleanup(input.on('change', () => renderer?.requestDraw()))
+  const live = props.active && !reduce.value
+  void [props.speed, props.colors, props.analyser]
+  if (reduce.value) { smooth.jump(0); target.set(0) } else target.set(live ? level(typeof input === 'number' ? input : input.get()) : 0)
+  if (typeof input !== 'number') onCleanup(input.on('change', value => { if (props.active && !reduce.value) target.set(level(value)); renderer?.requestDraw() }))
   renderer?.requestDraw()
-})
+}, { flush: 'post' })
+let stopSmooth: (() => void) | undefined
 onMounted(() => {
+  stopSmooth = smooth.on('change', () => renderer?.requestDraw())
   if (!canvas.value) return
   try { renderer = createOrbRenderer(canvas.value, read, error) }
   catch (failure) { error(failure instanceof Error ? failure : new Error(String(failure))) }
 })
-onBeforeUnmount(() => renderer?.dispose())
+onBeforeUnmount(() => { stopSmooth?.(); renderer?.dispose(); renderer = undefined })
 </script>
+
 <template>
   <div class="be-orb" role="img" :aria-label="ariaLabel" :aria-hidden="!ariaLabel || undefined" data-slot="voice-orb" :data-render-state="failed ? 'error' : 'ready'">
-    <span v-if="failed">{{ labels?.unavailable ?? 'Orb rendering unavailable' }}</span><canvas v-else ref="canvas" />
+    <div v-if="failed" class="be-orb-fallback">{{ labels?.unavailable ?? 'Orb rendering unavailable' }}</div>
+    <motion.div v-else class="be-orb-fill" :style="{ transform: reduce ? 'none' : transform }"><canvas ref="canvas" class="be-orb-canvas" /></motion.div>
   </div>
 </template>
-<style scoped>.be-orb{position:relative;width:16rem;max-width:100%;aspect-ratio:1;flex:none}.be-orb canvas{display:block;width:100%;height:100%}.be-orb span{box-sizing:border-box;display:grid;height:100%;place-items:center;border:1px solid var(--beui-border);border-radius:50%;background:var(--beui-muted);font-size:.75rem;text-align:center}</style>
+
+<style scoped>
+.be-orb { position: relative; width: 16rem; max-width: 100%; aspect-ratio: 1; flex: none; }
+.be-orb-fill { width: 100%; height: 100%; }
+.be-orb-canvas { display: block; width: 100%; height: 100%; }
+.be-orb-fallback { box-sizing: border-box; display: flex; width: 100%; height: 100%; align-items: center; justify-content: center; border: 1px solid var(--beui-border); border-radius: 9999px; background: var(--beui-card); padding: 2rem; text-align: center; font-size: .75rem; line-height: 1rem; color: var(--beui-muted-foreground); }
+</style>

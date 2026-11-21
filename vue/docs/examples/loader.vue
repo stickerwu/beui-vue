@@ -1,8 +1,38 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { Loader } from 'beui-vue'
-const paused = ref(false)
-const variants = ['spinner','dots','bars','dot-matrix','dither','morph','comet','metaballs','newton','helix','scramble','percent','ascii','ascii-line','ascii-braille','ascii-blocks','ascii-bounce'] as const
+
+const VARIANTS = [
+  { variant: 'spinner', label: 'Spinner' },
+  { variant: 'dots', label: 'Dots' },
+  { variant: 'bars', label: 'Bars' },
+  { variant: 'dot-matrix', label: 'Dot Matrix' },
+  { variant: 'dither', label: 'Dither' },
+  { variant: 'morph', label: 'Morph' },
+  { variant: 'comet', label: 'Comet' },
+  { variant: 'metaballs', label: 'Metaballs' },
+  { variant: 'newton', label: 'Newton' },
+  { variant: 'helix', label: 'Helix' },
+  { variant: 'scramble', label: 'Scramble' },
+  { variant: 'percent', label: 'Percent' },
+  { variant: 'ascii', label: 'ASCII' },
+  { variant: 'ascii-line', label: 'ASCII Line' },
+  { variant: 'ascii-braille', label: 'ASCII Braille' },
+  { variant: 'ascii-blocks', label: 'ASCII Blocks' },
+  { variant: 'ascii-bounce', label: 'ASCII Bounce' },
+] as const
 </script>
-<template><div class="gallery"><label><input v-model="paused" type="checkbox"> Pause animations</label><div class="loaders"><div v-for="variant in variants" :key="variant"><Loader :variant="variant" :paused="paused" :label="`Loading (${variant})`" /><small>{{ variant }}</small></div></div></div></template>
-<style scoped>.gallery { width:100%; text-align:center; } label,small { font-size:.72rem; color:var(--beui-muted-foreground); } .loaders { display:grid; grid-template-columns:repeat(auto-fit,minmax(6rem,1fr)); gap:.5rem; margin-top:1rem; } .loaders>div { display:grid; justify-items:center; align-content:center; gap:.5rem; min-height:4.5rem; border:1px solid var(--beui-border); border-radius:.7rem; }</style>
+
+<template>
+  <div class="loaders">
+    <div v-for="item in VARIANTS" :key="item.variant" class="cell">
+      <Loader :variant="item.variant" :size="36" />
+      <span class="label">{{ item.label }}</span>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.loaders { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2rem; padding: 2rem; width: 100%; box-sizing: border-box; }
+.cell { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+.cell .label { font-size: .75rem; line-height: 1rem; color: var(--beui-muted-foreground); }
+</style>

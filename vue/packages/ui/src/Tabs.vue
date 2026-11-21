@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { motion, useReducedMotion } from 'motion-v'
+import { motion } from 'motion-v'
+import { useReducedMotion } from './core/reduced-motion'
 import { computed, shallowRef, useId, useTemplateRef, watch } from 'vue'
 import { useTabTrack } from './core/tab-track'
 

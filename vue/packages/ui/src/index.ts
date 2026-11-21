@@ -17,6 +17,8 @@ export { default as Tabs } from './Tabs.vue'
 export { default as BeforeAfterSlider } from './BeforeAfterSlider.vue'
 export { default as AnimatedToastStack } from './AnimatedToastStack.vue'
 export * from './core/toasts'
+/** Hydration-safe prefers-reduced-motion (SSR renders full motion; the client follows after hydrating). */
+export { useReducedMotion } from './core/reduced-motion'
 export { default as LineChart } from './LineChart.vue'
 export { default as ShaderBackground } from './ShaderBackground.vue'
 export { default as LineChartPlot } from './graphics/LineChartPlot.vue'

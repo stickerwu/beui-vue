@@ -12,4 +12,4 @@ const status = ref<'idle' | 'success' | 'error'>('idle')
       @complete="status = $event === code ? 'success' : 'error'" />
   </div>
 </template>
-<style scoped>.verification { display: grid; justify-items: center; }</style>
+<style scoped>.verification { display: flex; flex-direction: column; align-items: center; gap: 1rem; }</style>

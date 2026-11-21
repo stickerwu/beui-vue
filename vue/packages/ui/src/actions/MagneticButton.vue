@@ -18,4 +18,4 @@ function move(event: PointerEvent) {
     <ButtonBase v-bind="$attrs"><slot /></ButtonBase>
   </motion.span>
 </template>
-<style scoped>.magnet { display:inline-flex; }</style>
+<style scoped>.magnet { display:inline-block; }</style>

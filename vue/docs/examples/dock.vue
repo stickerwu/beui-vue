@@ -1,12 +1,35 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Dock } from 'beui-vue'
-const active = ref('home')
-const items = [
-  {id:'home',label:'Home',icon:'⌂'}, {id:'mail',label:'Mail',icon:'✉'},
-  {id:'calendar',label:'Calendar',icon:'▦'}, {id:'music',label:'Music',icon:'♫'},
-  {id:'discover',label:'Discover',icon:'✧'}, {id:'settings',label:'Settings',icon:'⚙',separatorBefore:true},
-  {id:'source',label:'GitHub',icon:'⌘',href:'https://github.com/starc007/ui-components'},
+import { Dock, DockItem, DockSeparator } from 'beui-vue'
+import { LucideIcon } from './layout-icons'
+
+const ITEMS = [
+  { id: 'home', icon: 'House', label: 'Home' },
+  { id: 'mail', icon: 'Mail', label: 'Mail' },
+  { id: 'calendar', icon: 'Calendar', label: 'Calendar' },
+  { id: 'music', icon: 'Music', label: 'Music' },
+  { id: 'discover', icon: 'Sparkles', label: 'Discover' },
 ]
+const active = ref('home')
 </script>
-<template><Dock v-model="active" :items="items" label="Application dock" /></template>
+
+<template>
+  <div class="demo">
+    <Dock>
+      <DockItem v-for="item in ITEMS" :key="item.id" :aria-label="item.label" :active="active === item.id" @click="active = item.id">
+        <LucideIcon :name="item.icon" :size="20" />
+      </DockItem>
+      <DockSeparator />
+      <DockItem aria-label="Settings" :active="active === 'settings'" @click="active = 'settings'">
+        <LucideIcon name="Settings" :size="20" />
+      </DockItem>
+      <DockItem aria-label="GitHub">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 .5C5.65.5.5 5.65.5 12.02c0 5.1 3.29 9.43 7.86 10.96.58.1.79-.25.79-.56v-2.01c-3.2.7-3.87-1.54-3.87-1.54-.52-1.33-1.27-1.68-1.27-1.68-1.04-.71.08-.69.08-.69 1.15.08 1.76 1.18 1.76 1.18 1.02 1.76 2.68 1.25 3.34.96.1-.74.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.15 1.18.91-.25 1.89-.38 2.87-.39.97 0 1.96.13 2.87.39 2.19-1.49 3.15-1.18 3.15-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.42-2.7 5.4-5.27 5.68.42.36.78 1.07.78 2.16v3.2c0 .31.21.67.8.56 4.57-1.53 7.85-5.86 7.85-10.96C23.5 5.65 18.35.5 12 .5Z" /></svg>
+      </DockItem>
+    </Dock>
+  </div>
+</template>
+
+<style scoped>
+.demo { display: flex; width: 100%; justify-content: center; }
+</style>

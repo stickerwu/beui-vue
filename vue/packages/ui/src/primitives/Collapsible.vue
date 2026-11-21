@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { motion, useReducedMotion } from 'motion-v'
+import { motion } from 'motion-v'
+import { useReducedMotion } from '../core/reduced-motion'
 import { computed, provide, useId } from 'vue'
 import { collapsibleKey, layoutSpring, useOpenState } from './state'
 

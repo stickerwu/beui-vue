@@ -1,27 +1,48 @@
 <script setup lang="ts">
+import { AnimatePresence, motion } from 'motion-v'
+import { useReducedMotion } from '../core/reduced-motion'
+import { easeOut } from '../core/motion'
 import { useAlert } from './state'
+
 const { variant } = useAlert()
+const reduce = useReducedMotion()
 </script>
 
 <template>
   <span class="be-alert-icon" aria-hidden="true" data-slot="alert-icon">
-    <Transition name="be-icon"><span :key="variant"><slot>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path v-if="variant === 'warning'" d="M10.4 4.2a1.8 1.8 0 0 1 3.2 0l8 13.9a1.9 1.9 0 0 1-1.6 2.9H4a1.9 1.9 0 0 1-1.6-2.9z" />
-        <circle v-else cx="12" cy="12" r="9" />
-        <path v-if="variant === 'success'" d="m8 12 3 3 5-6" />
-        <path v-else-if="variant === 'warning' || variant === 'destructive'" d="M12 8v5m0 3h.01" />
-        <path v-else d="M12 11v5m0-8h.01" />
-      </svg>
-    </slot></span></Transition>
+    <AnimatePresence :initial="false" mode="popLayout">
+      <motion.span
+        :key="variant"
+        class="be-alert-glyph"
+        :initial="{ opacity: 0, transform: reduce ? 'translateY(0px) scale(1)' : 'translateY(4px) scale(.9)' }"
+        :animate="{ opacity: 1, transform: 'translateY(0px) scale(1)' }"
+        :exit="{ opacity: 0, transform: reduce ? 'translateY(0px) scale(1)' : 'translateY(-4px) scale(.9)', transition: { duration: .1, ease: easeOut } }"
+        :transition="{ duration: .18, ease: easeOut }"
+      >
+        <slot>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <template v-if="variant === 'success'">
+              <path d="M21.8 10A10 10 0 1 1 17 3.34" /><path d="m9 11 3 3L22 4" />
+            </template>
+            <template v-else-if="variant === 'warning'">
+              <path d="m21.7 18-8-14a2 2 0 0 0-3.4 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3" />
+              <path d="M12 9v4m0 4h.01" />
+            </template>
+            <template v-else-if="variant === 'destructive'">
+              <circle cx="12" cy="12" r="10" /><path d="M12 8v4m0 4h.01" />
+            </template>
+            <template v-else>
+              <circle cx="12" cy="12" r="10" /><path d="M12 16v-4m0-4h.01" />
+            </template>
+          </svg>
+        </slot>
+      </motion.span>
+    </AnimatePresence>
   </span>
 </template>
 
 <style scoped>
-.be-alert-icon { display: grid; place-items: center; flex: none; width: 1rem; height: 1rem; margin-top: .125rem; }
-.be-alert-icon > span { grid-area: 1 / 1; display: flex; }
-.be-alert-icon :deep(svg) { width: 1rem; height: 1rem; }
-.be-icon-enter-active, .be-icon-leave-active { transition: opacity .15s, transform .15s; }
-.be-icon-enter-from, .be-icon-leave-to { opacity: 0; transform: scale(.9); }
-@media (prefers-reduced-motion:reduce) { .be-icon-enter-from, .be-icon-leave-to { transform: none; } }
+.be-alert-icon { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 1rem; height: 1rem; margin-top: .125rem; }
+.be-alert-glyph { display: inline-flex; }
+.be-alert-glyph :deep(svg) { width: 1rem; height: 1rem; }
 </style>

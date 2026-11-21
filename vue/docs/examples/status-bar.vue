@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { StatusBar } from 'beui-vue'
+import { ButtonBase, StatusBar } from 'beui-vue'
 import { computed, ref } from 'vue'
 
 const incident = ref(false), replay = ref(0)
@@ -20,12 +20,25 @@ const api = computed(() => history.map((datum, day) => incident.value && day >= 
 </script>
 
 <template>
-  <div class="chart-demo" style="max-width:42rem"><header><span>48 days of status</span><div><button type="button" @click="replay++">Replay</button><button type="button" @click="incident = !incident">{{ incident ? 'Resolve incident' : 'Simulate incident' }}</button></div></header>
-    <div class="line"><strong>API</strong><span>{{ incident ? 'Degraded' : 'Operational' }}</span></div>
-    <StatusBar :key="`api-${replay}`" label="API status" :data="api" :statuses="statuses" hide-legend />
-    <div class="line website"><strong>Website</strong><span>Operational</span></div>
-    <StatusBar :key="`site-${replay}`" label="Website status" :data="website" :statuses="statuses" />
+  <div class="status-demo">
+    <div class="top"><span>48 days of status</span><div><ButtonBase variant="ghost" size="sm" @click="replay++">Replay</ButtonBase><ButtonBase variant="ghost" size="sm" @click="incident = !incident">{{ incident ? 'Resolve incident' : 'Simulate incident' }}</ButtonBase></div></div>
+    <StatusBar :key="`api-${replay}`" label="API status" :data="api" :statuses="statuses" hide-legend>
+      <template #header><div class="line"><strong>API</strong><span>{{ incident ? 'Degraded' : 'Operational' }}</span></div></template>
+    </StatusBar>
+    <StatusBar :key="`site-${replay}`" class="website" label="Website status" :data="website" :statuses="statuses">
+      <template #header><div class="line"><strong>Website</strong><span>Operational</span></div></template>
+    </StatusBar>
   </div>
 </template>
-<style scoped src="./chart-demo.css"></style>
-<style scoped>.line { display:flex;justify-content:space-between;margin-bottom:8px;font-size:14px; }.line span,header > span {color:var(--beui-muted-foreground)}.website { margin-top:24px;padding-top:24px;border-top:1px solid var(--beui-border); }</style>
+
+<style scoped>
+.status-demo { width: 100%; max-width: 42rem; margin-inline: auto; }
+.status-demo > * + * { margin-top: 24px; }
+.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.top > span { font-size: 14px; line-height: 20px; color: var(--beui-muted-foreground); }
+.top > div { display: flex; gap: 4px; }
+.line { display: flex; align-items: center; justify-content: space-between; font-size: 14px; line-height: 20px; }
+.line strong { font-weight: 500; }
+.line span { color: var(--beui-muted-foreground); }
+.website { padding-top: 24px; border-top: 1px solid var(--beui-border); }
+</style>

@@ -1,4 +1,5 @@
-import { useReducedMotion, useSpring } from 'motion-v'
+import { useSpring } from 'motion-v'
+import { useReducedMotion } from '../core/reduced-motion'
 import { onMounted, onScopeDispose, shallowRef, watchEffect } from 'vue'
 
 export function useHoverSpring() {

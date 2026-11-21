@@ -1,4 +1,11 @@
 <script setup lang="ts">
 import { AvailabilityScheduler } from 'beui-vue'
 </script>
-<template><AvailabilityScheduler :step="30" /></template>
+
+<template>
+  <div class="scheduler-stage"><AvailabilityScheduler /></div>
+</template>
+
+<style scoped>
+.scheduler-stage { display: flex; width: 100%; justify-content: center; }
+</style>
