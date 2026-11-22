@@ -437,6 +437,23 @@
   font-weight: 500;
 }
 
+/* Upstream wraps the label in `flex items-center justify-between gap-2`; the shared
+   hover background adds its own body wrapper, so give that wrapper the same job. */
+.beui-sidebar-link > .be-shared-bg-body {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.beui-sidebar-link > .be-shared-bg-body > span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .beui-new-badge {
   display: inline-flex;
   height: 16px;

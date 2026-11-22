@@ -230,5 +230,6 @@
  "Tool and code components": "工具与代码组件",
  "Present execution outcomes, generated source, and file changes with bounded streaming, stable highlighting, and inspectable completion states.": "以有界的流式输出、稳定的高亮和可检查的完成状态，呈现执行结果、生成的源码和文件变更。",
  "Human-in-the-loop components": "人机协同组件",
- "Pause agent work for a scoped permission, clarification, review, or decision, then preserve the resolved outcome in the run history.": "为限定范围的授权、澄清、审查或决定暂停 Agent 工作，并在运行记录中保留处理结果。"
+ "Pause agent work for a scoped permission, clarification, review, or decision, then preserve the resolved outcome in the run history.": "为限定范围的授权、澄清、审查或决定暂停 Agent 工作，并在运行记录中保留处理结果。",
+ "All {count} in {name}": "全部 {count} 个{name}"
 }

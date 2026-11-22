@@ -28,6 +28,8 @@ export interface CatalogPage {
   guide: CatalogGuide | null
   updatedAt: string
   native: { description: string } | null
+  /** The demo a home tile shows: beui.dev's page-level preview, else the first example. */
+  tile: { slug: string; variant: string | null }
 }
 
 export interface CatalogCredit {

@@ -1,4 +1,9 @@
 import './theme.css'
+// Stylesheets for whole groups live here, not in the group barrels: the package
+// marks .ts files side-effect free, so a bare CSS import in a barrel is dropped
+// from the library build and its rules never reach dist/style.css.
+import './agents/agents.css'
+import './blocks/blocks.css'
 export * from './primitives'
 export * from './charts'
 export * from './effects'

@@ -97,8 +97,19 @@ if (process.argv.includes('--docs')) {
   const nativeCatalog = JSON.parse(execFileSync('git', ['show', `${baseline}:lib/native/catalog.json`], {cwd: repo, encoding: 'utf8', maxBuffer: 1 << 28}))
   const isNewBadge = item => item.badge === 'new' && Date.parse(`${item.launchedAt}T00:00:00Z`) + 7 * 86400000 > Date.now()
   const creditOf = credit => credit ? {name: credit.name, url: credit.url, avatar: credit.avatar ?? null} : null
+  // Home tiles show what beui.dev's LandingComponentCard shows: the page-level preview
+  // (`<category>/<page slug>`) when one exists, otherwise the first example.
+  const previewKeys = new Set([...execFileSync('git', ['show', `${baseline}:components/previews/index.tsx`], {cwd: repo, encoding: 'utf8'}).matchAll(/^\s*"([a-z]+\/[a-z0-9-]+)":/gm)].map(match => match[1]))
+  const tileOf = (category, page, group) => {
+    const examples = group.flatMap(entry => (entry.examples ?? []).map(example => ({slug: entry.slug, variant: entry.examples.length > 1 ? example.slug : null, key: example.previewKey})))
+    const pageKey = `${category}/${page.slug}`
+    const target = (previewKeys.has(pageKey) && examples.find(example => example.key === pageKey))
+      || examples.find(example => example.key === page.examples?.[0]?.previewKey)
+    return target ? {slug: target.slug, variant: target.variant} : {slug: group[0].slug, variant: null}
+  }
   const pages = [...routeGroups].map(([path, group]) => {
     const page = registry.flatMap(category => category.components).find(page => page.slug === path.split('/').at(-1))
+    const registryCategory = registry.find(category => category.components.includes(page)).slug
     const description = page.description.replaceAll('React', 'Vue')
     // Same credit rules as beui.dev: one shared contributor shows once under the title,
     // otherwise "Includes designs by" lists each contributor and links to their example.
@@ -128,6 +139,7 @@ if (process.argv.includes('--docs')) {
       guide,
       updatedAt: componentDates(group[0].category, page.slug).updatedAt,
       native: native ? {description: native.description} : null,
+      tile: tileOf(registryCategory, page, group),
       entries: group.map(entry => ({
         slug: entry.slug, title: entry.title, category: entry.category, path: paths.get(entry.slug),
         pagePath: path, description,

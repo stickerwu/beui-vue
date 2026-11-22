@@ -1,5 +1,3 @@
-import './blocks.css'
-
 export { default as InfiniteMasonry } from './InfiniteMasonry.vue'
 export { default as NotificationStack } from './NotificationStack.vue'
 export { default as ProjectFolder } from './ProjectFolder.vue'

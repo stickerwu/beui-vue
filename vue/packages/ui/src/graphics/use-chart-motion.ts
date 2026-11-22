@@ -50,6 +50,10 @@ export function useChartMotion(targets: ComputedRef<Map<string, Point>>, width: 
     media = window.matchMedia('(prefers-reduced-motion: reduce)')
     media.addEventListener('change', snap)
     for (const [key, target] of targets.value) ensure(key, target)
+    // A size measured in an earlier onMounted (the plot's own) already changed the
+    // targets before this lazy watcher exists; start from them rather than the
+    // empty setup-time map.
+    points.value = targets.value
     watch([targets, width], ([next, size], [, oldSize]) => {
       stop()
       for (const key of values.keys()) if (!next.has(key)) values.delete(key)

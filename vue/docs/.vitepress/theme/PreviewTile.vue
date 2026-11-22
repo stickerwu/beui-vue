@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, shallowRef, useTemplateRef, type Component } from 'vue'
+import { computed, defineAsyncComponent, onBeforeUnmount, onMounted, provide, shallowRef, useTemplateRef, type Component } from 'vue'
+import { previewVariantKey } from '../preview-variant'
 import type { CatalogPage } from './catalog'
 import { useLocale } from './i18n'
 import Icon from './Icon.vue'
@@ -13,13 +14,16 @@ const frame = useTemplateRef<HTMLElement>('frame')
 const stage = useTemplateRef<HTMLElement>('stage')
 const visible = shallowRef(false)
 const measured = shallowRef(false)
-const scale = shallowRef(0.55)
+const scale = shallowRef(0.22)
 let intersectionObserver: IntersectionObserver | undefined
 let resizeObserver: ResizeObserver | undefined
 
+// Pin the example the tile shows, so multi-example demos render that one without their picker.
+provide(previewVariantKey, page.tile?.variant ?? undefined)
+
 const preview = computed(() => {
-  const entry = page.entries[0]
-  const load = entry && modules[`../../examples/${entry.slug}.vue`]
+  const slug = page.tile?.slug ?? page.entries[0]?.slug
+  const load = slug && modules[`../../examples/${slug}.vue`]
   return load ? defineAsyncComponent(async () => (await load()).default) : undefined
 })
 const stageStyle = computed(() => ({ '--home-preview-scale': scale.value }))
@@ -34,7 +38,7 @@ function measure() {
   // the bottom the way an app screen does. A card fits the whole demo instead.
   scale.value = mode === 'phone'
     ? Math.min(1, frame.value.clientWidth * 0.98 / width)
-    : Math.max(0.22, Math.min(detailed ? 0.82 : 0.78, frame.value.clientWidth * 0.94 / width, frame.value.clientHeight * 0.94 / height))
+    : Math.max(0.22, Math.min(0.82, frame.value.clientWidth * 0.94 / width, frame.value.clientHeight * 0.94 / height))
   measured.value = true
 }
 

@@ -36,7 +36,13 @@ export function useTabTrack(viewport: Ref<HTMLElement | null>, list: Ref<HTMLEle
     measureEdges()
     const buttons = list.value?.querySelectorAll<HTMLButtonElement>('[role="tab"]')
     if (!buttons) return
-    const boxes = Array.from(buttons, tab => ({ tab, start: tab.offsetLeft, width: tab.getBoundingClientRect().width }))
+    // Client rects include ancestor transforms (a scaled preview card); divide
+    // the scale back out so the pill stays in the list's own space.
+    const boxes = Array.from(buttons, tab => {
+      const width = tab.getBoundingClientRect().width
+      const scale = tab.offsetWidth ? width / tab.offsetWidth || 1 : 1
+      return { tab, start: tab.offsetLeft, width: width / scale }
+    })
     const target = boxes.find(({ tab }) => tab.dataset.value === current.value)
     for (const box of boxes) box.tab.style.setProperty('--tab-left', `${box.start}px`)
     if (!target?.width) { placed.value = false; return }

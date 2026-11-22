@@ -15,7 +15,11 @@ export function useHoverCapable() {
   return canHover
 }
 
-/** Measured border-box size of `element`, kept current by a ResizeObserver. */
+/**
+ * Layout size of `element` (clientWidth/clientHeight), kept current by a ResizeObserver.
+ * Mirrors upstream `useElementWidth`: a client rect would include ancestor transforms,
+ * so a chart inside a scaled preview card would draw at the shrunken width.
+ */
 export function useMeasuredSize(element: Ref<HTMLElement | null>, initial: { width: number; height: number }) {
   const size = shallowRef(initial)
   let observer: ResizeObserver | undefined
@@ -23,7 +27,8 @@ export function useMeasuredSize(element: Ref<HTMLElement | null>, initial: { wid
     const plot = element.value
     if (!plot) return
     const measure = () => {
-      const { width, height } = plot.getBoundingClientRect()
+      const width = plot.clientWidth
+      const height = plot.clientHeight
       if (width > 0 && height > 0 && (size.value.width !== width || size.value.height !== height)) size.value = { width, height }
     }
     measure()

@@ -1,5 +1,3 @@
-import './agents.css'
-
 export { default as AgentIcon } from './AgentIcon.vue'
 export { default as AgentCode } from './AgentCode.vue'
 export { default as AgentActivity } from './AgentActivity.vue'

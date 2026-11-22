@@ -94,13 +94,18 @@ function place() {
   // pills keep the integer offsets the original measures with.
   const tab = target.getBoundingClientRect()
   const origin = host.getBoundingClientRect()
-  const left = tracked.value ? target.offsetLeft : tab.left - origin.left - host.clientLeft
-  const top = tracked.value ? target.offsetTop : tab.top - origin.top - host.clientTop
+  // Client rects include any transform on an ancestor, such as a scaled preview
+  // card; the pill is positioned in the list's own untransformed space, so
+  // divide the scale back out. Without this a scaled list gets a shrunken,
+  // shifted pill that ResizeObserver never corrects (transforms don't resize).
+  const scale = host.offsetWidth ? origin.width / host.offsetWidth || 1 : 1
+  const left = tracked.value ? target.offsetLeft : (tab.left - origin.left) / scale - host.clientLeft
+  const top = tracked.value ? target.offsetTop : (tab.top - origin.top) / scale - host.clientTop
   const box = {
     x: left,
     y: top,
-    width: tab.width,
-    height: tab.height,
+    width: tab.width / scale,
+    height: tab.height / scale,
   }
   icons.forEach((icon, index) => {
     [icon.style.width, icon.style.marginRight] = saved[index]!
@@ -184,9 +189,11 @@ function syncClips() {
   // Read ALL geometry before writing ANY masks.
   const clips = labels.map(label => {
     const bounds = label.getBoundingClientRect()
+    // Insets are in the label's own space: divide out any ancestor scale.
+    const scale = label.offsetWidth ? bounds.width / label.offsetWidth || 1 : 1
     const left = Math.max(0, Math.min(bounds.width, pill.left - bounds.left))
     const right = Math.max(0, Math.min(bounds.width, bounds.right - pill.right))
-    return left + right >= bounds.width ? 'inset(0 100% 0 0)' : `inset(0 ${right}px 0 ${left}px)`
+    return left + right >= bounds.width ? 'inset(0 100% 0 0)' : `inset(0 ${right / scale}px 0 ${left / scale}px)`
   })
   labels.forEach((label, index) => {
     if (label.style.clipPath !== clips[index]) label.style.clipPath = clips[index]!

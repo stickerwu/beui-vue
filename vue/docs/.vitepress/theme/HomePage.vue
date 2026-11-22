@@ -7,6 +7,7 @@ import Icon from './Icon.vue'
 import PreviewTile from './PreviewTile.vue'
 import { useLocale } from './i18n'
 import './home.css'
+import './hero-beam.css'
 
 const { isZh, t, href } = useLocale()
 
@@ -130,7 +131,7 @@ onBeforeUnmount(() => {
 <template>
   <div class="home-page">
     <section class="home-hero" aria-labelledby="home-title">
-      <div class="home-eyebrow">
+      <div class="home-eyebrow" data-beam="hero" data-active="">
         <div class="home-eyebrow-inner">
           <a class="home-eyebrow-icon" href="https://github.com/stickerwu/beui-vue" target="_blank" rel="noreferrer noopener" aria-label="beui-vue on GitHub">
             <Icon name="github" />
@@ -139,11 +140,12 @@ onBeforeUnmount(() => {
             <span><strong>{{ entries.length }}</strong> <span>Vue</span><span class="home-sr-only"> {{ t('components') }}</span></span>
           </a>
           <span class="home-eyebrow-divider" aria-hidden="true" />
-          <a class="home-eyebrow-nuxt" :href="href('/install')">
-            <Icon name="code" />
+          <span class="home-eyebrow-icon" aria-hidden="true"><Icon name="code" /></span>
+          <a class="home-eyebrow-count" :href="href('/install')">
             <span>Nuxt <span class="home-eyebrow-muted">SSR</span></span>
           </a>
         </div>
+        <div data-beam-bloom="true" />
       </div>
       <h1 id="home-title" class="home-title">
         {{ t('Animated components for') }}<br class="home-title-break"> <mark class="home-mark">Vue</mark> {{ t('and') }} <mark class="home-mark home-mark-nuxt">Nuxt</mark>
@@ -226,7 +228,7 @@ onBeforeUnmount(() => {
             </div>
             <div class="home-explorer-action">
               <a class="home-button home-button-outline" :href="href(sectionsBySlug[item.value]?.path ?? '/components/motion')">
-                {{ t('All') }} {{ sectionsBySlug[item.value]?.entries.length }} · {{ item.label }}
+                {{ t('All {count} in {name}').replace('{count}', String(sectionsBySlug[item.value]?.entries.length ?? 0)).replace('{name}', item.label) }}
                 <Icon name="arrow-right" />
               </a>
             </div>
