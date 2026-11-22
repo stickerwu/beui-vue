@@ -1,3 +1,5 @@
-export { default as Table, default as TableAsync, default as TableEditable } from './Table.vue'
+export { default as Table } from './Table.vue'
+export { default as TableAsync } from './Table.vue'
+export { default as TableEditable } from './Table.vue'
 export { tableMessages } from './model'
 export type { TableColumn, TableProps, TableMessages, SortDirection, SortState, InsertPosition } from './model'

@@ -6,14 +6,29 @@ import { easeOut } from '../core/motion'
 
 interface Item { id: string; title: string; description?: string; disabled?: boolean; icon?: string }
 
-const { items, collapsible = true, classNames } = defineProps<{
+const { items, defaultValue = null, collapsible = true, classNames } = defineProps<{
   items: readonly Item[]
+  /** Open row when uncontrolled (no `v-model`). */
+  defaultValue?: string | null
   /** Allow closing the open row by activating it again. */
   collapsible?: boolean
   classNames?: { root?: string; item?: string; trigger?: string; icon?: string; title?: string; chevron?: string; content?: string; description?: string }
 }>()
-const active = defineModel<string | null>({ default: null })
-defineSlots<{ default?: (props: { item: Item }) => unknown, icon?: (props: { item: Item }) => unknown }>()
+const model = defineModel<string | null>()
+// Controlled when the parent binds `v-model`; otherwise the open row is local state seeded by `defaultValue`.
+const local = shallowRef<string | null>(defaultValue)
+const active = computed<string | null>({
+  get: () => (model.value !== undefined ? model.value : local.value),
+  set: value => { local.value = value; model.value = value },
+})
+defineSlots<{
+  /** Panel content of a row. Falls back to the item's `description`. */
+  default?: (props: { item: Item }) => unknown
+  /** Row title. Falls back to the item's `title`. */
+  title?: (props: { item: Item }) => unknown
+  /** Leading icon of a row. Falls back to the item's `icon` text. */
+  icon?: (props: { item: Item }) => unknown
+}>()
 const reduce = useReducedMotion()
 const uid = useId()
 
@@ -89,28 +104,10 @@ function panelHeight(item: Item, open: boolean) {
   return heights[item.id] || 'auto'
 }
 
-// Accordion keyboard support beyond plain tab order: move between headers.
-function keys(event: KeyboardEvent, index: number) {
-  const disabled = items.map((item, position) => (item.disabled ? position : -1)).filter(position => position >= 0)
-  const order = items.map((_, position) => position).filter(position => !disabled.includes(position))
-  if (!order.length) return
-  const current = order.indexOf(index)
-  if (current < 0) return
-  const target =
-    event.key === 'ArrowDown' ? order[(current + 1) % order.length]
-      : event.key === 'ArrowUp' ? order[(current - 1 + order.length) % order.length]
-        : event.key === 'Home' ? order[0]
-          : event.key === 'End' ? order[order.length - 1]
-            : undefined
-  if (target === undefined) return
-  event.preventDefault()
-  const buttons = (event.currentTarget as HTMLElement).closest('[data-bouncy-accordion]')?.querySelectorAll<HTMLButtonElement>('[data-bouncy-trigger]')
-  buttons?.[target]?.focus()
-}
 </script>
 
 <template>
-  <div data-bouncy-accordion class="be-accordion" :class="classNames?.root">
+  <div class="be-accordion" :class="classNames?.root">
     <motion.div v-for="(item, index) in items" :key="item.id" layout="position" :initial="false"
       :style="{ marginTop: geometry(index).separatedFromPrevious ? 12 : 0 }"
       :transition="reduce ? instant : geometry(index).closing ? CLOSE_TRANSITION : ROW_TRANSITION">
@@ -127,11 +124,11 @@ function keys(event: KeyboardEvent, index: number) {
         :transition="reduce ? instant : { ...ROW_TRANSITION, layout: geometry(index).open ? CONTENT_OPEN_TRANSITION : CLOSE_TRANSITION }"
         class="be-accordion-card" :class="[classNames?.item, item.disabled && 'be-accordion-disabled']">
         <motion.button :layout="!reduce" :transition="reduce ? instant : { layout: geometry(index).open ? CONTENT_OPEN_TRANSITION : CLOSE_TRANSITION }"
-          data-bouncy-trigger :id="`${uid}-${item.id}-trigger`" type="button" :disabled="item.disabled"
+          :id="`${uid}-${item.id}-trigger`" type="button" :disabled="item.disabled"
           :aria-expanded="geometry(index).open" :aria-controls="`${uid}-${item.id}-content`" class="be-accordion-trigger" :class="classNames?.trigger"
-          @click="toggle(item.id)" @keydown="keys($event, index)">
+          @click="toggle(item.id)">
           <span v-if="item.icon || $slots.icon" class="be-accordion-icon" :class="classNames?.icon" aria-hidden="true"><slot name="icon" :item="item">{{ item.icon }}</slot></span>
-          <span class="be-accordion-title" :class="classNames?.title">{{ item.title }}</span>
+          <span class="be-accordion-title" :class="classNames?.title"><slot name="title" :item="item">{{ item.title }}</slot></span>
           <motion.span aria-hidden="true" class="be-accordion-chevron" :class="classNames?.chevron"
             :animate="{ rotate: geometry(index).open ? 180 : 0 }" :transition="reduce ? instant : CHEVRON_TRANSITION" :initial="false">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6" /></svg>
@@ -160,8 +157,9 @@ function keys(event: KeyboardEvent, index: number) {
 .be-accordion { width: 100%; }
 .be-accordion-card { overflow: hidden; background: var(--beui-card); color: var(--beui-foreground); }
 .be-accordion-disabled { opacity: .5; }
-.be-accordion-trigger { display: flex; box-sizing: border-box; width: 100%; min-height: 54px; align-items: center; gap: 1rem; padding: .5rem 1.25rem; border: 0; background: none; color: inherit; font: inherit; text-align: start; cursor: pointer; }
-.be-accordion-trigger:focus-visible { outline: none; background: color-mix(in srgb, var(--beui-card) 75%, var(--beui-foreground) 6%); }
+.be-accordion-trigger { display: flex; box-sizing: border-box; width: 100%; min-height: 54px; align-items: center; gap: 1rem; padding: 0 1.25rem; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.be-accordion-trigger { transition: color .15s cubic-bezier(.4, 0, .2, 1), background-color .15s cubic-bezier(.4, 0, .2, 1), border-color .15s cubic-bezier(.4, 0, .2, 1); }
+.be-accordion-trigger:focus-visible { outline: none; background: color-mix(in srgb, var(--beui-muted) 25%, transparent); }
 .be-accordion-trigger:disabled { pointer-events: none; }
 .be-accordion-icon { display: grid; height: 1.75rem; width: 1.75rem; flex: none; place-items: center; color: var(--beui-muted-foreground); }
 .be-accordion-title { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; font-weight: 500; color: var(--beui-foreground); }

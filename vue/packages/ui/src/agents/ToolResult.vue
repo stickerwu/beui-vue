@@ -13,14 +13,18 @@ import AgentIcon from './AgentIcon.vue'
 import AgentReveal from './AgentReveal.vue'
 import AgentRollText from './AgentRollText.vue'
 import './agent-tokens.css'
-import { useCopy, type Labels } from './shared'
+import { useCopy, useHasListener, type Labels } from './shared'
 
 const props = withDefaults(defineProps<{
   tool: string, title: string, meta?: string, status?: ToolResultStatus, kind?: ToolResultKind,
   open?: boolean, defaultOpen?: boolean, collapseOnComplete?: boolean, maxHeight?: number, copyText?: string,
-  onCopy?: () => void | Promise<void>, onRetry?: () => void, labels?: Labels, contentClassName?: string
+  /** Overrides the built-in clipboard action. */
+  onCopy?: () => void | Promise<void>, labels?: Labels, contentClassName?: string
 }>(), { status: 'running', kind: 'custom', open: undefined, defaultOpen: true, collapseOnComplete: true, maxHeight: 220 })
-const emit = defineEmits<{ 'update:open': [value: boolean], openChange: [value: boolean] }>()
+const emit = defineEmits<{ 'update:open': [value: boolean], openChange: [value: boolean], retry: [] }>()
+defineSlots<{ default?(): unknown, icon?(): unknown }>()
+// The retry action only shows when a listener is bound, like upstream's optional `onRetry`.
+const hasRetry = useHasListener('retry')
 const reduce = useReducedMotion()
 const { open, setOpen } = useOpenState(() => props.open, props.defaultOpen, next => { emit('update:open', next); emit('openChange', next) })
 const { copied, copy } = useCopy()
@@ -71,9 +75,9 @@ onBeforeUnmount(() => { cancelAnimationFrame(frame); observer?.disconnect() })
       <div class="be-tr-indent">
         <div class="be-tr-card">
           <div ref="viewport" role="log" aria-live="polite" class="be-tr-viewport be-ag-hide-scroll" :style="{ maxHeight: `${maxHeight}px` }"><div class="be-tr-content" :class="contentClassName"><slot /></div></div>
-          <div v-if="canCopy || onRetry" class="be-tr-foot">
+          <div v-if="canCopy || hasRetry()" class="be-tr-foot">
             <motion.button v-if="canCopy" type="button" class="be-tr-action" :aria-label="copied ? t('copied') : t('copy')" :title="copied ? t('copied') : t('copy')" :while-press="reduce ? undefined : { scale: 0.9 }" :transition="pressSpring" @click="copy(copyText ?? '', onCopy)"><AgentIcon :name="copied ? 'Check' : 'Copy'" :size="14" /></motion.button>
-            <motion.button v-if="onRetry" type="button" class="be-tr-action" :aria-label="t('retry')" :title="t('retry')" :while-press="reduce ? undefined : { scale: 0.9 }" :transition="pressSpring" @click="onRetry"><AgentIcon name="RotateCcw" :size="14" /></motion.button>
+            <motion.button v-if="hasRetry()" type="button" class="be-tr-action" :aria-label="t('retry')" :title="t('retry')" :while-press="reduce ? undefined : { scale: 0.9 }" :transition="pressSpring" @click="emit('retry')"><AgentIcon name="RotateCcw" :size="14" /></motion.button>
             <span class="be-tr-foot-status"><AgentRollText :value="status">{{ statusLabel }}</AgentRollText></span>
           </div>
         </div>
@@ -89,8 +93,8 @@ onBeforeUnmount(() => { cancelAnimationFrame(frame); observer?.disconnect() })
 .be-tr-text { display: flex; min-width: 0; flex: 1; align-items: baseline; gap: 0.5rem; }
 .be-tr-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; color: color-mix(in srgb, var(--beui-foreground) 90%, transparent); }
 .be-tr-meta { flex: none; font-size: 0.75rem; line-height: 1rem; color: color-mix(in srgb, var(--beui-muted-foreground) 60%, transparent); }
-.be-tr-tool { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-mono, ui-monospace, monospace); font-size: 11px; line-height: 1rem; color: color-mix(in srgb, var(--beui-muted-foreground) 55%, transparent); }
-.be-tr-status { display: inline-flex; flex: none; align-items: center; gap: 0.25rem; font-size: 11px; line-height: 1rem; font-weight: 500; color: var(--beui-muted-foreground); }
+.be-tr-tool { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-mono, ui-monospace, monospace); font-size: 11px; line-height: calc(1.25 / .875); color: color-mix(in srgb, var(--beui-muted-foreground) 55%, transparent); }
+.be-tr-status { display: inline-flex; flex: none; align-items: center; gap: 0.25rem; font-size: 11px; line-height: calc(1.25 / .875); font-weight: 500; color: var(--beui-muted-foreground); }
 .be-tr-status[data-status=running] { color: var(--ag-blue); }
 .be-tr-status[data-status=success] { color: var(--ag-green); }
 .be-tr-status[data-status=error] { color: var(--ag-rose); }
@@ -104,5 +108,5 @@ onBeforeUnmount(() => { cancelAnimationFrame(frame); observer?.disconnect() })
 .be-tr-action { display: grid; width: 1.75rem; height: 1.75rem; place-items: center; padding: 0; border: 0; border-radius: 0.375rem; background: transparent; color: var(--beui-muted-foreground); cursor: pointer; outline: none; transition: color 0.15s, background-color 0.15s; }
 .be-tr-action:hover { background: var(--beui-muted); color: var(--beui-foreground); }
 .be-tr-action:focus-visible { box-shadow: 0 0 0 2px var(--beui-ring); }
-.be-tr-foot-status { margin-inline-start: auto; font-size: 11px; line-height: 1rem; color: color-mix(in srgb, var(--beui-muted-foreground) 55%, transparent); }
+.be-tr-foot-status { margin-inline-start: auto; font-size: 11px; line-height: calc(1.25 / .875); color: color-mix(in srgb, var(--beui-muted-foreground) 55%, transparent); }
 </style>

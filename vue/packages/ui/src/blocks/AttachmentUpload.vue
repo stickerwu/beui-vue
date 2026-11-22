@@ -44,7 +44,6 @@ export interface AttachmentUploadProps {
  */
 
 const props = withDefaults(defineProps<AttachmentUploadProps>(), {
-  defaultValue: () => [],
   multiple: true,
   maxFiles: 12,
   maxFileSize: 500 * 1024 * 1024,
@@ -97,7 +96,7 @@ const removingIds = shallowRef(new Set<string>())
 
 const { value: items, set: setItems } = useValue<AttachmentUploadItem[]>(
   () => props.modelValue ?? props.value,
-  props.defaultValue,
+  props.defaultValue ?? [],
   next => {
     emit('update:modelValue', next)
     emit('valueChange', next)
@@ -766,7 +765,7 @@ onBeforeUnmount(() => {
                     class="be-attach-progress"
                     :initial="{ opacity: 1, scaleX: 0 }"
                     :animate="{ opacity: 1, scaleX: 1 }"
-                    exit="{ opacity: 0 }"
+                    :exit="{ opacity: 0 }"
                     :transition="{ duration: UPLOAD_PROGRESS_MS / 1000, ease: easeOut }" />
                 </AnimatePresence>
               </div>
@@ -1017,6 +1016,7 @@ onBeforeUnmount(() => {
 
 .be-attach-dropzone-title {
   font-size: .875rem;
+  line-height: 1.25rem;
   font-weight: 600;
   letter-spacing: -.01em;
   color: var(--beui-foreground);
@@ -1134,6 +1134,7 @@ onBeforeUnmount(() => {
   display: block;
   overflow: hidden;
   font-size: .875rem;
+  line-height: 1.25rem;
   font-weight: 500;
   color: var(--beui-foreground);
   text-overflow: ellipsis;
@@ -1150,6 +1151,7 @@ onBeforeUnmount(() => {
 .be-attach-size {
   flex: none;
   font-size: .75rem;
+  line-height: 1rem;
   color: var(--beui-muted-foreground);
 }
 
@@ -1173,6 +1175,7 @@ onBeforeUnmount(() => {
   width: 2.25rem;
   flex: none;
   font-size: .75rem;
+  line-height: 1rem;
   font-variant-numeric: tabular-nums;
   color: var(--beui-muted-foreground);
 }
@@ -1222,10 +1225,10 @@ onBeforeUnmount(() => {
   z-index: -1;
   transform-origin: left;
   pointer-events: none;
-  background: rgb(52 211 153 / .25);
+  background: oklch(76.5% .177 163.223 / .25);
 }
 :global(.dark .be-attach-progress),
-:global([data-beui-theme="dark"] .be-attach-progress) { background: rgb(16 185 129 / .2); }
+:global([data-beui-theme="dark"] .be-attach-progress) { background: oklch(69.6% .17 162.48 / .2); }
 
 /* Action cell --------------------------------------------------------------- */
 
@@ -1246,9 +1249,9 @@ onBeforeUnmount(() => {
   place-items: center;
   border-radius: .75rem;
 }
-.be-attach-action-complete { color: #059669; }
+.be-attach-action-complete { color: oklch(59.6% .145 163.225); }
 :global(.dark .be-attach-action-complete),
-:global([data-beui-theme="dark"] .be-attach-action-complete) { color: #34d399; }
+:global([data-beui-theme="dark"] .be-attach-action-complete) { color: oklch(76.5% .177 163.223); }
 .be-attach-action-removing { color: var(--beui-muted-foreground); }
 .be-attach-action-failed { color: var(--beui-destructive); }
 .be-attach-spin { display: grid; place-items: center; }

@@ -176,7 +176,7 @@ function dragEnd() {
 /* minor ticks at /45 clear the 3:1 non-text floor in both themes */
 .be-ruler-major { height: 1.75rem; background: color-mix(in srgb, var(--beui-foreground) 70%, transparent); }
 .be-ruler-minor { height: .875rem; background: color-mix(in srgb, var(--beui-foreground) 45%, transparent); }
-.be-ruler-label { position: absolute; bottom: 0; font-size: 10px; line-height: 1rem; font-variant-numeric: tabular-nums; color: var(--beui-muted-foreground); }
+.be-ruler-label { position: absolute; bottom: 0; font-size: 10px; line-height: 1.5; font-variant-numeric: tabular-nums; color: var(--beui-muted-foreground); }
 .be-ruler-needle { pointer-events: none; position: absolute; bottom: 1.25rem; left: 50%; transform: translateX(-50%); }
 .be-ruler-needle span { display: block; width: 3px; height: 2.25rem; border-radius: 999px; background: var(--beui-foreground); }
 </style>

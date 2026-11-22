@@ -42,6 +42,8 @@ import { createBookSounds, type BookSounds } from './book-sounds'
 
 const props = withDefaults(defineProps<{
   books: readonly BookshelfBook[]
+  /** Id of the book that starts open when `v-model` is not bound. */
+  defaultValue?: string | null
   /** Book height in px. */
   height?: number
   /** Cover width as a fraction of the height. */
@@ -58,8 +60,10 @@ const props = withDefaults(defineProps<{
   /** Accessible name of the shelf. */
   label?: string
   labels?: Partial<BookshelfMessages>
-}>(), { height: 300, coverRatio: 0.68, gap: 3, openGap: 16, tilt: true, sound: false })
-const openId = defineModel<string | null>({ default: null })
+}>(), { height: 300, coverRatio: 0.68, gap: 3, openGap: 16, tilt: true, sound: false, defaultValue: null })
+const model = defineModel<string | null>()
+// Uncontrolled until the parent binds v-model (or a book is picked): `defaultValue` seeds it.
+const openId = computed(() => (model.value !== undefined ? model.value : props.defaultValue))
 const emit = defineEmits<{ valueChange: [id: string | null] }>()
 
 const t = computed(() => ({ ...bookshelfMessages, ...props.labels }))
@@ -259,7 +263,7 @@ function setButton(element: Element | { $el?: unknown } | null, id: string) {
 
 function setOpen(id: string | null) {
   if (id === openId.value) return
-  openId.value = id
+  model.value = id
   emit('valueChange', id)
   // A switch plays only the new book's slide; two at once is noise.
   if (id === null) sounds()?.push()

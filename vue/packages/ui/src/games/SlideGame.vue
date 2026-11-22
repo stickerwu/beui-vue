@@ -45,7 +45,7 @@ import SoundToggle from './SoundToggle.vue'
 import { createTickPlayer, type TickPlayer } from '../core/tick-sound'
 import { useReducedMotion } from '../core/reduced-motion'
 import { createGameSounds, type GameSounds } from './game-sounds'
-import { gameTargets, slideResult } from './game-math'
+import { slideResult } from './game-math'
 import { floor2, formatMultiplier, formatShort, PRESS_GUARD, type GameHistoryEntry } from './game-parts'
 import { face, type Round } from './slide-reel'
 import './game-parts.css'
@@ -79,7 +79,7 @@ const props = withDefaults(defineProps<{
   defaultSound?: boolean
   /** Overrides for the built-in text, e.g. for another language. */
   labels?: Partial<SlideGameMessages>
-}>(), { defaultTarget: 2, targets: () => gameTargets, defaultBet: 1, currency: '$', duration: 4, sound: undefined, defaultSound: false })
+}>(), { defaultTarget: 2, targets: () => [1.5, 2, 3, 5, 10, 25, 100], defaultBet: 1, currency: '$', duration: 4, sound: undefined, defaultSound: false })
 const emit = defineEmits<{
   /** Called when the reel stops, with the result, the round's target and its bet. The round wins when result >= target. */
   result: [value: number, target: number, bet: number]
@@ -257,7 +257,10 @@ const eyebrowState = computed(() => busy.value ? 'live' : won.value === true ? '
           </div>
           <div class="slide-field">
             <span class="slide-label" aria-hidden="true">{{ t('target') }}</span>
-            <Select class="slide-target" :model-value="String(target)" :options="options" :label="t('target')" :disabled="busy" @update:model-value="changeTarget" />
+            <Select class="slide-target" :model-value="String(target)" :options="options" :label="t('target')" :disabled="busy" @update:model-value="changeTarget">
+              <!-- Upstream: an sr-only "Target " before the value, so the trigger is named "Target 2×". -->
+              <template #value="{ option }"><span class="slide-sr">{{ t('target') }} </span>{{ option?.label ?? formatShort(target) }}</template>
+            </Select>
           </div>
         </div>
 

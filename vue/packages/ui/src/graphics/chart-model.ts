@@ -45,6 +45,8 @@ export function provideLineChart(props: Readonly<LineChartProps>, changeActive: 
   const requested = computed(() => props.activeId === undefined ? active.value : props.activeId)
   const index = computed(() => requested.value === null ? -1 : data.value.categories.indexOf(requested.value))
   const open = shallowRef(false)
+  /** A finger is driving the crosshair: it follows directly instead of trailing on a spring. */
+  const touching = shallowRef(false)
   const overlay = shallowRef<HTMLElement | null>(null)
   const geometry = shallowRef({ width: 0, height: 0 })
   const inspecting = computed(() => open.value && index.value >= 0 && !loading.value)
@@ -67,7 +69,7 @@ export function provideLineChart(props: Readonly<LineChartProps>, changeActive: 
     changeHidden(next)
   }
   const model = {
-    props, data, hidden, visible, hovered, domain, index, open, inspect, toggle, tooltipId,
+    props, data, hidden, visible, hovered, domain, index, open, touching, inspect, toggle, tooltipId,
     overlay, geometry, inspecting, loading, label, messages,
     valueText: (value: number | null) => value === null ? messages.value.noData : (props.formatValue ?? decimal.format)(value),
     tickText: (value: number) => (props.formatTick ?? compact.format)(value),

@@ -101,6 +101,11 @@
   padding: 40px 0;
 }
 
+/* beui.dev: 320px for a page's single preview, 260px inside example blocks. */
+.beui-example .beui-preview-stage {
+  min-height: 260px;
+}
+
 .beui-preview-stage > .beui-demo {
   display: flex;
   width: 100%;
@@ -742,10 +747,6 @@
     gap: 6px;
   }
 
-  .beui-preview-stage {
-    min-height: 280px;
-  }
-
   .beui-preview-dialog {
     padding-inline: 16px;
   }
@@ -966,9 +967,10 @@
   }
 }
 
-/* Pages with several upstream examples: one titled block per example (beui.dev ExampleBlock). */
-.beui-example { scroll-margin-top: 96px; }
-.beui-example + .beui-example { margin-top: 48px; }
+/* One titled block per upstream example (beui.dev ExampleBlock). */
 .beui-example-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+.beui-example-name { display: flex; align-items: center; gap: 8px; }
 .beui-doc-content .beui-example-title { margin: 0; border: 0; padding: 0; color: var(--foreground); font-size: 20px; font-weight: 500; line-height: 28px; letter-spacing: -.025em; }
-.beui-example-head code { border-radius: 6px; padding: 2px 8px; background: color-mix(in srgb, var(--foreground) 5%, transparent); color: var(--foreground); font-family: var(--font-mono, ui-monospace, monospace); font-size: 11px; line-height: 16px; }
+.beui-example-head code { border-radius: 6px; padding: 2px 8px; background: color-mix(in srgb, var(--foreground) 5%, transparent); color: var(--foreground); font-family: var(--font-mono, ui-monospace, monospace); font-size: 11px; line-height: 1.5; }
+/* The page wrappers own the spacing above previews (mt-8 / mt-10 / mb-4 upstream). */
+.beui-examples .beui-component-preview, .beui-default-preview .beui-component-preview { margin-top: 0; }

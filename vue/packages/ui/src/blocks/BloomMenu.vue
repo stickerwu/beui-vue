@@ -32,6 +32,11 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{ select: [label: string] }>()
 
+defineSlots<{
+  /** Icon of a cell; replaces the built-in glyph, like the `icon` component of an item in the React version. */
+  icon?(props: { item: BloomMenuItem, index: number }): unknown
+}>()
+
 const text = computed(() => ({ ...bloomMenuMessages, ...props.labels }))
 
 // Default items keep their English label as the id and `select` value; only the
@@ -313,7 +318,7 @@ const itemInitial = computed(() => (reduce.value ? { opacity: 0 } : { opacity: 0
   padding: .75rem 1rem;
   border-bottom: 1px solid var(--beui-border);
 }
-.bloom-title { font-size: .875rem; font-weight: 500; color: var(--beui-muted-foreground); }
+.bloom-title { font-size: .875rem; line-height: 1.25rem; font-weight: 500; color: var(--beui-muted-foreground); }
 .bloom-close {
   display: grid;
   place-items: center;
@@ -356,7 +361,7 @@ const itemInitial = computed(() => (reduce.value ? { opacity: 0 } : { opacity: 0
 .bloom-glyph { width: 1.25rem; height: 1.25rem; }
 span.bloom-glyph { display: grid; place-items: center; font-size: 1.25rem; line-height: 1; }
 .bloom-glyph path { fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
-.bloom-label { font-size: .875rem; font-weight: 500; }
+.bloom-label { font-size: .875rem; line-height: 1.25rem; font-weight: 500; }
 
 .bloom-trigger {
   display: inline-flex;
@@ -369,6 +374,7 @@ span.bloom-glyph { display: grid; place-items: center; font-size: 1.25rem; line-
   color: var(--beui-foreground);
   font: inherit;
   font-size: .875rem;
+  line-height: 1.25rem;
   font-weight: 500;
   outline: none;
   cursor: pointer;

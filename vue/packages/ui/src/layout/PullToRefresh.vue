@@ -17,7 +17,7 @@ import { computed, onBeforeUnmount, onMounted, shallowRef, useTemplateRef, watch
 import { easeInOut, easeOut, panelSpring, swapSpring } from '../core/motion'
 
 const props = withDefaults(defineProps<{
-  /** Runs after the user pulls beyond the threshold and releases. */
+  /** Runs after the user pulls beyond the threshold and releases. A prop rather than an event, because the pull waits for the returned promise. */
   onRefresh: () => void | Promise<void>
   /** Keeps the indicator active while an externally managed refresh runs. */
   refreshing?: boolean
@@ -28,13 +28,17 @@ const props = withDefaults(defineProps<{
   maxPull?: number
   /** Content offset in pixels while refreshing. */
   holdDistance?: number
+  /** Text shown while pulling. The `pullingLabel` slot takes over for rich content. */
   pullingLabel?: string
+  /** Text shown once the pull passes the threshold. The `releaseLabel` slot takes over for rich content. */
   releaseLabel?: string
+  /** Text shown while refreshing. The `refreshingLabel` slot takes over for rich content. */
   refreshingLabel?: string
   ariaLabel?: string
   /** Accessible name of the keyboard refresh button. */
   label?: string
   labels?: Partial<typeof pullToRefreshMessages>
+  /** Same as `class`. */
   className?: string
   contentClassName?: string
   indicatorClassName?: string
@@ -42,7 +46,15 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{ error: [reason: unknown] }>()
 
-defineSlots<{ default?(props: { refresh: () => Promise<void>; state: PullToRefreshStatus }): unknown }>()
+defineSlots<{
+  default?(props: { refresh: () => Promise<void>; state: PullToRefreshStatus }): unknown
+  /** Label while pulling; replaces `pullingLabel`. */
+  pullingLabel?(): unknown
+  /** Label once the pull passes the threshold; replaces `releaseLabel`. */
+  releaseLabel?(): unknown
+  /** Label while refreshing; replaces `refreshingLabel`. */
+  refreshingLabel?(): unknown
+}>()
 
 const text = computed(() => ({ ...pullToRefreshMessages, ...props.labels }))
 
@@ -224,12 +236,6 @@ watchEffect(() => {
   }
 })
 
-const label = computed(() => {
-  if (status.value === 'refreshing') return props.refreshingLabel ?? text.value.refreshing
-  if (status.value === 'ready') return props.releaseLabel ?? text.value.release
-  return props.pullingLabel ?? text.value.pulling
-})
-
 const accessibleLabel = computed(() => props.label ?? props.ariaLabel ?? text.value.label)
 const canRefresh = computed(() => !props.disabled && !isRefreshing.value)
 
@@ -303,7 +309,7 @@ onBeforeUnmount(() => {
 
           <path d="M14.5 21h7" class="buddy-mouth is-idle" :class="{ 'is-hidden': status === 'ready' || status === 'refreshing' }" />
           <path d="M14 20.5c1 2.4 7 2.4 8 0" class="buddy-mouth" :class="{ 'is-hidden': status !== 'ready' }" />
-          <circle cx="18" cy="21" r="1.6" class="buddy-eye" :class="{ 'is-hidden': status !== 'refreshing' }" />
+          <circle cx="18" cy="21" r="1.6" class="buddy-eye buddy-nose" :class="{ 'is-hidden': status !== 'refreshing' }" />
         </motion.svg>
       </motion.span>
       <span class="buddy-label">
@@ -315,7 +321,9 @@ onBeforeUnmount(() => {
             :animate="reduce ? { opacity: 1 } : { opacity: 1, y: 0 }"
             :exit="reduce ? { opacity: 0 } : { opacity: 0, y: -3 }"
             :transition="LABEL_SWAP">
-            {{ label }}
+            <slot v-if="status === 'refreshing'" name="refreshingLabel">{{ refreshingLabel ?? text.refreshing }}</slot>
+            <slot v-else-if="status === 'ready'" name="releaseLabel">{{ releaseLabel ?? text.release }}</slot>
+            <slot v-else name="pullingLabel">{{ pullingLabel ?? text.pulling }}</slot>
           </motion.span>
         </AnimatePresence>
       </span>
@@ -367,14 +375,15 @@ onBeforeUnmount(() => {
 }
 
 .buddy { display: block; width: 2.25rem; height: 2.25rem; transform-origin: bottom; }
-.buddy-svg { width: 100%; height: 100%; overflow: visible; }
-.buddy-orbit { opacity: 0; transition: opacity .15s; }
+.buddy-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.buddy-orbit { opacity: 0; transition: opacity .15s cubic-bezier(.4, 0, .2, 1); }
 .buddy-orbit.is-on { opacity: 1; }
-.buddy-arc { fill: none; stroke: var(--beui-muted-foreground); stroke-width: 1.5; stroke-linecap: round; }
+.buddy-arc { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; color: var(--beui-muted-foreground); }
 .buddy-ink { fill: var(--beui-foreground); }
 .buddy-eye { fill: var(--beui-background); }
-.buddy-mouth { fill: none; stroke: var(--beui-background); stroke-width: 1.5; stroke-linecap: round; transition: opacity .15s; }
-.buddy-mouth.is-hidden { opacity: 0; }
+.buddy-mouth { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; color: var(--beui-background); }
+.buddy-mouth, .buddy-nose { transition: opacity .15s cubic-bezier(.4, 0, .2, 1); }
+.is-hidden { opacity: 0; }
 
 .buddy-label { position: relative; display: block; height: 1rem; min-width: 6rem; text-align: center; }
 .buddy-label-text { position: absolute; inset-inline: 0; white-space: nowrap; }

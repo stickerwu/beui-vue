@@ -13,7 +13,7 @@ export type AnimatedBadgeMessages = typeof animatedBadgeMessages
 <script setup lang="ts">
 import { AnimatePresence, motion } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
-import { computed, useSlots } from 'vue'
+import { Comment, computed, Text, useSlots } from 'vue'
 import { easeOut, layoutSpring, swapSpring } from '../core/motion'
 
 const props = withDefaults(defineProps<{
@@ -33,7 +33,12 @@ const pulse = computed(() => props.pulse ?? status.value === 'loading')
 // `0` is a real label; booleans and "" from conditional callers are not and
 // must not reserve the gap and an empty slot.
 const hasLabel = computed(() => Boolean(slots.default))
-const resolvedContentKey = computed(() => props.contentKey ?? status.value)
+// Text and numbers are their own identity, so a changed label rolls even when the status stays put.
+const slotText = () => {
+  const nodes = (slots.default?.() ?? []).filter(node => node.type !== Comment)
+  return nodes.length > 0 && nodes.every(node => node.type === Text) ? nodes.map(node => String(node.children ?? '')).join('') : undefined
+}
+const resolvedContentKey = computed(() => props.contentKey ?? slotText() ?? status.value)
 
 // Lucide glyphs, one entry per element so they match the upstream icons exactly
 // ('circle' is the r=10 outline used by neutral and info).
@@ -157,7 +162,7 @@ const textMotion = computed(() => iconMotion.value)
   transition: color .3s, background-color .3s, border-color .3s;
 }
 .be-animated-badge-sm { height: 1.5rem; gap: .375rem; padding: 0 .5rem; font-size: 11px; }
-.be-animated-badge-md { height: 2rem; gap: .5rem; padding: 0 .75rem; font-size: .75rem; }
+.be-animated-badge-md { height: 2rem; gap: .5rem; padding: 0 .75rem; font-size: .75rem; line-height: 1rem; }
 .be-animated-badge[data-status=info], .be-animated-badge[data-status=loading] { border-color: color-mix(in srgb, var(--beui-primary) 30%, transparent); background: var(--beui-muted); color: var(--beui-primary); }
 /* Tailwind v4 emerald / amber / the site's danger token, as the upstream classes resolve them. */
 .be-animated-badge[data-status=success] { border-color: oklch(.696 .17 162.48 / .3); background: oklch(.696 .17 162.48 / .1); color: oklch(.596 .145 163.225); }

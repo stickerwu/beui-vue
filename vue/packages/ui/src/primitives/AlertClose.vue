@@ -35,9 +35,9 @@ function activate(event: MouseEvent) {
 .be-alert-close {
   display: inline-flex; flex: none; align-items: center; justify-content: center; width: 2rem; height: 2rem;
   margin: -.375rem; padding: 0; border: 0; border-radius: .5rem; background: transparent;
-  color: var(--beui-muted-foreground); cursor: pointer; outline: none; transition: color .15s, background-color .15s;
+  color: var(--beui-muted-foreground); cursor: pointer; outline: none; transition: color .15s cubic-bezier(.4, 0, .2, 1), background-color .15s cubic-bezier(.4, 0, .2, 1);
 }
 .be-alert-close:focus-visible { outline: 2px solid var(--beui-ring); }
 .be-alert-close:disabled { pointer-events: none; opacity: .5; }
-@media (hover: hover) { .be-alert-close:hover { background: color-mix(in srgb, var(--beui-foreground) 5%, transparent); color: var(--beui-foreground); } }
+@media (hover: hover) { .be-alert-close:hover { background: color-mix(in oklab, var(--beui-foreground) 5%, transparent); color: var(--beui-foreground); } }
 </style>

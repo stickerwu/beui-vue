@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, shallowRef } from 'vue'
-import { ButtonBase, CandlestickChart } from 'beui-vue'
+import { ButtonBase, CandlestickChart, CandlestickChartLegend, CandlestickChartPlot } from 'beui-vue'
 
 const playing = ref(true)
 const formatTime = (seconds: number) => `${String(Math.floor(seconds / 3600) % 24).padStart(2, '0')}:${String(Math.floor(seconds % 3600 / 60)).padStart(2, '0')}`
@@ -41,8 +41,11 @@ onBeforeUnmount(() => clearInterval(timer))
         <ButtonBase variant="ghost" size="sm" @click="playing = false; step()">Step</ButtonBase>
       </div>
     </div>
-    <CandlestickChart label="Simulated ETH / USD, 5 minute candles" style="--candles-gap: 16px" :height="320" :candles="candles" :last-price="candles.at(-1)?.close"
-      :format-price="value => value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })" />
+    <CandlestickChart label="Simulated ETH / USD, 5 minute candles" :candles="candles" :last-price="candles.at(-1)?.close"
+      :format-price="value => value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })">
+      <CandlestickChartLegend />
+      <CandlestickChartPlot :height="320" class="plot-gap" />
+    </CandlestickChart>
   </div>
 </template>
 
@@ -51,6 +54,7 @@ onBeforeUnmount(() => clearInterval(timer))
 .candle-demo > * + * { margin-top: 12px; }
 .top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding-inline: 4px; }
 .title { display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; font-weight: 500; }
-.sim { padding: 2px 6px; border: 1px solid var(--beui-border); border-radius: 4px; font-size: 9px; line-height: 1.5; font-weight: 400; letter-spacing: .05em; text-transform: uppercase; color: var(--beui-muted-foreground); }
+.sim { padding: 2px 6px; border: 1px solid var(--beui-border); border-radius: 4px; font-size: 9px; line-height: 1.42857; font-weight: 400; letter-spacing: .05em; text-transform: uppercase; color: var(--beui-muted-foreground); }
+.candle-demo :deep(.plot-gap) { margin-top: 16px; }
 .actions { display: flex; align-items: center; gap: 8px; }
 </style>

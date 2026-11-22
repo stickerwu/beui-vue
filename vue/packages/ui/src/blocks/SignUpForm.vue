@@ -25,7 +25,7 @@ export function passwordStrength(password: string): number {
 <script setup lang="ts">
 import { AnimatePresence, motion } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
-import { computed, h, shallowRef, useId } from 'vue'
+import { computed, h, shallowRef, useId, useSlots } from 'vue'
 import StatefulButton from '../actions/StatefulButton.vue'
 import { useValue } from '../agents/shared'
 import Checkbox from '../controls/Checkbox.vue'
@@ -56,7 +56,14 @@ const props = withDefaults(defineProps<{
   classNames?: SignUpFormClassNames
 }>(), { strengthMeter: true, title: undefined, description: undefined })
 const emit = defineEmits<{ 'update:values': [value: SignUpValues], valuesChange: [value: SignUpValues] }>()
-defineSlots<{ footer?(): unknown }>()
+defineSlots<{
+  /** Replaces the heading. */
+  title?(): unknown
+  /** Replaces the description below the heading. */
+  description?(): unknown
+  footer?(): unknown
+}>()
+const slots = useSlots()
 
 const t = computed(() => ({ ...signUpFormMessages, ...props.labels }))
 const title = computed(() => props.title === undefined ? t.value.title : props.title)
@@ -101,7 +108,7 @@ const shownError = (key: keyof SignUpValues) => touched.value[key] ? errors.valu
 const isValid = (key: keyof SignUpValues) => Boolean(touched.value[key]) && !errors.value[key] && Boolean(values.value[key])
 
 const STRENGTH_LABELS = ['strengthTooShort', 'strengthWeak', 'strengthFair', 'strengthGood', 'strengthStrong'] as const
-const STRENGTH_COLORS = ['var(--beui-destructive)', 'var(--beui-destructive)', '#f59e0b', '#fbbf24', 'var(--beui-success, oklch(70% 0.18 155))']
+const STRENGTH_COLORS = ['var(--beui-destructive)', 'var(--beui-destructive)', 'oklch(76.9% .188 70.08)', 'oklch(82.8% .189 84.429)', 'var(--beui-success, oklch(70% 0.18 155))']
 const strength = computed(() => passwordStrength(values.value.password))
 const showStrength = computed(() => props.strengthMeter && values.value.password.length > 0)
 const isSubmitting = computed(() => status.value === 'loading')
@@ -137,9 +144,9 @@ const formErrorId = `${baseId}-form-error`
 
 <template>
   <form novalidate class="be-signup" :class="[className, classNames?.root]" @submit.prevent="submit">
-    <div v-if="title || description" class="be-signup-header" :class="classNames?.header">
-      <h2 v-if="title" class="be-signup-title" :class="classNames?.title">{{ title }}</h2>
-      <p v-if="description" class="be-signup-description" :class="classNames?.description">{{ description }}</p>
+    <div v-if="title || description || slots.title || slots.description" class="be-signup-header" :class="classNames?.header">
+      <h2 v-if="title || slots.title" class="be-signup-title" :class="classNames?.title"><slot name="title">{{ title }}</slot></h2>
+      <p v-if="description || slots.description" class="be-signup-description" :class="classNames?.description"><slot name="description">{{ description }}</slot></p>
     </div>
 
     <div class="be-signup-fields" :class="classNames?.fields">

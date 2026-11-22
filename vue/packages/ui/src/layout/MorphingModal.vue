@@ -9,7 +9,6 @@ import { AnimatePresence, motion } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
 import { computed, nextTick, onMounted, shallowRef, useId, useTemplateRef, watch } from 'vue'
 import { easeOut, panelSpring } from '../core/motion'
-import MorphingModalView from './MorphingModalView.vue'
 import PresenceGate from './PresenceGate.vue'
 import { elementOf, focusablesIn, useBodyLock, useFocusTrap } from './overlay-kit'
 
@@ -19,11 +18,14 @@ const props = withDefaults(defineProps<{
   placement?: 'bottom' | 'center'
   /** Accessible name for the dialog. Without it, the dialog is named by the first heading in the current view. */
   label?: string
+  /** Alias of `label`, named after the React prop. */
+  ariaLabel?: string
   labels?: Partial<MorphingModalMessages>
 }>(), { placement: 'bottom' })
 /** Which view is currently shown. `null` closes the modal. */
 const viewId = defineModel<string | null>('viewId', { default: null })
 const emit = defineEmits<{ close: [] }>()
+const accessibleName = computed(() => props.ariaLabel ?? props.label)
 const t = computed(() => ({ ...morphingModalMessages, ...props.labels }))
 const open = computed(() => viewId.value !== null)
 const reduce = useReducedMotion()
@@ -52,7 +54,7 @@ function currentView() {
 // Name the dialog by the current view's first heading unless a label is set.
 async function nameDialog() {
   await nextTick()
-  if (!viewId.value || props.label) return
+  if (!viewId.value || accessibleName.value) return
   const heading = currentView()?.querySelector<HTMLElement>('h1, h2, h3, h4, h5, h6')
   if (heading && !heading.id) heading.id = `${uid}-${viewId.value}-title`
   headingId.value = heading?.id
@@ -88,16 +90,28 @@ const enterScale = computed(() => (reduce.value ? 1 : 0.97))
     <PresenceGate v-if="open" key="panel-layer" v-slot="{ isPresent }">
       <!-- The layer itself never takes pointer events, so it carries `inert` alone. -->
       <div class="be-mm-layer" :class="placement === 'bottom' ? 'be-mm-bottom' : 'be-mm-center'" :inert="!isPresent">
-        <motion.div ref="panel" class="be-mm-panel" :class="$attrs.class" role="dialog" aria-modal="true" :aria-label="label"
-          :aria-labelledby="label ? undefined : headingId" tabindex="-1" layout
+        <motion.div ref="panel" class="be-mm-panel" :class="$attrs.class" role="dialog" aria-modal="true" :aria-label="accessibleName"
+          :aria-labelledby="accessibleName ? undefined : headingId" tabindex="-1" layout
           :initial="{ opacity: 0, y: enterY, scale: enterScale }" :animate="{ opacity: 1, y: 0, scale: 1 }"
           :exit="{ opacity: 0, y: enterY, scale: reduce ? 1 : 0.98, transition: { duration: 0.18, ease: easeOut } }"
           :transition="panelSpring" :inert="!isPresent" :style="{ pointerEvents: isPresent ? 'auto' : 'none' }">
           <motion.div layout="position" class="be-mm-body" :transition="panelSpring">
             <AnimatePresence mode="popLayout" :initial="false">
-              <MorphingModalView :key="shown" :view="shown">
-                <template #default="{ view }"><slot :view="view" :close="close" /></template>
-              </MorphingModalView>
+              <!-- The keyed motion element is the direct child, so popLayout can lift the outgoing
+                   view out of flow. Its slot content is the last render of that view, frozen
+                   while it leaves; `inert` keeps the trap and assistive technology on the incoming one. -->
+              <motion.div :key="shown" :data-view="shown"
+                :initial="reduce ? { opacity: 0 } : { opacity: 0, y: 8, filter: 'blur(4px)' }"
+                :animate="reduce
+                  ? { opacity: 1, transition: { duration: 0.18, ease: easeOut } }
+                  : { opacity: 1, y: 0, filter: 'blur(0px)', transition: { duration: 0.24, ease: easeOut } }"
+                :exit="reduce
+                  ? { opacity: 0, transition: { duration: 0.14, ease: easeOut } }
+                  : { opacity: 0, y: -8, filter: 'blur(4px)', transition: { duration: 0.16, ease: easeOut } }">
+                <PresenceGate v-slot="{ isPresent: viewPresent }">
+                  <div :inert="!viewPresent"><slot :view="shown" :close="close" /></div>
+                </PresenceGate>
+              </motion.div>
             </AnimatePresence>
           </motion.div>
         </motion.div>

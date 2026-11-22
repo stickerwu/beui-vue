@@ -9,7 +9,7 @@ import { notFoundMessages } from './messages'
 import NotFoundScramble from './NotFoundScramble.vue'
 
 export type NotFoundVariant = 'glitch' | 'magnetic' | 'spotlight' | 'stacked' | 'terminal'
-export interface NotFoundProps { code?: string, title?: string, description?: string, homeHref?: string, homeLabel?: string, browseHref?: string, browseLabel?: string, labels?: Labels }
+export interface NotFoundProps { className?: string, code?: string, title?: string, description?: string, homeHref?: string, homeLabel?: string, browseHref?: string, browseLabel?: string, labels?: Labels }
 const props = withDefaults(defineProps<NotFoundProps & { variant: NotFoundVariant }>(), { code: '404', homeHref: '/', browseHref: '/components/motion' })
 
 const reduce = useReducedMotion()
@@ -58,7 +58,7 @@ const stackRest = { rotate: 0, x: 0, y: 0 }
 const TYPE_SPRING = { stiffness: 320, damping: 30, mass: .6 }
 </script>
 <template>
-  <section class="be-nf" :data-variant="variant">
+  <section class="be-nf" :class="className" :data-variant="variant">
     <!-- Glitch -->
     <div v-if="variant === 'glitch'" class="be-nf-glitch">
       <span aria-hidden="true" class="be-nf-ghost be-nf-ghost-red"><NotFoundScramble :text="code" /></span>
@@ -131,12 +131,12 @@ const TYPE_SPRING = { stiffness: 320, damping: 30, mass: .6 }
 .be-nf h1 { margin: 0; padding: 0; border: 0; }
 .be-nf p { margin: 0; }
 .be-nf-copy { display: flex; flex-direction: column; align-items: center; gap: .5rem; }
-.be-nf-title { font-size: 1.125rem; line-height: 1.55; font-weight: 600; color: var(--beui-foreground); }
-.be-nf-description { max-width: 24rem; font-size: .875rem; line-height: 1.43; color: var(--beui-muted-foreground); }
+.be-nf-title { font-size: 1.125rem; line-height: 1.75rem; font-weight: 600; color: var(--beui-foreground); }
+.be-nf-description { max-width: 24rem; font-size: .875rem; line-height: 1.25rem; color: var(--beui-muted-foreground); }
 .be-nf-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .75rem; }
 .be-nf-button {
   display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; height: 2.75rem; padding-inline: 1.5rem;
-  border-radius: 9999px; font-size: .875rem; line-height: 1.43; font-weight: 500; text-decoration: none; user-select: none;
+  border-radius: 9999px; font-size: .875rem; line-height: 1.25rem; font-weight: 500; text-decoration: none; user-select: none;
   transition: background-color .15s var(--nf-ease);
 }
 .be-nf-primary { background: var(--beui-primary); color: var(--beui-primary-foreground); }
@@ -177,13 +177,13 @@ const TYPE_SPRING = { stiffness: 320, damping: 30, mass: .6 }
 .be-nf-card { position: absolute; inset: 0; box-sizing: border-box; border: 1px solid var(--beui-border); border-radius: 1.5rem; background: var(--beui-card); box-shadow: 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1); }
 .be-nf-card-front { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .25rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1); }
 .be-nf-stack-code { user-select: none; font-weight: 700; line-height: 1; letter-spacing: -.05em; color: var(--beui-foreground); font-size: clamp(3.5rem, 9vw, 5rem); }
-.be-nf-stack-caption { font-size: .75rem; line-height: 1.33; font-weight: 500; text-transform: uppercase; letter-spacing: .025em; color: var(--beui-muted-foreground); }
+.be-nf-stack-caption { font-size: .75rem; line-height: 1rem; font-weight: 500; text-transform: uppercase; letter-spacing: .025em; color: var(--beui-muted-foreground); }
 
 /* Terminal */
 .be-nf-terminal { box-sizing: border-box; width: 100%; max-width: 28rem; overflow: hidden; border: 1px solid var(--beui-border); border-radius: .75rem; background: #0a0a0a; text-align: left; box-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1); }
 .be-nf-terminal-bar { display: flex; align-items: center; gap: .375rem; padding: .75rem 1rem; border-bottom: 1px solid rgb(255 255 255 / .1); }
 .be-nf-dot { width: .75rem; height: .75rem; border-radius: 9999px; }
-.be-nf-terminal-title { margin-left: .5rem; font-size: .75rem; line-height: 1.33; color: rgb(255 255 255 / .4); }
+.be-nf-terminal-title { margin-left: .5rem; font-size: .75rem; line-height: 1rem; color: rgb(255 255 255 / .4); }
 .be-nf-terminal-body { display: flex; flex-direction: column; gap: .375rem; padding: 1rem; font-family: var(--nf-mono); font-size: .875rem; line-height: 1.625; }
 .be-nf-term-line { color: rgb(255 255 255 / .8); }
 .be-nf-term-error { color: #ff5f57; }

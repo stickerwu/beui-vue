@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { animate, useMotionValue } from 'motion-v'
 import { useReducedMotion } from '../../core/reduced-motion'
-import { computed, onBeforeUnmount, onMounted, onUpdated, shallowRef, useId, useTemplateRef, watch, watchEffect, type StyleValue } from 'vue'
+import { computed, onBeforeUnmount, onMounted, onUpdated, provide, shallowRef, useId, useSlots, useTemplateRef, watch, watchEffect, type StyleValue, type VNode } from 'vue'
 import ButtonBase from '../../ButtonBase.vue'
 import { buildGeo, clipForProgress, supportsShapeClip, triggerCutout, type Align, type Side } from './pop-geometry'
-import { createHoverGesture, createTapGesture, elementOf, firstElement, useDismiss, usePortalPosition } from './pop-helpers'
+import { POPOVER_PARTS_KEY, createHoverGesture, createTapGesture, elementOf, firstElement, useDismiss, usePortalPosition, type PopoverPart } from './pop-helpers'
+import PopoverContent from './PopoverContent.vue'
 
 /**
  * A popover whose panel oozes out of the trigger as one liquid body: a blurred,
@@ -37,7 +38,26 @@ const props = withDefaults(defineProps<{
 }>(), { trigger: 'click', side: 'bottom', align: 'center', sideOffset: 14, panelRadius: 16, gooStrength: 8, triggerVariant: 'secondary', defaultOpen: false })
 
 const open = defineModel<boolean | undefined>('open')
-defineSlots<{ trigger?(): unknown; default?(props: { close: () => void }): unknown }>()
+defineSlots<{
+  /** The trigger. With `asChild` its own element is the trigger; otherwise it is the label of the built-in button. */
+  trigger?(): unknown
+  /** Panel content, or `PopoverTrigger` and `PopoverContent` when composed from parts. `close` shuts the popover. */
+  default?(props: { close: () => void }): unknown
+}>()
+const slots = useSlots()
+
+// Composed from parts: the default slot holds `PopoverTrigger` (rendered in place, as the trigger)
+// and `PopoverContent` (which hands the panel's content and classes over).
+const part = shallowRef<PopoverPart | null>(null)
+provide(POPOVER_PARTS_KEY, {
+  register: next => { part.value = next },
+  unregister: next => { if (part.value === next) part.value = null },
+})
+function findContent(nodes: unknown): boolean {
+  return Array.isArray(nodes) && nodes.some((node: VNode) => node.type === PopoverContent || (typeof node.type === 'symbol' && findContent(node.children)))
+}
+const composed = computed(() => findContent(slots.default?.({ close: () => {} })))
+const PanelRender = () => composed.value ? part.value?.slots.default?.({ close }) : slots.default?.({ close })
 
 // Open state: controlled through `v-model:open`, otherwise internal.
 const internalOpen = shallowRef(props.defaultOpen)
@@ -70,7 +90,7 @@ const triggerEl = shallowRef<HTMLElement | null>(null)
 const portalReady = shallowRef(false)
 
 function resolveTrigger() {
-  const next = props.asChild ? firstElement(host.value) : elementOf(button.value)
+  const next = props.asChild || composed.value ? firstElement(host.value) : elementOf(button.value)
   if (next !== triggerEl.value) triggerEl.value = next
 }
 onMounted(() => { portalReady.value = true; resolveTrigger() })
@@ -179,7 +199,7 @@ defineExpose({ close, open: () => setOpen(true) })
 
 <template>
   <span ref="root" class="be-popover" @pointerenter="rootEnter" @pointerleave="rootLeave">
-    <span v-if="asChild" ref="host" class="be-pop-host"><slot name="trigger" /></span>
+    <span v-if="asChild || composed" ref="host" class="be-pop-host"><slot name="trigger" /><slot v-if="composed" :close="close" /></span>
     <ButtonBase v-else ref="button" :variant="triggerVariant"><slot name="trigger">{{ label }}</slot></ButtonBase>
     <Teleport v-if="portalReady" to="body">
       <div data-popover-portal="" class="be-pop-portal" :style="portalStyle">
@@ -201,10 +221,10 @@ defineExpose({ close, open: () => setOpen(true) })
         <!-- Content is clipped by the same morph. The portal wrapper stays pointer-transparent; only the fully open panel accepts interaction. -->
         <div class="be-pop-layer" :style="boxStyle">
           <div ref="clipEl" class="be-pop-clip" :inert="!isOpen" :style="{ pointerEvents: isOpen ? 'auto' : 'none' }">
-            <div ref="contentEl" :id="contentId" role="dialog" :aria-label="label" class="be-pop-dialog" :class="contentClass"
-              :style="[{ left: `${geo.panel.x}px`, top: `${geo.panel.y}px`, transformOrigin: `${ALIGN_ORIGIN[align]} ${side === 'bottom' ? 'top' : 'bottom'}` }, contentStyle]"
+            <div ref="contentEl" :id="contentId" role="dialog" :aria-label="label" class="be-pop-dialog" :class="[contentClass, part?.attrs.class]"
+              :style="[{ left: `${geo.panel.x}px`, top: `${geo.panel.y}px`, transformOrigin: `${ALIGN_ORIGIN[align]} ${side === 'bottom' ? 'top' : 'bottom'}` }, contentStyle, part?.attrs.style as StyleValue]"
               @pointerenter="panelEnter" @pointerleave="panelLeave">
-              <slot :close="close" />
+              <PanelRender />
             </div>
           </div>
         </div>
@@ -223,5 +243,10 @@ defineExpose({ close, open: () => setOpen(true) })
 .be-pop-blob { inset: 0; }
 .be-pop-layer { pointer-events: none; position: absolute; z-index: 10; }
 .be-pop-clip { position: absolute; inset: 0; }
-.be-pop-dialog { position: absolute; box-sizing: border-box; width: max-content; max-width: min(92vw, 20rem); padding: 1rem; color: var(--beui-foreground); outline: none; }
+.be-pop-dialog { position: absolute; box-sizing: border-box; color: var(--beui-foreground); outline: none; }
+</style>
+
+<style>
+/* Zero specificity, so a `class` on `PopoverContent` (like `w-72` upstream) can resize the panel. */
+:where(.be-pop-dialog) { width: max-content; max-width: min(92vw, 20rem); padding: 1rem; }
 </style>

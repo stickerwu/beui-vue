@@ -264,7 +264,7 @@ const iconTransition = computed(() => (reduce.value ? { duration: 0.12 } : { typ
 .be-card-folder-eye svg, .be-card-folder-action svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .be-card-folder-meta { display: flex; flex: none; align-items: flex-end; gap: .875rem; padding-top: .5rem; }
 .be-card-folder-field { display: flex; flex-direction: column; gap: .125rem; }
-.be-card-folder-label { font-size: 9px; line-height: 1rem; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: color-mix(in srgb, var(--beui-muted-foreground) 65%, transparent); }
+.be-card-folder-label { font-size: 9px; line-height: 1.5; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: color-mix(in srgb, var(--beui-muted-foreground) 65%, transparent); }
 .be-card-folder-value { font-size: .75rem; line-height: 1rem; font-weight: 500; font-variant-numeric: tabular-nums; color: var(--beui-foreground); }
 .be-card-folder-bottom { display: flex; min-width: 0; align-items: baseline; justify-content: space-between; gap: 1rem; }
 .be-card-folder-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 1.125rem; line-height: 1.25; font-weight: 500; color: var(--beui-foreground); }

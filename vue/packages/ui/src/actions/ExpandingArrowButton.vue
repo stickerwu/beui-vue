@@ -93,13 +93,13 @@ const active = () => !props.disabled && ((canHover.value && hovered.value) || fo
 .be-arrow-button {
   position: relative; display: inline-flex; align-items: center; box-sizing: border-box;
   height: 4rem; min-width: 18rem; overflow: hidden; border: 0; border-radius: 22px; padding: .375rem;
-  background: #0a0a0a; color: #fff; font: inherit; cursor: pointer; user-select: none; outline: none;
+  background: oklch(.145 0 0); color: #fff; font: inherit; cursor: pointer; user-select: none; outline: none;
 }
-.be-arrow-button:focus-visible { box-shadow: 0 0 0 2px var(--beui-background), 0 0 0 4px #bef264; }
+.be-arrow-button:focus-visible { box-shadow: 0 0 0 2px var(--beui-background), 0 0 0 4px oklch(.897 .196 126.665); }
 .be-arrow-button:disabled { pointer-events: none; opacity: .5; }
 .be-arrow-accent {
   position: absolute; inset-block: .375rem; inset-inline-start: .375rem; z-index: 10;
-  overflow: hidden; background: #bef264; color: #0a0a0a;
+  overflow: hidden; background: oklch(.897 .196 126.665); color: oklch(.145 0 0);
 }
 .be-arrow-glyph { position: absolute; inset: 0; display: grid; place-items: center; }
 .be-arrow-row { position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-around; padding-inline: .75rem; }
@@ -107,6 +107,6 @@ const active = () => !props.disabled && ((canHover.value && hovered.value) || fo
 .be-arrow-chevron { width: 1.25rem; height: 1.75rem; }
 .be-arrow-label {
   position: relative; z-index: 0; margin-inline-start: 76px; margin-inline-end: 1.25rem;
-  white-space: nowrap; font-size: 1.125rem; font-weight: 500; letter-spacing: -.02em;
+  white-space: nowrap; font-size: 1.125rem; line-height: 1.75rem; font-weight: 500; letter-spacing: -.02em;
 }
 </style>

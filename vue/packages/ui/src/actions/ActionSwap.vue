@@ -6,7 +6,7 @@ import { easeOut, layoutSpring, pressSpring, swapSpring } from '../core/motion'
 
 export type ActionSwapItem = { id: string; label: string; ariaLabel?: string }
 
-const props = withDefaults(defineProps<{
+export interface ActionSwapProps {
   items: readonly ActionSwapItem[]
   modelValue?: string
   defaultValue?: string
@@ -16,7 +16,8 @@ const props = withDefaults(defineProps<{
   cycle?: boolean
   iconOnly?: boolean
   disabled?: boolean
-}>(), { animation: 'blur', variant: 'secondary', size: 'md', cycle: true, iconOnly: undefined, disabled: false })
+}
+const props = withDefaults(defineProps<ActionSwapProps>(), { animation: 'blur', variant: 'secondary', size: 'md', cycle: true, iconOnly: undefined, disabled: false })
 const emit = defineEmits<{ 'update:modelValue': [value: string]; valueChange: [value: string, item: ActionSwapItem] }>()
 const slots = useSlots()
 
@@ -152,11 +153,11 @@ function activate() {
 </template>
 
 <style scoped>
-.be-swap { box-sizing: border-box; display: inline-flex; flex: none; align-items: center; justify-content: center; height: 2.5rem; gap: .5rem; padding: 0 1rem; overflow: hidden; border: 1px solid transparent; font: inherit; font-size: .875rem; line-height: 1.25rem; font-weight: 500; white-space: nowrap; user-select: none; cursor: pointer; transition: background-color .15s, color .15s, border-color .15s; }
+.be-swap { box-sizing: border-box; display: inline-flex; flex: none; align-items: center; justify-content: center; height: 2.5rem; gap: .5rem; padding: 0 1rem; overflow: hidden; border: 0; font: inherit; font-size: .875rem; line-height: 1.25rem; font-weight: 500; white-space: nowrap; user-select: none; cursor: pointer; transition: background-color .15s, color .15s, border-color .15s; }
 .be-swap:disabled { pointer-events: none; opacity: .5; }
 .be-swap[data-variant=primary] { background: var(--beui-primary); color: var(--beui-primary-foreground); }
-.be-swap[data-variant=secondary] { background: var(--beui-card); color: var(--beui-foreground); border-color: var(--beui-border); }
-.be-swap[data-variant=outline] { background: transparent; color: var(--beui-foreground); border-color: var(--beui-border); }
+.be-swap[data-variant=secondary] { background: var(--beui-card); color: var(--beui-foreground); border: 1px solid var(--beui-border); }
+.be-swap[data-variant=outline] { background: transparent; color: var(--beui-foreground); border: 1px solid var(--beui-border); }
 .be-swap[data-variant=ghost] { background: transparent; color: var(--beui-muted-foreground); }
 .be-swap[data-size=sm] { height: 2rem; gap: .375rem; padding: 0 .75rem; font-size: .75rem; line-height: 1rem; }
 .be-swap[data-size=lg] { height: 3rem; gap: .625rem; padding: 0 1.25rem; font-size: 1rem; line-height: 1.5rem; }

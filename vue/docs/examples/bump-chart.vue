@@ -44,6 +44,6 @@ function shuffle() {
 .top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 0 8px; }
 h3 { margin: 0; padding: 0; border: 0; letter-spacing: normal; font-size: 14px; line-height: 20px; font-weight: 500; color: var(--beui-foreground); }
 .top p { margin: 4px 0 0; font-size: 12px; line-height: 16px; color: var(--beui-muted-foreground); }
-.shuffle { flex: none; gap: 8px; }
-.hint { margin: 0; text-align: center; font-size: 11px; line-height: 16px; color: var(--beui-muted-foreground); }
+.bump-demo .shuffle { flex: none; gap: 8px; }
+.hint { margin: 0; text-align: center; font-size: 11px; line-height: 1.5; color: var(--beui-muted-foreground); }
 </style>

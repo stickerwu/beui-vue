@@ -66,6 +66,15 @@ const emit = defineEmits<{
   action: [item: BlockAction]
 }>()
 
+defineSlots<{
+  /** Replaces an action's icon. */
+  icon?(props: { item: BlockAction }): unknown
+  /** Replaces a whole action's contents (icon, label, shortcut and badge). */
+  item?(props: { item: BlockAction; expanded: boolean; active: boolean }): unknown
+  /** Alias of `item`, named after the React `renderItem` prop. */
+  renderItem?(props: { item: BlockAction; expanded: boolean; active: boolean }): unknown
+}>()
+
 const reduce = useReducedMotion()
 
 // A pointer session on an action button, recorded where the click cannot report
@@ -284,11 +293,10 @@ const shortcutTarget = computed(() => (isExpanded.value
           layout="position"
           type="button"
           class="action-item"
-          :class="[classNames?.item, `is-${size}`, { 'is-highlighted': highlightId === item.id, 'is-active': item.active || activeId === item.id && classNames?.activeItem }]"
+          :class="[classNames?.item, `is-${size}`, { 'is-highlighted': highlightId === item.id }, (item.active || activeId === item.id) && classNames?.activeItem]"
           :disabled="item.disabled"
           :title="item.title ?? (typeof item.label === 'string' ? item.label : undefined)"
           :aria-label="item.ariaLabel ?? item.label"
-          :aria-pressed="item.active ?? (activeId === item.id ? true : undefined)"
           :transition="ITEM_TRANSITION"
           :while-press="reduce || item.disabled ? undefined : { scale: 0.96 }"
           @pointerenter="onItemEnter(item, $event)"
@@ -298,6 +306,7 @@ const shortcutTarget = computed(() => (isExpanded.value
           @click="onItemClick(item, $event)">
           <motion.span v-if="highlightId === item.id" layout-id="action-bar-highlight" class="action-highlight" :transition="ITEM_TRANSITION" />
 
+          <slot name="renderItem" :item="item" :expanded="isExpanded" :active="item.active || activeId === item.id">
           <slot name="item" :item="item" :expanded="isExpanded" :active="item.active || activeId === item.id">
             <span class="action-icon" :class="[classNames?.icon, `is-${size}`]">
               <slot name="icon" :item="item">{{ item.icon ?? item.label.slice(0, 1) }}</slot>
@@ -323,6 +332,7 @@ const shortcutTarget = computed(() => (isExpanded.value
               class="action-badge"
               :class="[classNames?.badge, { 'is-collapsed': !isExpanded }]">{{ item.badge }}</span>
           </slot>
+          </slot>
         </motion.button>
       </motion.div>
     </motion.div>
@@ -347,12 +357,12 @@ const shortcutTarget = computed(() => (isExpanded.value
   border: 1px solid var(--beui-border);
   border-radius: 999px;
   background: color-mix(in srgb, var(--beui-card) 90%, transparent);
-  box-shadow: 0 24px 48px -12px rgb(0 0 0 / .25);
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / .25);
   backdrop-filter: blur(24px);
 }
 .action-track::-webkit-scrollbar { display: none; }
-.action-track.is-sm { min-height: 2.25rem; gap: .25rem; padding: .25rem; font-size: .75rem; }
-.action-track.is-md { min-height: 2.75rem; gap: .375rem; padding: .375rem; font-size: .875rem; }
+.action-track.is-sm { min-height: 2.25rem; gap: .25rem; padding: .25rem; font-size: .75rem; line-height: calc(1 / .75); }
+.action-track.is-md { min-height: 2.75rem; gap: .375rem; padding: .375rem; font-size: .875rem; line-height: calc(1.25 / .875); }
 
 .action-item {
   position: relative;
@@ -370,7 +380,7 @@ const shortcutTarget = computed(() => (isExpanded.value
   font-weight: 500;
   outline: none;
   cursor: pointer;
-  transition: color .15s ease-out, background-color .15s ease-out;
+  transition: color .15s cubic-bezier(.16, 1, .3, 1), background-color .15s cubic-bezier(.16, 1, .3, 1);
 }
 .action-item.is-sm { height: 1.75rem; min-width: 1.75rem; padding: 0 .375rem; }
 .action-item.is-md { height: 2rem; min-width: 2rem; padding: 0 .5rem; }
@@ -378,7 +388,7 @@ const shortcutTarget = computed(() => (isExpanded.value
 .action-item:focus-visible { color: var(--beui-foreground); outline: 2px solid var(--beui-ring); outline-offset: 2px; }
 .action-item:disabled { pointer-events: none; opacity: .4; }
 
-.action-highlight { position: absolute; inset: 0; z-index: -1; border-radius: 999px; background: color-mix(in srgb, var(--beui-muted) 80%, transparent); }
+.action-highlight { position: absolute; inset: 0; z-index: -10; border-radius: 999px; background: color-mix(in srgb, var(--beui-muted) 80%, transparent); }
 
 .action-icon { display: inline-flex; flex: none; align-items: center; justify-content: center; }
 .action-icon.is-sm { width: .875rem; height: .875rem; }

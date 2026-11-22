@@ -44,7 +44,7 @@ const props = withDefaults(defineProps<{
   labels?: Partial<MinesMessages>
   /** Injectable random source for the mine layout, for reproducible rounds. */
   random?: () => number
-}>(), { size: 5, defaultMines: 3, showResult: true, random: Math.random, sound: undefined, defaultSound: false })
+}>(), { size: 5, defaultMines: 3, showResult: true, random: () => Math.random(), sound: undefined, defaultSound: false })
 const emit = defineEmits<{
   'update:mines': [count: number]; minesChange: [count: number]
   reveal: [tile: number, kind: Tile, multiplier: number]

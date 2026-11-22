@@ -65,7 +65,7 @@ onBeforeUnmount(() => observer?.disconnect())
     :style="{ borderRadius: `${RADIUS}px` }">
     <!-- max-content keeps this at the natural size of the active content; the shell springs toward it. -->
     <div ref="sizer" class="be-island-sizer">
-      <AnimatePresence mode="popLayout" :initial="false">
+      <AnimatePresence :initial="false">
         <IslandSlot v-if="view === null && (slots.compact || compact)" key="compact" class="be-island-compact">
           <slot name="compact">{{ compact }}</slot>
         </IslandSlot>
@@ -80,6 +80,6 @@ onBeforeUnmount(() => observer?.disconnect())
    reads as unfurling downward out of the pill. */
 .be-island { position: relative; display: inline-flex; box-sizing: border-box; align-items: flex-start; justify-content: center; overflow: hidden; background: var(--beui-foreground); color: var(--beui-background); box-shadow: 0 25px 50px -12px rgb(0 0 0 / .25); font-size: 1rem; line-height: 1.5; }
 .be-island-sizer { width: max-content; }
-.be-island-compact { box-sizing: border-box; min-width: 126px; min-height: 37px; gap: .5rem; padding: .375rem 1rem; font-size: .75rem; line-height: 1.33333; font-weight: 500; }
+.be-island-compact { box-sizing: border-box; min-width: 126px; min-height: 37px; gap: .5rem; padding: .375rem 1rem; font-size: .75rem; line-height: calc(1 / .75); font-weight: 500; }
 .be-island :deep(.be-island-view) { box-sizing: border-box; padding: 1rem 1.5rem; }
 </style>

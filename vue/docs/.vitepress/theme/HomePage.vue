@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { Marquee, ShaderBackground, Tabs } from 'beui-vue'
+import { ShaderBackground, Tabs } from 'beui-vue'
 import { computed, onBeforeUnmount, onMounted, shallowRef, useTemplateRef } from 'vue'
 import { useData } from 'vitepress'
-import { TESTIMONIALS, type Testimonial } from '../../../../components/app/landing/testimonials-data'
 import { entries, pages, sections } from './catalog'
 import Icon from './Icon.vue'
 import PreviewTile from './PreviewTile.vue'
-import { avatarSrc } from './avatars'
 import { useLocale } from './i18n'
 import './home.css'
 
@@ -54,17 +52,6 @@ const stats = computed(() => [
   { value: sections.length, label: t('Library sections') },
   { value: 'MIT', label: t('Free for commercial use') },
 ])
-const testimonialFaces = TESTIMONIALS.slice(0, 7)
-const failedAvatars = shallowRef<Record<string, boolean>>({})
-const testimonialColumns = [
-  { direction: 'up' as const, speed: 46 },
-  { direction: 'down' as const, speed: 54 },
-  { direction: 'up' as const, speed: 50 },
-  { direction: 'down' as const, speed: 58 },
-].map((column, index) => ({
-  ...column,
-  items: TESTIMONIALS.filter((_, testimonialIndex) => testimonialIndex % 4 === index) as Testimonial[],
-}))
 const platformPages = ['tabs', 'color-picker', 'alert', 'swipeable-list'].flatMap(slug => {
   const page = pages.find(item => item.slug === slug)
   return page ? [page] : []
@@ -113,14 +100,6 @@ const faqItems = computed(() => [
     answer: t('beui-vue is an independently maintained Vue implementation by stickerwu. The original component designs and interactions come from beUI and its contributors, whose attribution and MIT license are preserved.'),
   },
 ])
-
-function testimonialHref(testimonial: Testimonial) {
-  return testimonial.url ?? `https://x.com/${testimonial.user.username}/status/${testimonial.id}`
-}
-
-function avatarFailed(id: string) {
-  failedAvatars.value = { ...failedAvatars.value, [id]: true }
-}
 
 async function copyInstallCommand() {
   clearTimeout(copyTimer)
@@ -254,47 +233,6 @@ onBeforeUnmount(() => {
           </template>
         </template>
       </Tabs>
-    </section>
-
-    <section class="home-container home-section home-testimonials" aria-labelledby="home-testimonials">
-      <div class="home-testimonial-heading">
-        <div class="home-community">
-          <div class="home-community-faces" aria-hidden="true">
-            <img v-for="testimonial in testimonialFaces.filter(item => !failedAvatars[item.id])" :key="testimonial.id" :src="avatarSrc(testimonial.user.avatar)" alt="" width="28" height="28" loading="lazy" @error="avatarFailed(testimonial.id)">
-          </div>
-          <p>{{ t('From the') }} <span>{{ t('beUI community') }}</span></p>
-        </div>
-        <h2 id="home-testimonials" class="home-section-title">{{ t('Loved by builders') }}</h2>
-        <p class="home-testimonial-subtitle">{{ t('What people say about the original beUI on X.') }}</p>
-      </div>
-      <div class="home-testimonial-wall">
-        <div v-for="(column, index) in testimonialColumns" :key="column.speed" class="home-testimonial-column" :class="`home-testimonial-column-${index + 1}`">
-          <Marquee :direction="column.direction" :speed="column.speed" gap="0.75rem" :fade="false" class="home-testimonial-marquee">
-            <a v-for="testimonial in column.items" :key="testimonial.id" :href="testimonialHref(testimonial)" target="_blank" rel="noreferrer noopener" class="home-testimonial">
-              <svg viewBox="0 0 24 24" aria-hidden="true" class="home-testimonial-x" fill="currentColor">
-                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-              </svg>
-              <blockquote :cite="testimonialHref(testimonial)" class="home-testimonial-quote">
-                <p>{{ testimonial.text.replace(/^(@\w+\s+)+/, '') }}</p>
-              </blockquote>
-              <div class="home-testimonial-author">
-                <img v-if="!failedAvatars[testimonial.id]" :src="avatarSrc(testimonial.user.avatar)" alt="" width="28" height="28" loading="lazy" class="home-testimonial-avatar" @error="avatarFailed(testimonial.id)">
-                <span v-else class="home-testimonial-avatar home-testimonial-initial" aria-hidden="true">{{ testimonial.user.name.slice(0, 1) }}</span>
-                <div class="home-testimonial-user">
-                  <div class="home-testimonial-name">
-                    <span>{{ testimonial.user.name }}</span>
-                    <svg v-if="testimonial.user.verified" viewBox="0 0 24 24" role="img" :aria-label="t('Verified on X')" class="home-testimonial-verified" fill="currentColor">
-                      <path d="M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.68.88-3.34 2.19c-1.39-.46-2.9-.2-3.91.81s-1.27 2.52-.81 3.91c-1.31.66-2.19 1.91-2.19 3.34s.88 2.67 2.19 3.34c-.46 1.39-.2 2.91.81 3.91s2.52 1.27 3.91.81c.66 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.46 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42 2.26 2.26 4.8-5.23 1.47 1.36-6.2 6.77z" />
-                    </svg>
-                  </div>
-                  <span class="home-testimonial-handle">@{{ testimonial.user.username }}</span>
-                </div>
-              </div>
-              <span class="home-sr-only">{{ t('Opens the original post in a new tab.') }}</span>
-            </a>
-          </Marquee>
-        </div>
-      </div>
     </section>
 
     <section class="home-container home-section" aria-labelledby="home-platforms">

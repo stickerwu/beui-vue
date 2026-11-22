@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { animate, motion, useMotionValue, useTransform } from 'motion-v'
+import { useMotionSource } from '../core/motion-source'
 import { useReducedMotion } from '../core/reduced-motion'
 import { computed, nextTick, onBeforeUnmount, onMounted, shallowRef, useTemplateRef, watch } from 'vue'
 import { capturePointer, releasePointer } from '../core/touch'
@@ -118,19 +119,24 @@ onBeforeUnmount(() => {
   if (dragFrame !== null) cancelAnimationFrame(dragFrame)
 })
 
+// The measured geometry as a motion value, so the transforms below follow a
+// resize even while the handle rests.
+const geometryValue = useMotionSource(() => geometry.value)
+
 // Slide a fixed-size fill inside the inset clipping window. The labels and dots
 // stay above it, and only transforms animate.
 const fillX = useTransform(() => {
   const x = handleX.get()
-  const right = x >= endX.value ? geometry.value.width - 2 : x + 8
-  return right - geometry.value.width + 2
+  const { width } = geometryValue.get()
+  const right = x >= Math.max(HANDLE_START, width - HANDLE_END_INSET) ? width - 2 : x + 8
+  return right - width + 2
 })
 // Part progressively over six pixels at each text edge instead of toggling the
 // stem on/off in a single pointer frame. The thumb uses the same two-dot
 // treatment across both the label and numeric readout.
 const split = useTransform(() => {
   const x = handleX.get()
-  const { width, labelWidth, readoutWidth } = geometry.value
+  const { width, labelWidth, readoutWidth } = geometryValue.get()
   const overlap = (start: number, end: number) => Math.max(0, Math.min(1, (x + 4 - start) / 6, (end - x) / 6))
   return Math.max(overlap(TEXT_INSET, TEXT_INSET + labelWidth), overlap(width - TEXT_INSET - readoutWidth, width - TEXT_INSET))
 })

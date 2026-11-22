@@ -200,7 +200,7 @@ function hideTip(wait = 0) {
 .be-pmc-title { margin: 0; padding: 0; border: 0; overflow-wrap: anywhere; font-family: var(--beui-font-display, inherit); font-size: 1rem; line-height: 1.375; font-weight: 500; letter-spacing: -.025em; color: inherit; }
 .be-pmc-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .375rem; margin: .25rem 0 0; font-size: .75rem; line-height: 1rem; color: var(--beui-muted-foreground); }
 .be-pmc-status { display: inline-flex; align-items: center; gap: .375rem; }
-.be-pmc-status.is-live { color: #f43f5e; }
+.be-pmc-status.is-live { color: oklch(64.5% .246 16.439); }
 .be-pmc-live { width: .375rem; height: .375rem; border-radius: 9999px; background: currentColor; }
 
 .be-pmc-body { display: flex; flex: 1; flex-direction: column; margin: 0 .5rem .5rem; padding: .75rem 1rem; border-radius: 1.5rem; background: var(--beui-background); }
@@ -219,10 +219,10 @@ function hideTip(wait = 0) {
   border: 1px solid var(--odds-border); border-radius: .75rem; background: var(--odds-bg); color: var(--odds-ink); font: inherit; font-size: .875rem; line-height: 1.25rem; font-weight: 600;
   box-shadow: 0 3px 0 var(--odds-shadow); cursor: pointer; transition: background-color .15s;
 }
-.be-pmc-odds.is-positive { --odds-ink: #047857; --odds-shadow: rgb(16 185 129 / .2); --odds-border: rgb(16 185 129 / .25); --odds-bg: rgb(16 185 129 / .1); --odds-hover: rgb(16 185 129 / .15); }
-.be-pmc-odds.is-negative { --odds-ink: #be123c; --odds-shadow: rgb(244 63 94 / .2); --odds-border: rgb(244 63 94 / .25); --odds-bg: rgb(244 63 94 / .1); --odds-hover: rgb(244 63 94 / .15); }
-:global(:is(.dark, [data-beui-theme='dark']) .be-pmc-odds.is-positive) { --odds-ink: #34d399; }
-:global(:is(.dark, [data-beui-theme='dark']) .be-pmc-odds.is-negative) { --odds-ink: #fb7185; }
+.be-pmc-odds.is-positive { --odds-ink: oklch(50.8% .118 165.612); --odds-shadow: oklch(69.6% .17 162.48 / .2); --odds-border: oklch(69.6% .17 162.48 / .25); --odds-bg: oklch(69.6% .17 162.48 / .1); --odds-hover: oklch(69.6% .17 162.48 / .15); }
+.be-pmc-odds.is-negative { --odds-ink: oklch(51.4% .222 16.935); --odds-shadow: oklch(64.5% .246 16.439 / .2); --odds-border: oklch(64.5% .246 16.439 / .25); --odds-bg: oklch(64.5% .246 16.439 / .1); --odds-hover: oklch(64.5% .246 16.439 / .15); }
+:global(:is(.dark, [data-beui-theme='dark']) .be-pmc-odds.is-positive) { --odds-ink: oklch(76.5% .177 163.223); }
+:global(:is(.dark, [data-beui-theme='dark']) .be-pmc-odds.is-negative) { --odds-ink: oklch(71.2% .194 13.428); }
 @media (hover: hover) { .be-pmc-odds:hover { background: var(--odds-hover); } }
 .be-pmc-odds:focus-visible { outline: 2px solid var(--beui-ring); outline-offset: 2px; }
 .be-pmc-swap { position: relative; display: inline-block; max-width: 100%; margin-block: -.08em; padding-block: .08em; white-space: nowrap; vertical-align: bottom; clip-path: inset(0 -999px); }
@@ -230,12 +230,12 @@ function hideTip(wait = 0) {
 .be-pmc-swap-layer { position: absolute; top: .08em; left: 0; display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; will-change: opacity, filter, transform; }
 
 .be-pmc-line { box-sizing: border-box; width: 6rem; height: .125rem; overflow: hidden; border-radius: 9999px; }
-.be-pmc-line-fill { width: 100%; height: 100%; transform-origin: left; border-radius: 9999px; background: rgb(110 231 183 / .7); }
-:global(:is(.dark, [data-beui-theme='dark']) .be-pmc-line-fill) { background: rgb(52 211 153 / .4); }
+.be-pmc-line-fill { width: 100%; height: 100%; transform-origin: left; border-radius: 9999px; background: oklch(84.5% .143 164.978 / .7); }
+:global(:is(.dark, [data-beui-theme='dark']) .be-pmc-line-fill) { background: oklch(76.5% .177 163.223 / .4); }
 
 .be-pmc-footer { display: flex; flex: none; align-items: center; gap: .5rem; margin-top: .5rem; font-size: .75rem; line-height: 1rem; color: var(--beui-muted-foreground); }
-.be-pmc-chart { flex: none; width: 3rem; height: 1.25rem; color: #10b981; }
-:global(:is(.dark, [data-beui-theme='dark']) .be-pmc-chart) { color: #34d399; }
+.be-pmc-chart { flex: none; width: 3rem; height: 1.25rem; color: oklch(69.6% .17 162.48); }
+:global(:is(.dark, [data-beui-theme='dark']) .be-pmc-chart) { color: oklch(76.5% .177 163.223); }
 .be-pmc-volume { flex: none; }
 .be-pmc-bookmark { display: flex; flex: none; align-items: center; justify-content: center; width: 2.25rem; height: 2.25rem; margin-left: auto; padding: 0; border: 0; border-radius: .75rem; background: transparent; color: inherit; cursor: pointer; transition: background-color .15s; }
 .be-pmc-bookmark.is-saved { color: var(--beui-foreground); }

@@ -35,12 +35,9 @@ export interface CrashProps {
   /** Initial sound state when uncontrolled. Default false. */
   defaultSound?: boolean
   /** Override built-in text for this instance. */
-  labels?: Partial<Record<string, string>>
-  onStart?: (round: number) => void
-  onCashOut?: (multiplier: number) => void
-  onCrash?: (point: number, payout: number | null) => void
-  onSoundChange?: (enabled: boolean) => void
-  onAutoCashOutChange?: (value: number | null) => void
+  labels?: Partial<CrashMessages>
+  /** Accessible name for the game. Default "Crash". */
+  'aria-label'?: string
 }
 
 export type CrashPhase = 'idle' | 'starting' | 'running' | 'crashed'

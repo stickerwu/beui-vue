@@ -62,7 +62,7 @@ watch(() => [props.row.size, props.reduce] as const, ([size, reduce], _, cleanup
 .ob-row:hover .hover { opacity: .05; }
 .ob-row .hover.range { opacity: .08; }
 .plain, .link { position: relative; }
-.link { padding: 0; border: 0; border-radius: 2px; background: transparent; color: inherit; font: inherit; cursor: pointer; outline: none; }
+.link { padding: 0; border: 0; border-radius: 4px; background: transparent; color: inherit; font: inherit; cursor: pointer; outline: none; }
 .link:hover { text-decoration: underline; }
 .link:focus-visible { box-shadow: 0 0 0 2px var(--beui-ring); }
 </style>

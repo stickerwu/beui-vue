@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { motion, useTransform, type MotionValue } from 'motion-v'
 import { computed, type ComponentPublicInstance } from 'vue'
+import { useMotionSource } from '../core/motion-source'
 import type { ChoiceOption } from './types'
 
 const props = defineProps<{
   option: ChoiceOption
   index: number
   position: MotionValue<number>
-  verticalAnchor: number | string
+  verticalAnchor: string
   radius: number
   itemHeight: number
   visibleCount: number
@@ -23,33 +24,45 @@ const emit = defineEmits<{ select: [] }>()
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value))
 const horizontal = computed(() => props.side === 'top' || props.side === 'bottom')
 
+// The transforms below re-run only when a motion value they read changes, so
+// the props they depend on are mirrored into one.
+const layout = useMotionSource(() => ({
+  index: props.index,
+  radius: props.radius,
+  itemHeight: props.itemHeight,
+  visibleCount: props.visibleCount,
+  side: props.side,
+  dimmed: props.disabled || !!props.option.disabled,
+}))
+
 // Each option is a motion value driven by the shared floating `position`: the
 // label rides a circle of `radius`, with its angle capped at ±1.5 rad so rows
 // far from the centre fold in behind the ends instead of spiralling away.
 const transform = useTransform(() => {
-  const angle = clamp(((props.index - props.position.get()) * props.itemHeight) / props.radius, -1.5, 1.5)
-  const bend = props.radius * (1 - Math.cos(angle))
-  const along = props.radius * Math.sin(angle)
-  const x = horizontal.value ? along : props.side === 'left' ? bend : -bend
-  const y = horizontal.value ? (props.side === 'top' ? bend : -bend) : along
-  const rotation = ((props.side === 'left' || props.side === 'bottom' ? -angle : angle) * 180) / Math.PI
-  const anchor = horizontal.value ? '-50%' : props.side === 'left' ? '-100%' : '0%'
+  const { index, radius, itemHeight, side } = layout.get()
+  const horizontal = side === 'top' || side === 'bottom'
+  const angle = clamp(((index - props.position.get()) * itemHeight) / radius, -1.5, 1.5)
+  const bend = radius * (1 - Math.cos(angle))
+  const along = radius * Math.sin(angle)
+  const x = horizontal ? along : side === 'left' ? bend : -bend
+  const y = horizontal ? (side === 'top' ? bend : -bend) : along
+  const rotation = ((side === 'left' || side === 'bottom' ? -angle : angle) * 180) / Math.PI
+  const anchor = horizontal ? '-50%' : side === 'left' ? '-100%' : '0%'
   return `translate3d(${x}px, ${y}px, 0) translate(${anchor}, -50%) rotate(${rotation}deg)`
 })
 
 const opacity = useTransform(() => {
-  const distance = Math.abs(props.index - props.position.get())
-  return (
-    clamp((props.visibleCount / 2 + 0.5 - distance) / 1.5, 0, 1) *
-    (props.disabled || props.option.disabled ? 0.35 : 1)
-  )
+  const { index, visibleCount, dimmed } = layout.get()
+  const distance = Math.abs(index - props.position.get())
+  return clamp((visibleCount / 2 + 0.5 - distance) / 1.5, 0, 1) * (dimmed ? 0.35 : 1)
 })
 
 // Rows outside the visible window must not swallow a drag that starts on the
 // track behind them.
-const pointerEvents = useTransform(() =>
-  Math.abs(props.index - props.position.get()) < props.visibleCount / 2 ? 'auto' : 'none',
-)
+const pointerEvents = useTransform(() => {
+  const { index, visibleCount } = layout.get()
+  return Math.abs(index - props.position.get()) < visibleCount / 2 ? 'auto' : 'none'
+})
 
 // Stable per instance, so Vue never treats it as a different ref on re-render.
 function register(ref: Element | ComponentPublicInstance | null) {

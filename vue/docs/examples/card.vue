@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ButtonBase, CARD_TARGET_CLASS, Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Switch } from 'beui-vue'
+import { ButtonBase, CARD_TARGET_CLASS, Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Checkbox, Switch } from 'beui-vue'
 import { ref, shallowRef, useId } from 'vue'
 
 const id = useId()
@@ -24,7 +24,7 @@ const summary = [
           <CardTitle>{{ file.title }}</CardTitle>
           <CardDescription :id="`${id}-doc-${index}`">{{ file.description }}</CardDescription>
           <CardAction>
-            <input v-model="file.selected" :class="[CARD_TARGET_CLASS, 'choice']" type="checkbox" :aria-label="file.title" :aria-describedby="`${id}-doc-${index}`" />
+            <Checkbox v-model="file.selected" :class="CARD_TARGET_CLASS" :aria-label="file.title" :aria-describedby="`${id}-doc-${index}`" />
           </CardAction>
         </CardHeader>
       </Card>
@@ -96,11 +96,7 @@ dd { margin: 0; color: var(--beui-foreground); font-weight: 500; }
 .between { justify-content: space-between; }
 .studio { overflow: hidden; padding-top: 0; }
 .studio > img { display: block; width: 100%; aspect-ratio: 16 / 9; height: auto; object-fit: cover; }
-.price { color: var(--beui-muted-foreground); font-size: .875rem; }
+.price { color: var(--beui-muted-foreground); font-size: .875rem; line-height: 1.25rem; }
 .price > span { color: var(--beui-foreground); font-weight: 500; }
 
-/* Native checkbox drawn like the library Checkbox: 20px, 2px border, primary fill and check when on. */
-.choice { appearance: none; display: inline-grid; place-content: center; width: 1.25rem; height: 1.25rem; margin: 0; border: 2px solid color-mix(in srgb, var(--beui-muted-foreground) 50%, transparent); border-radius: .375rem; background: var(--beui-background); cursor: pointer; transition: background-color .2s, border-color .2s; }
-.choice:hover { border-color: var(--beui-muted-foreground); }
-.choice:checked { border-color: var(--beui-primary); background: var(--beui-primary) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5'/%3E%3C/svg%3E") center / 80% no-repeat; }
 </style>

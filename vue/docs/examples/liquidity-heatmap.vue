@@ -33,5 +33,5 @@ const snapshots = computed(() => Array.from({ length: 24 }, (_, time) => ({
 .demo .top h3 { margin: 0; padding: 0; border: 0; font-size: 14px; line-height: 20px; font-weight: 500; letter-spacing: normal; }
 .top p { margin: 4px 0 0; font-size: 12px; line-height: 16px; color: var(--beui-muted-foreground); }
 .resim { gap: 8px; }
-.foot { margin: 0; text-align: center; font-size: 11px; line-height: 16px; color: var(--beui-muted-foreground); }
+.foot { margin: 0; text-align: center; font-size: 11px; line-height: 1.5; color: var(--beui-muted-foreground); }
 </style>

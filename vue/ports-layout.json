@@ -10,7 +10,7 @@
   "shared-layout-bg": {"name":"SharedLayoutBg","api":"默认插槽的直接子元素共享背景。指针移动或键盘焦点切换时，背景弹簧跟随目标的位置与大小。"},
   "bounce-sidebar": {"name":"BounceSidebar","api":"`items` 提供标签与可选链接，`v-model` 为当前项 ID。活动标记沿列表弹动。"},
   "animated-sidebar": {"name":"AnimatedSidebar","api":"`items` 支持子菜单。`v-model` 与 `v-model:open` 控制当前项目与展开状态。窄屏使用模态抽屉。Ctrl+B 或 Cmd+B 切换。"},
-  "file-tree": {"name":"FileTree","api":"`items` 使用递归 `children`。`v-model` 绑定文件，`v-model:expanded` 绑定展开的目录 ID 列表。支持方向键、Home 和 End。"},
+  "file-tree": {"name":"FileTree","api":"`items` 使用递归 `children`。`v-model` 绑定文件，`v-model:expanded-ids` 绑定展开的目录 ID 列表。支持方向键、Home 和 End。"},
   "preview-rail": {"name":"PreviewRail","api":"指向、聚焦或轻触 `items` 中的刻度显示预览。`orientation` 和 `previewSide` 配置布局。`preview` 插槽自定义内容。"},
   "dock": {"name":"Dock","api":"`items` 支持图标、链接与 `separatorBefore` 分隔符。`v-model` 指定活动项，`icon` 插槽提供自定义图标。"},
   "morphing-modal": {"name":"MorphingModal","api":"`v-model:view-id` 为 `null` 时关闭。更改视图 ID 可使面板平滑适应内容高度。默认插槽提供 `view` 与 `close`。"},

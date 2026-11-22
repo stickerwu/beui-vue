@@ -1,6 +1,7 @@
 import data from '../catalog-data.json'
 import pagesZh from './i18n/pages.zh.json'
 import sectionsZh from './i18n/sections.zh.json'
+import guidesZh from './i18n/guides.zh.json'
 
 export interface CatalogEntry {
   slug: string
@@ -21,6 +22,25 @@ export interface CatalogPage {
   launchedAt: string | null
   relatedSlugs: string[]
   entries: CatalogEntry[]
+  credit: CatalogCredit | null
+  sharedCredit: boolean
+  creditGroups: { credit: CatalogCredit; examples: string[] }[]
+  guide: CatalogGuide | null
+  updatedAt: string
+  native: { description: string } | null
+}
+
+export interface CatalogCredit {
+  name: string
+  url: string
+  avatar: string | null
+}
+
+/** Agent component guide (upstream lib/agent-guides.ts): composition tree and behaviour notes. */
+export interface CatalogGuide {
+  introduction: string
+  composition: { description: string; tree: string }
+  connections: { slug: string; name: string; description: string }[]
 }
 
 export interface CatalogSection {
@@ -29,16 +49,19 @@ export interface CatalogSection {
   path: string
   heading: string
   description: string
+  /** Heading of the full list on the category page ("All animated components"). */
+  allLabel: string
   entries: CatalogPage[]
 }
 
 export type Locale = 'zh' | 'en'
 
 type PageCopy = Record<string, { title?: string; description?: string }>
-type SectionCopy = Record<string, { name?: string; heading?: string; description?: string }>
+type SectionCopy = Record<string, { name?: string; heading?: string; description?: string; allLabel?: string }>
 
 const pageCopy = pagesZh as PageCopy
 const sectionCopy = sectionsZh as SectionCopy
+const guideCopy = guidesZh as Record<string, Partial<CatalogGuide>>
 
 /**
  * The catalog itself is written in English — it is the upstream beUI copy with
@@ -52,8 +75,14 @@ export const entries = pages.flatMap(page => page.entries)
 export function localizePage(page: CatalogPage, locale: Locale): CatalogPage {
   if (locale === 'en') return page
   const copy = pageCopy[page.slug]
-  if (!copy) return page
-  return { ...page, title: copy.title ?? page.title, description: copy.description ?? page.description }
+  const guide = guideCopy[page.slug]
+  if (!copy && !guide) return page
+  return {
+    ...page,
+    title: copy?.title ?? page.title,
+    description: copy?.description ?? page.description,
+    guide: page.guide && guide ? { ...page.guide, ...guide } : page.guide,
+  }
 }
 
 export function localizeSection(section: CatalogSection, locale: Locale): CatalogSection {
@@ -65,6 +94,7 @@ export function localizeSection(section: CatalogSection, locale: Locale): Catalo
     name: copy.name ?? section.name,
     heading: copy.heading ?? section.heading,
     description: copy.description ?? section.description,
+    allLabel: copy.allLabel ?? section.allLabel,
     entries: section.entries.map(page => localizePage(page, locale)),
   }
 }

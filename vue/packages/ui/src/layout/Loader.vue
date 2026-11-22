@@ -108,7 +108,9 @@ const label = computed(() => labelProp ?? t.value.label)
 const target = computed(() => scrambleProp ?? t.value.scramble)
 const filterId = `be-loader-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
 
-// Reduced motion keeps a calm opacity pulse and drops every transform.
+// Reduced motion keeps a calm opacity pulse and drops every transform. The template keys its root on the
+// preference: it resolves after mount, and motion keeps the last value of a property a new `animate` stops
+// naming (a bar frozen at 30% height), so the parts start over.
 const REDUCED_PULSE = { opacity: [1, 0.4, 1] }
 const reducedTransition = { duration: 1.4, ease: easeInOut, repeat: Infinity }
 
@@ -198,7 +200,7 @@ const pulse = (values: Record<string, unknown>, delay = 0) => ({
 </script>
 
 <template>
-  <span role="status" :aria-label="label" class="be-loader" :class="$attrs.class" :style="(($attrs.style as string) || undefined)">
+  <span :key="reduce ? 'reduced' : 'full'" role="status" :aria-label="label" class="be-loader" :class="$attrs.class" :style="(($attrs.style as string) || undefined)">
     <!-- Spinner -->
     <motion.svg v-if="variant === 'spinner'" :width="size" :height="size" :viewBox="`0 0 ${size} ${size}`"
       :animate="spin" :transition="spinTransition" aria-hidden="true">
@@ -305,14 +307,16 @@ const pulse = (values: Record<string, unknown>, delay = 0) => ({
 
     <!-- Helix -->
     <span v-else-if="variant === 'helix'" class="be-loader-helix" :style="{ width: `${size}px`, height: `${size}px` }" aria-hidden="true">
-      <motion.span v-for="row in helixRows" :key="`a-${row}`" class="be-loader-dot"
-        :style="{ width: `${helixDot}px`, height: `${helixDot}px`, left: `${size / 2 - helixDot / 2}px`, top: `${((row - 1) / (helixRows - 1)) * (size - helixDot)}px` }"
-        :animate="(reduce ? { opacity: [0.4, 1, 0.4] } : { x: [helixAmp, -helixAmp, helixAmp], scale: [1, 0.5, 1], opacity: [1, 0.45, 1] })"
-        :transition="{ duration: speed, ease: easeInOut, repeat: Infinity, delay: ((row - 1) / helixRows) * speed }" />
-      <motion.span v-for="row in helixRows" :key="`b-${row}`" class="be-loader-dot"
-        :style="{ width: `${helixDot}px`, height: `${helixDot}px`, left: `${size / 2 - helixDot / 2}px`, top: `${((row - 1) / (helixRows - 1)) * (size - helixDot)}px` }"
-        :animate="(reduce ? { opacity: [0.4, 1, 0.4] } : { x: [-helixAmp, helixAmp, -helixAmp], scale: [0.5, 1, 0.5], opacity: [0.45, 1, 0.45] })"
-        :transition="{ duration: speed, ease: easeInOut, repeat: Infinity, delay: ((row - 1) / helixRows) * speed }" />
+      <span v-for="row in helixRows" :key="row">
+        <motion.span class="be-loader-dot"
+          :style="{ width: `${helixDot}px`, height: `${helixDot}px`, left: `${size / 2 - helixDot / 2}px`, top: `${((row - 1) / (helixRows - 1)) * (size - helixDot)}px` }"
+          :animate="(reduce ? { opacity: [0.4, 1, 0.4] } : { x: [helixAmp, -helixAmp, helixAmp], scale: [1, 0.5, 1], opacity: [1, 0.45, 1] })"
+          :transition="{ duration: speed, ease: easeInOut, repeat: Infinity, delay: ((row - 1) / helixRows) * speed }" />
+        <motion.span class="be-loader-dot"
+          :style="{ width: `${helixDot}px`, height: `${helixDot}px`, left: `${size / 2 - helixDot / 2}px`, top: `${((row - 1) / (helixRows - 1)) * (size - helixDot)}px` }"
+          :animate="(reduce ? { opacity: [0.4, 1, 0.4] } : { x: [-helixAmp, helixAmp, -helixAmp], scale: [0.5, 1, 0.5], opacity: [0.45, 1, 0.45] })"
+          :transition="{ duration: speed, ease: easeInOut, repeat: Infinity, delay: ((row - 1) / helixRows) * speed }" />
+      </span>
     </span>
 
     <!-- Percent -->

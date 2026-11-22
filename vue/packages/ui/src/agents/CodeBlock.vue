@@ -54,8 +54,8 @@ onBeforeUnmount(() => cancelAnimationFrame(frame))
 .be-cb-head { display: flex; height: 2.5rem; align-items: center; gap: 0.625rem; padding-inline: 0.75rem; }
 .be-cb-file { color: color-mix(in srgb, var(--beui-muted-foreground) 70%, transparent); }
 .be-cb-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-mono, ui-monospace, monospace); font-size: 0.75rem; line-height: 1rem; color: color-mix(in srgb, var(--beui-foreground) 80%, transparent); }
-.be-cb-lang { font-size: 10px; line-height: 1rem; font-weight: 500; letter-spacing: 0.025em; text-transform: uppercase; color: color-mix(in srgb, var(--beui-muted-foreground) 55%, transparent); }
-.be-cb-status { margin-inline-start: auto; display: inline-flex; flex: none; align-items: center; gap: 0.25rem; font-size: 10px; line-height: 1rem; font-weight: 500; color: var(--ag-green); }
+.be-cb-lang { font-size: 10px; line-height: calc(1.25 / .875); font-weight: 500; letter-spacing: 0.025em; text-transform: uppercase; color: color-mix(in srgb, var(--beui-muted-foreground) 55%, transparent); }
+.be-cb-status { margin-inline-start: auto; display: inline-flex; flex: none; align-items: center; gap: 0.25rem; font-size: 10px; line-height: calc(1.25 / .875); font-weight: 500; color: var(--ag-green); }
 .be-cb-status[data-streaming=true] { color: var(--ag-blue); }
 .be-cb-copy { display: grid; flex: none; width: 1.75rem; height: 1.75rem; place-items: center; padding: 0; border: 0; border-radius: 9999px; background: transparent; color: var(--beui-muted-foreground); cursor: pointer; outline: none; transition: color 0.15s, background-color 0.15s; }
 .be-cb-copy:hover { background: color-mix(in srgb, var(--beui-background) 70%, transparent); color: var(--beui-foreground); }

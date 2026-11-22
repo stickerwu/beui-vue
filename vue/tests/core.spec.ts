@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test, type Page } from '@playwright/test'
 
 import { openDemo } from './open-demo'
 
@@ -29,9 +29,15 @@ test('button forwards keyboard activation and keeps disabled controls inert', as
   await expect(show).toBeDisabled()
 })
 
+/** One captioned block of the tabs demo (caption text, then a Tabs root). */
+function tabSection(page: Page, caption: string) {
+  return page.locator('.beui-demo .section').filter({ has: page.getByText(caption, { exact: true }) })
+}
+
 test('tabs move focus, wrap, and expose only the selected panel', async ({ page }) => {
   await openDemo(page, 'tabs')
-  const list = page.getByRole('tablist', { name: 'Pill', exact: true })
+  // The demo captions each tab list with a "Pill" label; the lists themselves carry no accessible name (as upstream).
+  const list = tabSection(page, 'Pill').getByRole('tablist')
   const overview = list.getByRole('tab', { name: 'Overview' })
   const activity = list.getByRole('tab', { name: 'Activity' })
   await overview.focus()
@@ -48,10 +54,10 @@ test('tabs move focus, wrap, and expose only the selected panel', async ({ page 
 
 test('overflow control reveals hidden tabs without changing selection', async ({ page }) => {
   await openDemo(page, 'tabs')
-  const list = page.getByRole('tablist', { name: 'Overflow' })
-  const scrollRight = page.getByRole('button', { name: 'Scroll tabs right' }).first()
-  await scrollRight.click()
-  await expect(page.getByRole('button', { name: 'Scroll tabs left' }).first()).toBeEnabled()
+  const section = tabSection(page, 'Overflow')
+  const list = section.getByRole('tablist')
+  await section.getByRole('button', { name: 'Scroll tabs right' }).click()
+  await expect(section.getByRole('button', { name: 'Scroll tabs left' })).toBeEnabled()
   await expect(list.getByRole('tab', { selected: true })).toHaveAccessibleName('Overview')
 })
 

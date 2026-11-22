@@ -47,7 +47,7 @@ const transition = computed(() => reduce.value ? { duration: 0 } : { opacity: { 
 .cl-row:hover .cl-title { color: var(--beui-foreground); }
 .cl-domain { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .75rem; line-height: 1rem; color: color-mix(in oklab, var(--beui-muted-foreground) 60%, transparent); }
 .cl-end { display: flex; flex: none; align-items: center; gap: .375rem; }
-.cl-index { display: grid; width: 1.25rem; height: 1.25rem; place-items: center; border-radius: .375rem; background: color-mix(in oklab, var(--beui-foreground) 5%, transparent); font-size: 10px; line-height: 1rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--beui-muted-foreground); }
+.cl-index { display: grid; width: 1.25rem; height: 1.25rem; place-items: center; border-radius: .375rem; background: color-mix(in oklab, var(--beui-foreground) 5%, transparent); font-size: 10px; line-height: calc(1.25 / .875); font-weight: 600; font-variant-numeric: tabular-nums; color: var(--beui-muted-foreground); }
 .cl-external { color: color-mix(in oklab, var(--beui-muted-foreground) 40%, transparent); transition: color .15s; }
 .cl-row:hover .cl-external { color: var(--beui-muted-foreground); }
 </style>

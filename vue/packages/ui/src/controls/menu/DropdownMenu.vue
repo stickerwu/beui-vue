@@ -2,7 +2,7 @@
 import { useReducedMotion } from '../../core/reduced-motion'
 import { computed, onMounted, provide, shallowRef, useId, watch } from 'vue'
 import DropdownMenuContent from './DropdownMenuContent.vue'
-import DropdownMenuTrigger from './DropdownMenuTrigger'
+import DropdownMenuTrigger from './DropdownMenuTrigger.vue'
 import MenuItemsView from './MenuItemsView.vue'
 import { rootKey, type FocusTarget } from './menu-shared'
 import type { MenuItemSpec } from './menu-types'

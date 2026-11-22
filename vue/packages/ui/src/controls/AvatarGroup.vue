@@ -22,6 +22,7 @@ import { useReducedMotion } from '../core/reduced-motion'
 import { computed, shallowRef } from 'vue'
 import { useMountedMedia } from '../core/mounted-media'
 import { easeOut, layoutSpring, pressSpring } from '../core/motion'
+import Avatar from './Avatar.vue'
 import Tooltip from './tooltip/Tooltip.vue'
 import TooltipProvider from './tooltip/TooltipProvider.vue'
 
@@ -55,7 +56,6 @@ const localExpanded = shallowRef(props.defaultExpanded)
 const isExpanded = computed(() => props.expanded ?? localExpanded.value)
 // Index of the avatar under a mouse pointer; the +N button counts as the last slot.
 const hovered = shallowRef<number | null>(null)
-const failed = shallowRef(new Set<string>())
 
 const text = computed(() => ({ ...avatarGroupMessages, ...props.labels }))
 const limit = computed(() => Math.max(1, props.max))
@@ -75,12 +75,6 @@ function offset(index: number) {
   return index < (hovered.value ?? 0) ? -geometry.value.push : geometry.value.push
 }
 
-function initials(name: string) {
-  const parts = name.trim().split(/\s+/).filter(Boolean)
-  const letters = parts.length > 1 ? parts[0]![0]! + parts[parts.length - 1]![0]! : (parts[0] ?? '?').slice(0, 2)
-  return letters.toUpperCase() || '?'
-}
-
 function toggle() {
   const next = !isExpanded.value
   if (props.expanded === undefined) localExpanded.value = next
@@ -92,17 +86,12 @@ const showMore = computed(() => text.value.showMore.replace('{count}', String(ov
 function enter(index: number, event: PointerEvent) {
   if (event.pointerType === 'mouse') hovered.value = index
 }
-function fail(src: string) {
-  const next = new Set(failed.value)
-  next.add(src)
-  failed.value = next
-}
 </script>
 
 <template>
   <TooltipProvider :skip-delay="400">
   <div class="be-avatars" :class="className" :data-size="size" @pointerleave="hovered = null">
-    <ul :aria-label="label ?? text.label" class="be-avatars-list" :data-size="size" :style="{ '--avatar-text': SIZES[size].text }">
+    <ul :aria-label="label ?? text.label" class="be-avatars-list">
       <AnimatePresence :initial="false" mode="popLayout">
         <motion.li
           v-for="(member, index) in visible"
@@ -122,19 +111,7 @@ function fail(src: string) {
               :transition="layoutSpring"
               @pointerenter="enter(index, $event)"
             >
-              <span class="be-avatar">
-                <img
-                  v-if="member.src && !failed.has(member.src)"
-                  :src="member.src"
-                  :alt="member.name"
-                  draggable="false"
-                  @error="fail(member.src!)"
-                >
-                <template v-else>
-                  <span aria-hidden="true">{{ initials(member.name) }}</span>
-                  <span class="be-avatar-spoken">{{ member.name }}</span>
-                </template>
-              </span>
+              <Avatar :name="member.name" :src="member.src" :size="size" />
             </motion.span>
           </Tooltip>
         </motion.li>
@@ -149,7 +126,7 @@ function fail(src: string) {
           <motion.span class="be-avatar-part" :animate="{ x: offset(visible.length) }" :transition="layoutSpring" @pointerenter="enter(visible.length, $event)">
             <motion.button
               type="button"
-              class="be-avatar be-avatar-count"
+              class="be-avatar be-avatar-count" :data-size="size"
               :aria-expanded="isExpanded"
               :aria-label="isExpanded ? text.showFewer : showMore"
               :while-press="reduce ? undefined : { scale: .92 }"
@@ -179,21 +156,11 @@ function fail(src: string) {
 .be-avatars { display: inline-flex; align-items: center; }
 .be-avatars-list { position: relative; display: flex; align-items: center; margin: 0; padding: 0; list-style: none; }
 .be-avatar-slot { margin: 0; }
-.be-avatar-part { display: block; }
-.be-avatar {
-  position: relative; display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center;
-  box-sizing: border-box; width: 2.25rem; height: 2.25rem; overflow: hidden; border-radius: 50%;
-  background: var(--beui-card); color: var(--beui-muted-foreground); font-size: var(--avatar-text, .75rem); font-weight: 500;
-  user-select: none; outline: 2px solid var(--beui-background);
-}
-.be-avatars[data-size=sm] .be-avatar { width: 1.75rem; height: 1.75rem; }
-.be-avatars[data-size=md] .be-avatar { width: 2.25rem; height: 2.25rem; }
-.be-avatars[data-size=lg] .be-avatar { width: 2.75rem; height: 2.75rem; }
-.be-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.be-avatar-spoken { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.be-avatar-part { display: block; border-radius: 9999px; }
 .be-avatar-count {
   border: 0; padding: 0; background: var(--beui-foreground); color: var(--beui-background);
-  font: inherit; font-size: var(--avatar-text, .75rem); font-weight: 500; font-variant-numeric: tabular-nums; cursor: pointer;
+  font-family: inherit; font-weight: 500; font-variant-numeric: tabular-nums; cursor: pointer;
 }
-.be-avatar-count:focus-visible { outline: 2px solid var(--beui-ring); outline-offset: 2px; }
+.be-avatar-count { outline: none; }
+.be-avatar-count:focus-visible { box-shadow: 0 0 0 2px var(--beui-ring); }
 </style>

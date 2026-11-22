@@ -8,11 +8,11 @@ let current: { close: () => void } | null = null
 
 <script setup lang="ts">
 import { useReducedMotion } from '../../core/reduced-motion'
-import { Comment, computed, inject, nextTick, onBeforeUnmount, onMounted, onUpdated, shallowRef, useId, useSlots, useTemplateRef, watch, watchEffect, type VNode } from 'vue'
+import { Comment, computed, inject, nextTick, onBeforeUnmount, onMounted, onUpdated, provide, shallowRef, Text, unref, useAttrs, useId, useSlots, useTemplateRef, watch, watchEffect, type VNode } from 'vue'
 import { createHoverGesture, createTapGesture, firstElement, useDismiss } from '../popover/pop-helpers'
 import {
-  computePlacement, focusFromKeyboard, graceArea, inBox, inPolygon, TIMING_KEY, watchModality,
-  type TooltipAlign, type TooltipPoint, type TooltipSide,
+  computePlacement, focusFromKeyboard, graceArea, inBox, inPolygon, PARTS_KEY, TIMING_KEY, watchModality,
+  type TooltipAlign, type TooltipPart, type TooltipPoint, type TooltipSide,
 } from './tip-shared'
 
 /**
@@ -20,6 +20,9 @@ import {
  * a built-in button when the slot holds only text). Timing comes from an
  * optional `TooltipProvider`: the first label waits, the next ones open
  * instantly. Ported from `components/motion/tooltip.tsx`.
+ *
+ * Two ways to write it: the shorthand (`content` or the `#content` slot, the default slot is the
+ * trigger), or composed from `TooltipTrigger` and `TooltipContent` inside it.
  */
 const props = withDefaults(defineProps<{
   /** Plain-text content; use the `#content` slot for anything richer. */
@@ -52,11 +55,18 @@ const props = withDefaults(defineProps<{
   pressed?: boolean | null
   /** Accepted for backward compatibility; the trigger element is now yours. */
   toolbar?: boolean
+  /** Anchor an element you already have (for example a chart cell) instead of a trigger. The tooltip then does not listen to it: drive `v-model:open` yourself. */
+  anchorRef?: HTMLElement | null | { value: HTMLElement | null }
+  /** Id of the tooltip surface, for anchors that reference it themselves. */
+  id?: string
 }>(), { side: 'top', align: 'center', arrow: false, followCursor: false, disabled: false, asLabel: false, defaultOpen: false, pressed: undefined })
 
 const open = defineModel<boolean | undefined>('open')
 const emit = defineEmits<{ activate: [event: MouseEvent]; show: []; hide: [] }>()
 const slots = useSlots()
+// `class` on the shorthand styles the tooltip surface (the root renders no element of its own).
+defineOptions({ inheritAttrs: false })
+const attrs = useAttrs()
 defineSlots<{ default?(): unknown; content?(): unknown }>()
 
 const timing = inject(TIMING_KEY, null)
@@ -66,7 +76,7 @@ const skipDelay = computed(() => timing?.skipDelay.value ?? 300)
 
 const reducedMotion = useReducedMotion()
 const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '')
-const contentId = `be-tip-${uid}-content`
+const contentId = props.id ?? `be-tip-${uid}-content`
 const labelId = `be-tip-${uid}-label`
 
 const host = useTemplateRef<HTMLElement>('host')
@@ -76,11 +86,32 @@ const anchor = shallowRef<HTMLElement | null>(null)
 const mounted = shallowRef(false)
 const rendered = shallowRef(false)
 const ready = shallowRef(false)
-const placedSide = shallowRef<TooltipSide>(props.side)
+// A composed tooltip hands its side, align, offset, arrow and class over through `TooltipContent`.
+const part = shallowRef<TooltipPart | null>(null)
+const eff = computed(() => {
+  const c = part.value?.props
+  return {
+    side: c?.side ?? props.side,
+    align: c?.align ?? props.align,
+    sideOffset: c?.sideOffset ?? props.sideOffset,
+    arrow: c?.arrow ?? props.arrow,
+    anchorPoint: c?.anchorPoint ?? props.anchorPoint,
+    class: [props.contentClass, attrs.class, c?.class],
+  }
+})
+const placedSide = shallowRef<TooltipSide>(eff.value.side)
 
 const isOpen = computed(() => open.value ?? props.defaultOpen)
-const empty = computed(() => !props.content && !slots.content)
+const hasNodes = (nodes: unknown): boolean => Array.isArray(nodes) && nodes.some((node: VNode) => node.type === Text ? String(node.children ?? '').trim() !== '' : node.type !== Comment && (typeof node.type !== 'symbol' || hasNodes(node.children)))
+const empty = computed(() => !props.content && !slots.content && !(part.value && hasNodes(part.value.slots.default?.())))
 const present = computed(() => isOpen.value && !empty.value)
+provide(PARTS_KEY, {
+  open: computed(() => isOpen.value),
+  register: next => { part.value = next },
+  unregister: next => { if (part.value === next) part.value = null },
+})
+// What the surface shows: composed content first, then the `#content` slot, then the `content` prop.
+const ContentRender = () => part.value?.slots.default?.() ?? (slots.content ? slots.content() : props.content)
 
 // Whether the default slot supplies an element to anchor to. Text-only content
 // gets a built-in button, so there is always something focusable.
@@ -92,8 +123,9 @@ function hasElementTrigger() {
   return walk(slots.default?.() ?? [])
 }
 
+const external = computed(() => props.anchorRef !== undefined)
 function resolveAnchor() {
-  const next = firstElement(host.value)
+  const next = external.value ? (unref(props.anchorRef as never) as HTMLElement | null) ?? null : firstElement(host.value)
   if (next !== anchor.value) anchor.value = next
 }
 onMounted(() => { mounted.value = true; watchModality(); resolveAnchor() })
@@ -172,7 +204,7 @@ let schedule: () => void = () => {}
 // Listeners go on the trigger itself rather than on cloned props, so a
 // component that owns its own handlers keeps them.
 watch(anchor, (el, _, cleanup) => {
-  if (!el) return
+  if (!el || external.value) return
   // A mouse press dismisses the label and keeps it away until the pointer
   // leaves; hovering a control you just clicked should not bring it back.
   let suppressed = false
@@ -241,7 +273,7 @@ watch(anchor, (el, _, cleanup) => {
 
 // ARIA: the tooltip is either the trigger's name or its description.
 watch(anchor, (el, _, cleanup) => {
-  if (!el) return
+  if (!el || external.value) return
   const originalLabelledby = el.getAttribute('aria-labelledby')
   const originalDescribedby = el.getAttribute('aria-describedby')
   const originalLabel = el.getAttribute('aria-label')
@@ -309,7 +341,8 @@ watch([isOpen, anchor], ([value, el], _, cleanup) => {
   cleanup(() => { observer.disconnect(); window.removeEventListener('blur', close) })
 }, { immediate: true })
 
-watch([() => props.disabled, empty], () => { if (props.disabled || empty.value) close() })
+// A chart drives its own open state and swaps content as it goes; only a trigger-owned label closes itself for having nothing to say.
+watch([() => props.disabled, empty], () => { if (props.disabled || (empty.value && !external.value)) close() })
 
 // ...and closed by the next tap that lands somewhere else, or Escape. The label
 // covers nothing interactive, so that tap passes through to what it hit.
@@ -345,17 +378,17 @@ function place() {
   if (!present.value || !a || !floating) return
   const currentCursor = props.followCursor ? cursor : null
   const anchorRect = a.getBoundingClientRect()
-  const virtual = Boolean(currentCursor) || props.anchorPoint !== undefined
-  const px = currentCursor?.x ?? anchorRect.left + anchorRect.width * (props.anchorPoint?.x ?? 0.5)
-  const py = currentCursor?.y ?? anchorRect.top + anchorRect.height * (props.anchorPoint?.y ?? 0.5)
+  const virtual = Boolean(currentCursor) || eff.value.anchorPoint !== undefined
+  const px = currentCursor?.x ?? anchorRect.left + anchorRect.width * (eff.value.anchorPoint?.x ?? 0.5)
+  const py = currentCursor?.y ?? anchorRect.top + anchorRect.height * (eff.value.anchorPoint?.y ?? 0.5)
   const reference = virtual ? { left: px, top: py, width: 0, height: 0 } : anchorRect
   const box = floating.getBoundingClientRect()
   const result = computePlacement({
     reference,
     floating: { width: box.width, height: box.height },
-    side: currentCursor ? (cursorSide ?? props.side) : props.side,
-    align: props.align,
-    offset: props.sideOffset ?? (currentCursor ? 12 : 8),
+    side: currentCursor ? (cursorSide ?? eff.value.side) : eff.value.side,
+    align: eff.value.align,
+    offset: eff.value.sideOffset ?? (currentCursor ? 12 : 8),
     viewport: { width: document.documentElement.clientWidth, height: window.innerHeight },
     padding: 8,
     arrow: arrowEl.value ? 12 : undefined,
@@ -389,7 +422,7 @@ schedule = () => {
   if (frame !== undefined) return
   frame = requestAnimationFrame(() => { frame = undefined; place() })
 }
-watch([floatingEl, anchor, present, () => props.side, () => props.align, () => props.sideOffset, () => props.followCursor, () => props.arrow, () => props.anchorPoint, () => props.content], (_, __, cleanup) => {
+watch([floatingEl, anchor, present, () => eff.value.side, () => eff.value.align, () => eff.value.sideOffset, () => props.followCursor, () => eff.value.arrow, () => eff.value.anchorPoint, () => props.content], (_, __, cleanup) => {
   const floating = floatingEl.value
   const a = anchor.value
   if (!present.value || !a || !floating) return
@@ -427,21 +460,21 @@ defineExpose({ close, open: openNow })
 </script>
 
 <template>
-  <span ref="host" class="be-tip-host">
+  <span v-if="!external" ref="host" class="be-tip-host">
     <slot v-if="hasElementTrigger()" />
     <button v-else type="button" class="be-tip-fallback"><slot /></button>
   </span>
   <Teleport v-if="mounted" to="body">
     <!-- The name has to exist while the label is closed, so it lives apart from the surface. -->
-    <span v-if="asLabel && !empty" :id="labelId" hidden><slot name="content">{{ content }}</slot></span>
+    <span v-if="asLabel && !empty" :id="labelId" hidden><ContentRender /></span>
     <span v-if="rendered && !empty" ref="floating" class="be-tip-positioner" style="visibility: hidden" :inert="!present" :aria-hidden="!present || undefined">
-      <span :id="asLabel ? undefined : contentId" role="tooltip" class="be-tip-surface" :class="[{ relative: arrow, reduced: reducedMotion }, contentClass]"
+      <span :id="asLabel ? undefined : contentId" role="tooltip" class="be-tip-surface" :class="[{ relative: eff.arrow, reduced: reducedMotion }, eff.class]"
         :aria-hidden="asLabel || undefined" :data-open="ready && present ? '' : undefined" :data-side="placedSide"
         :style="{ pointerEvents: present && !followCursor ? 'auto' : 'none' }"
         @pointerenter="onContentEnter" @pointerleave="onContentLeave">
-        <slot name="content">{{ content }}</slot>
+        <ContentRender />
         <!-- Each arrow is a 12px box whose base sits on the surface's inner border edge, so its fill covers the border beneath it and only the two outer edges stroke. -->
-        <svg v-if="arrow" ref="arrowEl" aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" class="be-tip-arrow" :data-side="placedSide">
+        <svg v-if="eff.arrow" ref="arrowEl" aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" class="be-tip-arrow" :data-side="placedSide">
           <path :d="{ top: 'M0 6L6 12L12 6Z', bottom: 'M0 6L6 0L12 6Z', left: 'M6 0L12 6L6 12Z', right: 'M6 0L0 6L6 12Z' }[placedSide]" class="fill" />
           <path :d="{ top: 'M0 6L6 12L12 6', bottom: 'M0 6L6 0L12 6', left: 'M6 0L12 6L6 12', right: 'M6 0L0 6L6 12' }[placedSide]" fill="none" stroke-width="1" class="stroke" />
         </svg>

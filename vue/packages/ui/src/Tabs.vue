@@ -1,123 +1,152 @@
+<script lang="ts">
+export { tabsMessages, type TabsMessages, type TabsVariant, type TabsIconDisplay } from './tabs/context'
+
+/** A tab described by data, for the `items` shorthand. */
+export interface TabItem { value: string; label: string; content?: string; disabled?: boolean }
+</script>
+
 <script setup lang="ts">
-import { motion } from 'motion-v'
+import { motion, useSpring } from 'motion-v'
+import { computed, provide, shallowRef, useId, useSlots } from 'vue'
 import { useReducedMotion } from './core/reduced-motion'
-import { computed, shallowRef, useId, useTemplateRef, watch } from 'vue'
-import { useTabTrack } from './core/tab-track'
+import TabsContent from './tabs/TabsContent.vue'
+import TabsList from './tabs/TabsList.vue'
+import TabsTrigger from './tabs/TabsTrigger.vue'
+import {
+  TABS_SPRING,
+  tabsKey,
+  tabsMessages,
+  type TabRegistration,
+  type TabsContext,
+  type TabsIconDisplay,
+  type TabsMessages,
+  type TabsVariant,
+} from './tabs/context'
 
-interface TabItem { value: string; label: string; content?: string; disabled?: boolean }
-const { items, modelValue, defaultValue, variant = 'pill', icons = 'always', labels } = defineProps<{
-  items: readonly TabItem[]
-  modelValue?: string
+const props = withDefaults(defineProps<{
+  /** Shorthand for a list of triggers and their panels. Omit it and compose `TabsList`, `TabsTrigger` and `TabsContent` instead. */
+  items?: readonly TabItem[]
   defaultValue?: string
-  variant?: 'pill' | 'segment' | 'underline'
+  variant?: 'pill' | 'underline' | 'segment'
+  /**
+   * With "selected", a trigger's icon springs open only on the selected tab
+   * and folds away when another is chosen. Defaults to "always".
+   */
   icons?: 'always' | 'selected'
-  labels?: { list?: string; scrollLeft?: string; scrollRight?: string }
-}>()
+  /** Override any built-in string. `list` names the tab list for assistive technology. */
+  labels?: Partial<TabsMessages> & { list?: string }
+}>(), { variant: 'pill', icons: 'always' })
+/** The selected tab's value. Leave it unbound for an uncontrolled `Tabs` that starts at `defaultValue`. */
+const model = defineModel<string>()
+const emit = defineEmits<{ valueChange: [value: string] }>()
 const slots = defineSlots<{
-  trigger?(props: { item: TabItem; active: boolean }): unknown
-  icon?(props: { item: TabItem; active: boolean }): unknown
-  panel?(props: { item: TabItem; active: boolean }): unknown
+  /** `TabsList` and `TabsContent`, or nothing when `items` is set. */
+  default?: () => unknown
+  /** Content of a trigger in `items` mode. Defaults to the item's label. */
+  trigger?: (props: { item: TabItem; active: boolean }) => unknown
+  /** Icon of a trigger in `items` mode. */
+  icon?: (props: { item: TabItem; active: boolean }) => unknown
+  /** Content of a panel in `items` mode. Defaults to the item's `content`. */
+  panel?: (props: { item: TabItem; active: boolean }) => unknown
 }>()
-const emit = defineEmits<{ 'update:modelValue': [value: string]; valueChange: [value: string] }>()
-const enabled = computed(() => items.filter(item => !item.disabled))
-const internal = shallowRef(defaultValue ?? enabled.value[0]?.value ?? '')
-const current = computed(() => modelValue ?? internal.value)
-const tabStop = computed(() => enabled.value.find(item => item.value === current.value)?.value ?? enabled.value[0]?.value)
-const panelItems = computed(() => items.filter(hasPanel))
-const groupId = useId()
-const viewport = useTemplateRef('viewport')
-const list = shallowRef<HTMLElement | null>(null)
+const rawSlots = useSlots()
+
 const reduce = useReducedMotion()
-const { edges, placed, trackStyles, left, width, refresh, measureEdges, reveal, scroll } = useTabTrack(viewport, list, current, reduce)
-const mask = computed(() => `linear-gradient(to right, ${edges.value.left ? 'transparent, black 40px' : 'black'}, ${edges.value.right ? 'black calc(100% - 40px), transparent' : 'black'})`)
+const t = computed(() => ({ ...tabsMessages, ...props.labels }))
+const firstEnabled = () => props.items?.find(item => !item.disabled)?.value ?? ''
+const internal = shallowRef(props.defaultValue ?? firstEnabled())
+const current = computed(() => model.value ?? internal.value)
+function setValue(value: string) {
+  if (value !== current.value) internal.value = value
+  model.value = value
+  emit('valueChange', value)
+}
 
-watch(() => items.map(item => [item.value, item.disabled, item.label]), refresh, { flush: 'post' })
-watch(enabled, available => {
-  if (modelValue === undefined && !available.some(item => item.value === internal.value)) internal.value = available[0]?.value ?? ''
+const x = useSpring(0, TABS_SPRING)
+const y = useSpring(0, TABS_SPRING)
+const width = useSpring(0, TABS_SPRING)
+const height = useSpring(0, TABS_SPRING)
+const placed = shallowRef(false)
+
+const tabs = shallowRef<ReadonlyMap<string, TabRegistration>>(new Map())
+function registerTab(value: string, registration: TabRegistration) {
+  const known = tabs.value.get(value)
+  if (known && known.disabled === registration.disabled && known.indicatorClassName === registration.indicatorClassName) return
+  tabs.value = new Map(tabs.value).set(value, registration)
+}
+function unregisterTab(value: string) {
+  if (!tabs.value.has(value)) return
+  const next = new Map(tabs.value)
+  next.delete(value)
+  tabs.value = next
+}
+const panels = shallowRef<ReadonlySet<string>>(new Set())
+function registerPanel(value: string) {
+  if (!panels.value.has(value)) panels.value = new Set(panels.value).add(value)
+}
+function unregisterPanel(value: string) {
+  if (!panels.value.has(value)) return
+  const next = new Set(panels.value)
+  next.delete(value)
+  panels.value = next
+}
+// Resolved from the registry during render so the list has exactly one tab
+// stop in the same commit that changes the selection or the tabs.
+const tabStop = computed<string | null>(() => {
+  if (tabs.value.size === 0) return null
+  const enabled = Array.from(tabs.value).filter(([, registration]) => !registration.disabled)
+  return enabled.some(([value]) => value === current.value) ? current.value : (enabled[0]?.[0] ?? '')
 })
+const baseId = useId()
+const layoutId = useId()
+const slug = (value: string) => value.replace(/[^\w-]/g, '_')
 
-function id(kind: string, value: string) { return `${groupId}-${kind}-${encodeURIComponent(value)}` }
-function hasPanel(item: TabItem) { return Boolean(slots.panel) || item.content !== undefined }
-function select(item: TabItem) {
-  if (item.disabled || current.value === item.value) return
-  if (modelValue === undefined) internal.value = item.value
-  emit('update:modelValue', item.value)
-  emit('valueChange', item.value)
-}
-function navigate(event: KeyboardEvent, item: TabItem) {
-  const rows = enabled.value
-  const index = rows.findIndex(row => row.value === item.value)
-  if (index < 0 || !list.value) return
-  const forward = getComputedStyle(list.value).direction === 'rtl' ? -1 : 1
-  const steps: Record<string, number> = { ArrowRight: index + forward, ArrowLeft: index - forward, Home: 0, End: rows.length - 1 }
-  const next = steps[event.key]
-  if (next === undefined) return
-  event.preventDefault()
-  const target = rows[(next + rows.length) % rows.length]!
-  select(target)
-  document.getElementById(id('tab', target.value))?.focus({ preventScroll: true })
-}
+provide(tabsKey, {
+  value: current,
+  layoutId,
+  setValue,
+  variant: computed(() => props.variant),
+  icons: computed(() => props.icons),
+  reduce,
+  track: { x, y, width, height },
+  placed,
+  tabStop,
+  tabs,
+  registerTab,
+  unregisterTab,
+  panels,
+  registerPanel,
+  unregisterPanel,
+  tabId: value => `${baseId}-tab-${slug(value)}`,
+  panelId: value => `${baseId}-panel-${slug(value)}`,
+  t,
+} satisfies TabsContext)
+
+const hasPanel = (item: TabItem) => Boolean(rawSlots.panel) || item.content !== undefined
 </script>
 
 <template>
-  <div class="be-tabs" :data-variant="variant">
-    <div class="be-scroll-frame" :data-overflow="edges.left || edges.right">
-      <button v-if="edges.left || edges.right" type="button" class="be-scroll left" :aria-controls="`${groupId}-viewport`" :aria-label="labels?.scrollLeft ?? 'Scroll tabs left'" :disabled="!edges.left" @click="scroll(-1)">‹</button>
-      <div :id="`${groupId}-viewport`" ref="viewport" class="be-viewport" :style="{ maskImage: mask }" @scroll.passive="measureEdges">
-        <motion.div :ref="(node: any) => { list = node?.$el ?? node }" class="be-list" role="tablist" :aria-label="labels?.list ?? 'Tabs'" :style="trackStyles" :data-placed="placed">
-          <motion.span v-if="placed" class="be-indicator" aria-hidden="true" :style="{ x: left, width }" />
-          <button v-for="item in items" :id="id('tab', item.value)" :key="item.value" type="button" role="tab" class="be-trigger" :data-value="item.value"
-            :disabled="item.disabled" :aria-selected="item.value === current" :tabindex="!item.disabled && tabStop === item.value ? 0 : -1"
-            :aria-controls="hasPanel(item) ? id('panel', item.value) : undefined" @click="select(item)" @keydown="navigate($event, item)" @focus="reveal($event.currentTarget as HTMLElement)">
-            <span v-if="slots.icon" class="be-icon" :data-open="icons === 'always' || item.value === current" aria-hidden="true"><span><slot name="icon" :item="item" :active="item.value === current" /></span></span>
-            <slot name="trigger" :item="item" :active="item.value === current"><span class="be-label">{{ item.label }}</span></slot>
-            <span v-if="!slots.trigger && variant !== 'underline'" class="be-ink" aria-hidden="true">{{ item.label }}</span>
-          </button>
-        </motion.div>
-      </div>
-      <button v-if="edges.left || edges.right" type="button" class="be-scroll right" :aria-controls="`${groupId}-viewport`" :aria-label="labels?.scrollRight ?? 'Scroll tabs right'" :disabled="!edges.right" @click="scroll(1)">›</button>
-    </div>
-    <div v-for="item in panelItems" :id="id('panel', item.value)" :key="item.value" class="be-panel" role="tabpanel" :aria-labelledby="id('tab', item.value)"
-      :tabindex="item.value === current ? 0 : undefined" :hidden="item.value !== current">
-      <slot name="panel" :item="item" :active="item.value === current">{{ item.content }}</slot>
-    </div>
-  </div>
+  <!-- layoutRoot: the underline indicator measures in page coordinates, so inside
+       fixed or scrolled containers it would replay scroll offsets as movement. -->
+  <motion.div layout-root class="be-tabs" :data-variant="variant">
+    <slot>
+      <template v-if="items">
+        <TabsList :aria-label="labels?.list">
+          <TabsTrigger v-for="item in items" :key="item.value" :value="item.value" :disabled="item.disabled" :data-plain="slots.trigger ? '' : undefined">
+            <template v-if="slots.icon" #icon><slot name="icon" :item="item" :active="item.value === current" /></template>
+            <slot name="trigger" :item="item" :active="item.value === current">{{ item.label }}</slot>
+          </TabsTrigger>
+        </TabsList>
+        <template v-for="item in items" :key="item.value">
+          <TabsContent v-if="hasPanel(item)" :value="item.value">
+            <slot name="panel" :item="item" :active="item.value === current">{{ item.content }}</slot>
+          </TabsContent>
+        </template>
+      </template>
+    </slot>
+  </motion.div>
 </template>
 
 <style scoped>
 .be-tabs { min-width: 0; max-width: 100%; }
-.be-scroll-frame { position: relative; min-width: 0; border-radius: 999px; }
-.be-scroll-frame[data-overflow=true] { background: var(--beui-card); }
-.be-viewport { overflow-x: auto; scrollbar-width: none; border-radius: inherit; }
-.be-viewport::-webkit-scrollbar { display: none; }
-.be-list { position: relative; isolation: isolate; display: flex; align-items: stretch; width: max-content; box-sizing: border-box; padding: 4px; gap: 4px; border-radius: 999px; background: var(--beui-card); }
-.be-trigger { position: relative; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap; margin: 0; border: 0; background: transparent; border-radius: inherit; cursor: pointer; color: var(--beui-muted-foreground); padding: 6px 14px; font: inherit; font-size: .875rem; line-height: 1.25rem; font-weight: 500; }
-.be-trigger[aria-selected=true] { color: var(--beui-primary-foreground); }
-.be-list[data-placed=false] .be-trigger[aria-selected=true] { background: var(--beui-primary); }
-.be-trigger:disabled { opacity: .5; cursor: default; }
-.be-trigger:focus-visible, .be-scroll:focus-visible, .be-panel:focus-visible { outline: 2px solid var(--beui-ring); outline-offset: -2px; }
-.be-indicator { position: absolute; pointer-events: none; top: 4px; bottom: 4px; left: 0; background: var(--beui-primary); border-radius: inherit; }
-.be-ink { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; padding-inline: inherit; clip-path: inset(0 max(0px, calc(100% + var(--tab-left) - var(--pill-right))) 0 max(0px, calc(var(--pill-left) - var(--tab-left)))); color: var(--beui-primary-foreground); pointer-events: none; }
-.be-list[data-placed=false] .be-ink { display: none; }
-.be-list[data-placed=true] .be-label { color: var(--beui-muted-foreground); }
-.be-icon { display: grid; grid-template-columns: 1fr; margin-inline-end: 6px; transition: grid-template-columns .2s, margin .2s, opacity .15s; }
-.be-icon > span { overflow: hidden; min-width: 0; display: grid; place-items: center; }
-.be-icon[data-open=false] { grid-template-columns: 0fr; margin: 0; opacity: 0; }
-.be-tabs[data-variant=segment] :is(.be-scroll-frame,.be-list) { border-radius: .5rem; }
-.be-tabs[data-variant=segment] .be-list { padding: 2px; gap: 0; }
-.be-tabs[data-variant=segment] .be-indicator { inset-block: 2px; border-radius: .375rem; }
-.be-tabs[data-variant=underline] :is(.be-list,.be-scroll-frame) { border-radius: 0; background: transparent; }
-.be-tabs[data-variant=underline] .be-list { padding: 0; border-bottom: 1px solid var(--beui-border); }
-.be-tabs[data-variant=underline] .be-indicator { top: auto; bottom: 0; height: 1px; }
-.be-tabs[data-variant=underline] .be-trigger { min-height: 44px; padding: 4px 12px 10px; }
-.be-tabs[data-variant=underline] .be-trigger[aria-selected=true] { color: var(--beui-foreground); background: transparent; }
-.be-tabs[data-variant=underline] .be-trigger[aria-selected=true] .be-label { color: inherit; }
-.be-tabs[data-variant=underline] .be-list[data-placed=false] .be-trigger[aria-selected=true] { box-shadow: inset 0 -1px var(--beui-primary); }
-.be-scroll { position: absolute; z-index: 2; inset-block: 0; width: 36px; border: 0; border-radius: inherit; background: transparent; color: var(--beui-foreground); font: inherit; font-size: 1.5rem; cursor: pointer; }
-.be-scroll.left { left: 0; } .be-scroll.right { right: 0; } .be-scroll:disabled { visibility: hidden; }
-.be-panel { margin-top: 1rem; border-radius: .375rem; }
-.be-panel:not([hidden]) { animation: be-panel-in .18s cubic-bezier(.16,1,.3,1); }
-@keyframes be-panel-in { from { opacity: 0; transform: translateY(4px); } }
-@media (prefers-reduced-motion: reduce) { .be-icon { transition: none; } .be-panel:not([hidden]) { animation: none; } }
-@media (forced-colors: active) { .be-trigger[aria-selected=true] { border-bottom: 2px solid Highlight; } .be-ink { display: none; } }
 </style>

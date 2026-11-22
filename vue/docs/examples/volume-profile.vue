@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { VolumeProfile, Tabs } from 'beui-vue'
+import { VolumeProfile, Tabs, VolumeProfilePlot, VolumeProfileSummary, VolumeProfileTooltip } from 'beui-vue'
 
 // Illustrative executed volume, already aggregated into $100 price ranges.
 // Price-bin identities stay stable when the session changes.
@@ -19,7 +19,11 @@ const usd = (value: number) => value.toLocaleString('en-US', { style: 'currency'
 <template><div class="demo">
   <header><div><p class="title">BTC / USD</p><p class="note">Volume by price · Demo data</p></div>
     <Tabs v-model="session" :items="sessions" :labels="{ list: 'Profile session' }" /></header>
-  <VolumeProfile label="BTC volume profile" unit="BTC" :data="data" :format-price="usd" :format-volume="value => value.toLocaleString('en-US', { maximumFractionDigits: 2 })" plot-class="demo-plot" />
+  <VolumeProfile label="BTC volume profile" unit="BTC" :data="data" :format-price="usd" :format-volume="value => value.toLocaleString('en-US', { maximumFractionDigits: 2 })">
+    <VolumeProfilePlot class="demo-plot" />
+    <VolumeProfileTooltip />
+    <VolumeProfileSummary />
+  </VolumeProfile>
 </div></template>
 
 <style scoped>

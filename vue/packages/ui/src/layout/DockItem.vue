@@ -1,26 +1,33 @@
 <script setup lang="ts">
 import { motion } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
-import { computed, inject, useAttrs } from 'vue'
+import { computed, getCurrentInstance, inject, useAttrs } from 'vue'
 import { layoutSpring } from '../core/motion'
 import { dockKey } from './dock-context'
 
 defineOptions({ inheritAttrs: false })
-defineProps<{
+// `active` stays undefined when omitted, so a plain button carries no `aria-pressed` (as upstream).
+withDefaults(defineProps<{
   /** Marks the item as the current one and slides the shared pill to it. */
   active?: boolean
+}>(), { active: undefined })
+const emit = defineEmits<{
+  /** Pressing the item. Passing a listener also renders the item as a `<button>`; omit it when children carry their own link or button. */
+  click: [event: MouseEvent]
 }>()
 const attrs = useAttrs()
+const instance = getCurrentInstance()
 const dock = inject(dockKey, null)
 const reduce = useReducedMotion()
 const size = computed(() => dock?.value.size ?? 44)
 const pillId = computed(() => dock?.value.pillLayoutId ?? 'dock-pill')
 // With a click handler the item is the button; otherwise its children carry their own link or button.
-const interactive = computed(() => 'onClick' in attrs)
+// Read from the vnode on each render so a listener added later still counts.
+const isInteractive = () => Boolean(instance?.vnode.props?.onClick)
 </script>
 
 <template>
-  <button v-if="interactive" v-bind="attrs" type="button" class="be-dock-item be-dock-button" :style="{ width: `${size}px`, height: `${size}px` }" :aria-pressed="active">
+  <button v-if="isInteractive()" v-bind="attrs" type="button" class="be-dock-item be-dock-button" :style="{ width: `${size}px`, height: `${size}px` }" :aria-pressed="active" @click="emit('click', $event)">
     <motion.span v-if="active" class="be-dock-pill" :layout-id="pillId" :transition="reduce ? { duration: 0 } : layoutSpring" />
     <slot />
   </button>

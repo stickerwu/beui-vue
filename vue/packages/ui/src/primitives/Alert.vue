@@ -2,10 +2,10 @@
 import { AnimatePresence } from 'motion-v'
 import { computed, nextTick, onBeforeUnmount, provide, shallowRef, useId, watch } from 'vue'
 import AlertSurface from './AlertSurface.vue'
-import { alertKey, alertMessages, useOpenState, type AlertMessages, type AlertVariant } from './state'
+import { alertKey, alertMessages, useOpenState, type AlertMessages } from './state'
 
 const props = withDefaults(defineProps<{
-  variant?: AlertVariant
+  variant?: 'default' | 'info' | 'success' | 'warning' | 'destructive'
   open?: boolean
   defaultOpen?: boolean
   role?: 'alert' | 'status'
@@ -102,7 +102,7 @@ onBeforeUnmount(() => {
 .be-alert {
   position: relative; box-sizing: border-box; width: 100%; padding: 1rem; border-radius: .75rem;
   color: var(--beui-foreground); background: var(--beui-background); font-size: .875rem;
-  transition: color .2s, background-color .2s;
+  transition: color .2s cubic-bezier(.16, 1, .3, 1), background-color .2s cubic-bezier(.16, 1, .3, 1);
 }
 .be-alert[data-variant=info] { --be-alert-color: var(--beui-primary); }
 .be-alert[data-variant=success] { --be-alert-color: #047857; }
@@ -110,7 +110,7 @@ onBeforeUnmount(() => {
 .be-alert[data-variant=destructive] { --be-alert-color: var(--beui-destructive); }
 :is(.dark,[data-beui-theme=dark]) .be-alert[data-variant=success] { --be-alert-color: #34d399; }
 :is(.dark,[data-beui-theme=dark]) .be-alert[data-variant=warning] { --be-alert-color: #fcd34d; }
-.be-alert:not([data-variant=default]) { color: var(--be-alert-color); background: color-mix(in srgb, var(--be-alert-color) 5%, transparent); }
+.be-alert:not([data-variant=default]) { color: var(--be-alert-color); background: color-mix(in oklab, var(--be-alert-color) 5%, transparent); }
 .be-alert-row { display: flex; min-width: 0; align-items: flex-start; gap: .75rem; }
 .be-alert-content { flex: 1; min-width: 0; }
 .be-alert-content > * + * { margin-top: .25rem; }

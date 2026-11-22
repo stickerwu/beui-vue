@@ -279,7 +279,7 @@ onBeforeUnmount(() => {
   outline: none;
   cursor: pointer;
 }
-.swipe-action:focus-visible { outline: 2px solid var(--beui-ring); outline-offset: -2px; }
+.swipe-action:focus-visible { box-shadow: 0 0 0 2px var(--beui-background), 0 0 0 4px var(--beui-ring); }
 .swipe-action:disabled { pointer-events: none; opacity: .5; }
 .swipe-action-bubble {
   display: grid;
@@ -297,12 +297,12 @@ onBeforeUnmount(() => {
 .swipe-action[data-tone='neutral']:hover { color: var(--beui-foreground); }
 .swipe-action[data-tone='primary'] { color: var(--beui-foreground); }
 .swipe-action[data-tone='danger'] { color: var(--beui-destructive); }
-/* The theme has no success/warning tokens yet; both fall back to the emerald/amber
-   hues of the original, which the host can override without patching the component. */
-.swipe-action[data-tone='success'] { color: var(--beui-success, #059669); }
-.swipe-action[data-tone='warning'] { color: var(--beui-warning, #d97706); }
-:global(:is(.dark, [data-beui-theme='dark']) .swipe-action[data-tone='success']) { color: var(--beui-success, #34d399); }
-:global(:is(.dark, [data-beui-theme='dark']) .swipe-action[data-tone='warning']) { color: var(--beui-warning, #fbbf24); }
+/* The theme has no success/warning tokens yet; both fall back to the Tailwind 4
+   emerald/amber hues of the original, which the host can override without patching the component. */
+.swipe-action[data-tone='success'] { color: var(--beui-success, oklch(59.6% .145 163.225)); }
+.swipe-action[data-tone='warning'] { color: var(--beui-warning, oklch(66.6% .179 58.318)); }
+:global(:is(.dark, [data-beui-theme='dark']) .swipe-action[data-tone='success']) { color: var(--beui-success, oklch(76.5% .177 163.223)); }
+:global(:is(.dark, [data-beui-theme='dark']) .swipe-action[data-tone='warning']) { color: var(--beui-warning, oklch(82.8% .189 84.429)); }
 
 .swipe-surface {
   position: relative;
@@ -339,8 +339,15 @@ onBeforeUnmount(() => {
   height: 1px;
   overflow: hidden;
   clip-path: inset(50%);
+  display: grid;
+  place-items: center;
+  padding: 0;
   border: 0;
-  background: transparent;
+  border-radius: 9999px;
+  background: var(--beui-muted);
+  color: var(--beui-muted-foreground);
+  outline: none;
+  cursor: pointer;
 }
 .swipe-toggle svg { width: 1rem; height: 1rem; fill: currentColor; }
 .swipe-toggle:focus-visible {
@@ -350,14 +357,9 @@ onBeforeUnmount(() => {
   height: 2rem;
   overflow: visible;
   clip-path: none;
-  display: grid;
-  place-items: center;
   translate: 0 -50%;
-  border-radius: 50%;
-  background: var(--beui-muted);
-  color: var(--beui-muted-foreground);
-  outline: 2px solid var(--beui-ring);
-  outline-offset: 2px;
+  /* `ring-2 ring-ring` of the original: a 2px ring outside the border box. */
+  box-shadow: 0 0 0 2px var(--beui-ring);
 }
 
 .swipe-sr {

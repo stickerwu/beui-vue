@@ -5,6 +5,8 @@ import { PopoverMorph } from 'beui-vue'
 import { findPage, localizePage, localizeSection, pages, sections } from './catalog'
 import { useLocale } from './i18n'
 import CategoryPage from './CategoryPage.vue'
+import ComponentGuide from './ComponentGuide.vue'
+import CreditLink from './CreditLink.vue'
 import HomePage from './HomePage.vue'
 import Icon from './Icon.vue'
 import ProBlockLinks from './ProBlockLinks.vue'
@@ -26,11 +28,22 @@ const currentSection = computed(() => {
   const section = sections.find(item => item.slug === currentPage.value?.category)
   return section ? localizeSection(section, locale.value) : undefined
 })
-const currentIndex = computed(() => pages.findIndex(item => item.path === currentPage.value?.path))
-const previous = computed(() => currentIndex.value > 0 ? localizePage(pages[currentIndex.value - 1], locale.value) : undefined)
-const next = computed(() => {
-  const item = pages[currentIndex.value + 1]
-  return currentIndex.value >= 0 && item ? localizePage(item, locale.value) : undefined
+// Previous/next stay inside the category, in the sidebar's order (new items first), like beui.dev.
+const pagerItems = computed(() => {
+  const items = currentSection.value?.entries ?? []
+  return [...items.filter(item => item.isNew), ...items.filter(item => !item.isNew)]
+})
+const currentIndex = computed(() => pagerItems.value.findIndex(item => item.path === currentPage.value?.path))
+const previous = computed(() => currentIndex.value > 0 ? pagerItems.value[currentIndex.value - 1] : undefined)
+const next = computed(() => currentIndex.value >= 0 ? pagerItems.value[currentIndex.value + 1] : undefined)
+const updatedLabel = computed(() => currentPage.value?.updatedAt
+  ? new Intl.DateTimeFormat(isZh.value ? 'zh-CN' : 'en-US', { dateStyle: 'medium', timeZone: 'UTC' }).format(new Date(`${currentPage.value.updatedAt}T00:00:00Z`))
+  : '')
+const creditNames = computed(() => {
+  const groups = currentPage.value?.creditGroups ?? []
+  const parts = new Intl.ListFormat(isZh.value ? 'zh-CN' : 'en-US', { type: 'conjunction' }).formatToParts(groups.map(group => group.credit.name))
+  let index = 0
+  return parts.map(part => part.type === 'element' ? { text: part.value, group: groups[index++] } : { text: part.value, group: undefined })
 })
 const related = computed(() => (currentPage.value?.relatedSlugs ?? []).flatMap(slug => pages.filter(item => item.slug === slug)).map(item => localizePage(item, locale.value)))
 const content = useTemplateRef<HTMLElement>('content')
@@ -77,11 +90,31 @@ onBeforeUnmount(() => clearTimeout(copyTimer))
       <article v-else-if="frontmatter.componentPage">
         <nav class="beui-breadcrumb" :aria-label="t('Breadcrumb')">
           <a :href="href(currentSection?.path ?? '/components/motion')">{{ currentSection?.name ?? t('All Vue components') }}</a>
-          <span aria-hidden="true">/</span>
+          <Icon name="chevron-right" :size="14" class="beui-breadcrumb-separator" />
           <span>{{ currentPage?.title ?? page.title }}</span>
         </nav>
         <div class="beui-page-heading">
-          <h1>{{ currentPage?.title ?? page.title }}</h1>
+          <div class="beui-page-title">
+            <div class="beui-page-title-row">
+              <h1>{{ currentPage?.title ?? page.title }}</h1>
+              <span v-if="currentPage?.isNew" class="beui-new-badge beui-title-badge">{{ t('New') }}</span>
+            </div>
+            <CreditLink v-if="currentPage?.credit" class="beui-page-credit" :credit="currentPage.credit" />
+            <p v-else-if="currentPage?.creditGroups.length" class="beui-credit-summary">
+              <span class="beui-credit-faces" aria-hidden="true">
+                <template v-for="group in currentPage.creditGroups.slice(0, 2)" :key="group.credit.url">
+                  <img v-if="group.credit.avatar" :src="group.credit.avatar" alt="" width="20" height="20" class="beui-credit-avatar">
+                </template>
+              </span>
+              <span>
+                {{ t('Includes designs by') }}
+                <template v-for="(part, index) in creditNames" :key="index">
+                  <a v-if="part.group" :href="`#${part.group.examples[0]}`">{{ part.text }}</a>
+                  <template v-else>{{ part.text }}</template>
+                </template>
+              </span>
+            </p>
+          </div>
           <div class="beui-copy-page">
             <button type="button" @click="copyPage">
               <Icon :name="copied ? 'check' : 'copy'" />
@@ -107,6 +140,13 @@ onBeforeUnmount(() => clearTimeout(copyTimer))
         <div ref="content" class="beui-doc-content">
           <Content />
         </div>
+        <ComponentGuide v-if="currentPage?.guide" :guide="currentPage.guide" />
+        <a v-if="currentPage?.native" class="beui-native-link" :href="`https://beui.dev/react-native/${currentPage.slug}`" target="_blank" rel="noopener noreferrer">
+          <Icon name="smartphone" class="beui-native-icon" />
+          <span class="beui-native-copy"><span class="beui-native-title">{{ t('Also on React Native.') }}</span>{{ ' ' }}<span>{{ t(currentPage.native.description) }}</span></span>
+          <Icon name="arrow-right" class="beui-native-arrow" />
+          <span class="beui-sr-only">{{ t('(opens in a new tab)') }}</span>
+        </a>
         <ProBlockLinks v-if="currentPage" :page-key="currentPage.path.replace('/components/', '')" />
         <section v-if="related.length" class="beui-related" aria-labelledby="beui-related-title">
           <h2 id="beui-related-title">{{ t('Related components') }}</h2>
@@ -117,15 +157,18 @@ onBeforeUnmount(() => clearTimeout(copyTimer))
             </a>
           </div>
         </section>
-        <nav class="beui-page-pager" :aria-label="t('Component pages')">
+        <p v-if="updatedLabel" class="beui-updated">{{ t('Updated') }} <time :datetime="currentPage?.updatedAt">{{ updatedLabel }}</time></p>
+        <nav v-if="previous || next" class="beui-page-pager" :aria-label="t('Previous and next components')">
           <a v-if="previous" :href="href(previous.path)">
-            <span>{{ t('Previous') }}</span>
-            <strong>← {{ previous.title }}</strong>
+            <span class="beui-pager-label"><Icon name="arrow-left" :size="14" class="beui-pager-arrow" />{{ t('Previous') }}</span>
+            <span class="beui-pager-title">{{ previous.title }}</span>
           </a>
+          <span v-else class="beui-pager-spacer" aria-hidden="true" />
           <a v-if="next" class="beui-page-next" :href="href(next.path)">
-            <span>{{ t('Next') }}</span>
-            <strong>{{ next.title }} →</strong>
+            <span class="beui-pager-label">{{ t('Next') }}<Icon name="arrow-right" :size="14" class="beui-pager-arrow" /></span>
+            <span class="beui-pager-title">{{ next.title }}</span>
           </a>
+          <span v-else class="beui-pager-spacer" aria-hidden="true" />
         </nav>
       </article>
       <article v-else class="beui-prose">

@@ -1,6 +1,6 @@
 import { defineConfig, devices } from '@playwright/test'
 
-// BEUI_E2E_URL points the suite at an already running server (e.g. the source dev server on 5175).
+// BEUI_E2E_URL points the suite at an already running server (e.g. the source dev server on 5173).
 const external = process.env.BEUI_E2E_URL
 
 export default defineConfig({

@@ -40,13 +40,20 @@ const props = withDefaults(defineProps<{
 
 /** Stable identity of the chosen tick; `activeId` is the prop alias. */
 const active = defineModel<string>()
-const emit = defineEmits<{ select: [item: PreviewRailItem]; activeChange: [id: string] }>()
+const emit = defineEmits<{
+  /** Alias of `itemSelect`. */
+  select: [item: PreviewRailItem]
+  activeChange: [id: string]
+  itemSelect: [item: PreviewRailItem]
+}>()
 
 defineSlots<{
   /** Content beside the rail. */
   default?(): unknown
   /** Card shown for the highlighted tick. */
   preview?(props: { item: PreviewRailItem }): unknown
+  /** Alias of `preview`, named after the React `renderPreview` prop. */
+  renderPreview?(props: { item: PreviewRailItem }): unknown
 }>()
 
 const text = computed(() => ({ ...previewRailMessages, ...props.labels }))
@@ -104,7 +111,7 @@ function selectItem(id: string) {
   if (props.activeId === undefined) active.value = id
   emit('activeChange', id)
   const item = props.items.find(entry => entry.id === id)
-  if (item) emit('select', item)
+  if (item) { emit('select', item); emit('itemSelect', item) }
 }
 
 // The next tap outside the rail stands in for the pointer leaving it. The card
@@ -236,10 +243,12 @@ const contentTransition = computed(() => ({ duration: reduce.value ? 0 : 0.18, e
             <AnimatePresence mode="wait" :initial="false">
               <motion.div :key="item.id" :initial="contentInitial" :animate="contentAnimate" :exit="contentExit" :transition="contentTransition">
                 <slot name="preview" :item="item">
-                  <div class="preview-card">
-                    <p class="preview-title">{{ item.label }}</p>
-                    <div v-if="item.description" class="preview-description">{{ item.description }}</div>
-                  </div>
+                  <slot name="renderPreview" :item="item">
+                    <div class="preview-card">
+                      <p class="preview-title">{{ item.label }}</p>
+                      <div v-if="item.description" class="preview-description">{{ item.description }}</div>
+                    </div>
+                  </slot>
                 </slot>
               </motion.div>
             </AnimatePresence>
@@ -283,7 +292,7 @@ const contentTransition = computed(() => ({ duration: reduce.value ? 0 : 0.18, e
   cursor: pointer;
 }
 .is-horizontal .rail-item { align-items: flex-end; justify-content: center; width: 1.5rem; height: 3rem; }
-.rail-item:focus-visible { outline: 2px solid var(--beui-ring); outline-offset: 2px; }
+.rail-item:focus-visible { box-shadow: 0 0 0 2px var(--beui-background), 0 0 0 4px var(--beui-ring); }
 
 .rail-tick {
   display: block;

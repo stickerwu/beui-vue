@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { ExpandableControl } from 'beui-vue'
+import { ExpandableButton, ExpandableChip } from 'beui-vue'
 import { LucideIcon } from './layout-icons'
 </script>
 
 <template>
   <div class="stack">
     <div class="row">
-      <ExpandableControl label="Notifications">
+      <ExpandableButton label="Notifications">
         <template #icon><LucideIcon name="Bell" :size="16" /></template>
-      </ExpandableControl>
+      </ExpandableButton>
     </div>
     <div class="row">
-      <ExpandableControl variant="chip" label="React" action-label="Remove React">
+      <ExpandableChip label="React" action-label="Remove React">
         <template #actionIcon><LucideIcon name="X" :size="14" /></template>
-      </ExpandableControl>
+      </ExpandableChip>
     </div>
   </div>
 </template>

@@ -45,6 +45,12 @@ const props = withDefaults(defineProps<{
   onMove?: (move: ResourceMove) => void | Promise<void>, onRename?: (item: SidebarResource, label: string) => void | Promise<void>
 }>(), { items: undefined, defaultItems: () => [], activeId: undefined, defaultActiveId: null, defaultExpandedIds: () => [] })
 const emit = defineEmits<{ 'update:items': [value: SidebarResource[]], itemsChange: [value: SidebarResource[]], 'update:activeId': [value: string], activeChange: [value: string], moveError: [error: unknown, move: ResourceMove] }>()
+defineSlots<{
+  /** Replaces a row's icon. */
+  renderIcon?(props: { item: SidebarResource }): unknown
+  /** Replaces the row menu content; `moves` lists the moves available right now. */
+  renderMenu?(props: { item: SidebarResource, rename: () => void, close: () => void, moves: SidebarResourceMoveCommands }): unknown
+}>()
 
 const reduce = useReducedMotion()
 const text = computed(() => ({ ...aiSidebarMessages, ...props.labels }) as Record<keyof AISidebarMessages, string>)
@@ -319,7 +325,7 @@ watch(menu, value => { if (!value) menuAnchor.value = null })
           @mouseenter="hovered = row.item.id" @mouseleave="hovered = null"
           @dragstart.capture="dragStart($event, row.item.id)" @dragend.capture="dragEnd" @dragover="dragOver($event, row)" @drop="dropRow"
         >
-          <span aria-hidden="true" class="be-ais-icon"><slot name="icon" :item="row.item"><AgentIcon :name="iconName(row.item)" :size="16" /></slot></span>
+          <span aria-hidden="true" class="be-ais-icon"><slot name="renderIcon" :item="row.item"><AgentIcon :name="iconName(row.item)" :size="16" /></slot></span>
           <input
             v-if="renaming === row.item.id" :id="`${prefix}-rename`" v-model="draft" :aria-label="t('renameItem', { item: row.item.label })" draggable="false" class="be-ais-input"
             @click.stop @dblclick.stop @blur="renameBlur(row.item)" @keydown="renameKey($event, row.item)"
@@ -338,7 +344,7 @@ watch(menu, value => { if (!value) menuAnchor.value = null })
       class="be-ais-menu" @dismiss="reason => closeMenu(reason === 'escape')" @placed="focusMenu"
     >
       <div ref="menuNode" class="be-ais-menu-body" @keydown.esc.stop="closeMenu(true)">
-        <slot name="menu" :item="menuRow.item" :rename="() => startRename(menuRow!.item)" :close="() => closeMenu(true)" :moves="menuMoves">
+        <slot name="renderMenu" :item="menuRow.item" :rename="() => startRename(menuRow!.item)" :close="() => closeMenu(true)" :moves="menuMoves">
           <button type="button" role="menuitem" class="be-ais-action" @click="runFromMenu(() => startRename(menuRow!.item))"><AgentIcon name="Pencil" :size="14" /><span class="be-ais-action-text">{{ t('rename') }}</span></button>
           <div v-if="menuMoves.up || menuMoves.down || menuMoves.into || menuMoves.out" aria-hidden="true" class="be-ais-sep" />
           <button v-if="menuMoves.up" type="button" role="menuitem" class="be-ais-action" @click="runFromMenu(menuMoves.up)"><AgentIcon name="ArrowUp" :size="14" /><span class="be-ais-action-text">{{ t('moveUp') }}</span></button>

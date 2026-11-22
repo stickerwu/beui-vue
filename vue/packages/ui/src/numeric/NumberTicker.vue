@@ -18,7 +18,7 @@ import TickColumn from './TickColumn.vue'
 /** Height of one digit cell, in `em`. The rolling column repeats this ten times. */
 const DIGIT_HEIGHT_EM = 1.1
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   value: number
   /** Digits to pad to (left). */
   pad?: number
@@ -40,17 +40,16 @@ const props = defineProps<{
   locale?: boolean | string
   /** Custom formatter. */
   format?: (value: number) => string
-}>()
-const { decimals = 0, duration = 0.9, stagger = 0.04, startOnView = true, blur = false } = props
+}>(), { decimals: 0, duration: 0.9, stagger: 0.04, startOnView: true, blur: false })
 
 const root = useTemplateRef<HTMLElement>('root')
 const inView = useInView(root, { once: true, amount: 0.6 })
-const armed = shallowRef(!startOnView)
+const armed = shallowRef(!props.startOnView)
 const entered = shallowRef(false)
 let enteredTimer: ReturnType<typeof setTimeout> | undefined
 
 const text = computed(() => {
-  const places = Math.max(0, Math.floor(decimals))
+  const places = Math.max(0, Math.floor(props.decimals))
   const factor = 10 ** places
   // Round before formatting so `format` sees the same number the slots render.
   const rounded = Math.round(props.value * factor) / factor
@@ -84,13 +83,13 @@ watch(
     // reads as lag.
     if (!value || entered.value) return
     clearTimeout(enteredTimer)
-    enteredTimer = setTimeout(() => (entered.value = true), (duration + glyphs.value.length * stagger) * 1000)
+    enteredTimer = setTimeout(() => (entered.value = true), (props.duration + glyphs.value.length * props.stagger) * 1000)
   },
   { immediate: true },
 )
 
 watch(inView, value => {
-  if (startOnView && value) armed.value = true
+  if (props.startOnView && value) armed.value = true
 })
 
 onBeforeUnmount(() => clearTimeout(enteredTimer))

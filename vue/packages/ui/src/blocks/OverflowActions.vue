@@ -23,9 +23,9 @@ export type OverflowActionsClassNames = {
 </script>
 
 <script setup lang="ts">
-import { AnimatePresence, motion } from 'motion-v'
+import { AnimatePresence, motion, mountedStates } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
-import { computed, onBeforeUnmount, useId, watch } from 'vue'
+import { computed, onBeforeUnmount, onBeforeUpdate, useId, useTemplateRef, watch } from 'vue'
 import { easeOut } from '../core/motion'
 import { useMountedMedia } from '../core/mounted-media'
 import { useOpenState } from '../primitives/state'
@@ -107,6 +107,23 @@ watch(isExpanded, expanded => {
 }, { flush: 'post' })
 onBeforeUnmount(() => { overflowNode = null })
 
+// React measures every layout box before any of the commit's DOM changes. A
+// motion component here measures in its own beforeUpdate, which runs after the
+// siblings before it have already patched, so the toggle would be measured
+// where the new actions already pushed it and never glide. Measuring the
+// shells, the actions and the toggle from this component's beforeUpdate, which
+// runs before any of them patches, restores that.
+const root = useTemplateRef<{ $el?: HTMLElement }>('root')
+onBeforeUpdate(() => {
+  const el = root.value?.$el
+  if (!el || reduce.value) return
+  const nodes = [el, ...el.querySelectorAll<HTMLElement>('.be-overflow-track, .be-overflow-group, .be-overflow-cell, .be-overflow-toggle')]
+  for (const node of nodes) {
+    const state = mountedStates.get(node)
+    if (state && !state.isExiting) state.getSnapshot(true)
+  }
+})
+
 function handleAction(item: OverflowActionItem) {
   item.onClick?.()
   emit('action', item)
@@ -117,7 +134,7 @@ const actionClass = (extra?: string) => [props.classNames?.action, extra].filter
 </script>
 
 <template>
-  <motion.div layout :transition="transition" class="be-overflow" :class="[classNames?.root, className]">
+  <motion.div ref="root" layout :transition="transition" class="be-overflow" :class="[classNames?.root, className]">
     <motion.div layout :transition="transition" class="be-overflow-track" :class="[`is-${size}`, classNames?.track]">
       <motion.div layout :transition="transition" class="be-overflow-group" :class="`is-${size}`">
         <OverflowActionButton v-for="item in primaryActions" :key="item.id" :item="item" :size="size" :reduce="reduce" :can-hover="canHover"

@@ -2,13 +2,13 @@
 import { motion, useMotionValue, useScroll, useSpring, useTransform, type MotionValue } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
 import { computed, toRef, watchEffect } from 'vue'
-import { useSmoothScroll } from '../layout/scroll-context'
+import { useSmoothScrollProvider } from '../layout/scroll-context'
 
 const { progress, container, spring = true, variant = 'bar', position = 'top', height = 2, fixed = true, size = 40, thickness = 3 } = defineProps<{
   progress?: number | MotionValue<number>; container?: HTMLElement | null; spring?: boolean; variant?: 'bar' | 'circle'; position?: 'top' | 'bottom'; height?: number; fixed?: boolean; size?: number; thickness?: number
 }>()
 const reduce = useReducedMotion()
-const provider = useSmoothScroll()
+const provider = useSmoothScrollProvider()
 const { scrollYProgress } = useScroll({ container: toRef(() => container ?? provider?.container.value) })
 const raw = useMotionValue(0)
 const smooth = useSpring(raw, { stiffness: 120, damping: 30, mass: .6 })

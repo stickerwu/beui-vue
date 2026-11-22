@@ -19,6 +19,7 @@ import { animate, motion, useMotionValue, useMotionValueEvent, useSpring, useTra
 import { useReducedMotion } from '../core/reduced-motion'
 import { computed, onBeforeUnmount, onMounted, shallowRef, useId, useTemplateRef, watch } from 'vue'
 import { glideSpring, layoutSpring } from '../core/motion'
+import { useMotionSource } from '../core/motion-source'
 import { capturePointer, releasePointer } from '../core/touch'
 import ArcPickerOptionItem from './ArcPickerOption.vue'
 
@@ -106,10 +107,12 @@ const verticalInset = computed(() => Math.max(
     measurements.value.width - measurements.value.labelWidth - BRACKET_SPACE,
   ),
 ))
-const verticalAnchor = computed<number | string>(() => (measurements.value.width
-  ? props.side === 'left'
+// A CSS length: unlike React, Vue does not append px to numeric style values,
+// so a bare number would be dropped and leave the first render's percentage.
+const verticalAnchor = computed<string>(() => (measurements.value.width
+  ? `${props.side === 'left'
     ? measurements.value.width - verticalInset.value
-    : verticalInset.value
+    : verticalInset.value}px`
   : props.side === 'left'
     ? '58%'
     : '42%'))
@@ -133,17 +136,21 @@ const frameWidth = useSpring(frameTarget, layoutSpring)
 
 // The selection brackets ride the measured width of the chosen label. Their
 // transforms read both springs, so the outward nudge and a size change compose.
+// `side` is mirrored into a motion value so the transforms follow a side switch.
+const sideValue = useMotionSource(() => props.side)
 const leading = useTransform(() => {
+  const side = sideValue.get()
   const size = frameWidth.get()
   const amount = clamp(expansion.get(), 0, 1)
-  const extent = horizontal.value ? size / 2 : props.side === 'left' ? size : 0
+  const extent = side === 'top' || side === 'bottom' ? size / 2 : side === 'left' ? size : 0
   const gap = BRACKET_GAP + amount * BRACKET_EXPANSION
   return `translate3d(${-extent - gap}px, -50%, 0) scaleY(${1 - amount * 0.08})`
 })
 const trailing = useTransform(() => {
+  const side = sideValue.get()
   const size = frameWidth.get()
   const amount = clamp(expansion.get(), 0, 1)
-  const extent = horizontal.value ? size / 2 : props.side === 'right' ? size : 0
+  const extent = side === 'top' || side === 'bottom' ? size / 2 : side === 'right' ? size : 0
   const gap = BRACKET_GAP + amount * BRACKET_EXPANSION
   return `translate3d(${extent + gap}px, -50%, 0) scaleY(${1 - amount * 0.08})`
 })

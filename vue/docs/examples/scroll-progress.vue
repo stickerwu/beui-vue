@@ -18,7 +18,9 @@ const region = useTemplateRef('region')
 .progress-frame { box-sizing: border-box; position: relative; width: 100%; max-width: 32rem; overflow: hidden; border: 1px solid var(--beui-border); border-radius: 1rem; background: var(--beui-card); }
 .scroller { height: 16rem; overflow-y: auto; scrollbar-width: none; }
 .scroller::-webkit-scrollbar { display: none; }
-.rows { display: flex; flex-direction: column; gap: .75rem; padding: 1rem; }
-.circle { position: absolute; right: .75rem; top: .75rem; z-index: 10; padding: .25rem; border-radius: 999px; background: color-mix(in srgb, var(--beui-background) 70%, transparent); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); line-height: 0; pointer-events: none; }
+.rows { padding: 1rem; }
+.circle { position: absolute; right: .75rem; top: .75rem; z-index: 10; padding: .25rem; border-radius: 999px; background: color-mix(in srgb, var(--beui-background) 70%, transparent); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); pointer-events: none; }
+.circle :deep(svg) { display: block; }
+.row:not(:last-child) { margin-bottom: .75rem; }
 .row { border-radius: .5rem; padding: 1rem .75rem; background: color-mix(in srgb, var(--beui-muted) 60%, transparent); font-size: .875rem; line-height: 1.25rem; color: var(--beui-muted-foreground); }
 </style>

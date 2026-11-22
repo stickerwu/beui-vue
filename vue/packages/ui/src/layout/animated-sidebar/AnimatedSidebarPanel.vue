@@ -21,8 +21,11 @@ const props = withDefaults(defineProps<{
   /** Accessible name of the sidebar. */
   ariaLabel?: string
   /** Class for the sticky surface inside the width-animated wrapper. */
+  panelClassName?: string
+  /** Alias of `panelClassName`. */
   panelClass?: string
 }>(), { side: 'left', variant: 'sidebar', collapsible: 'icon' })
+defineSlots<{ default?: () => unknown }>()
 
 const { isMobile, open, reduce, t } = useAnimatedSidebar()
 const label = computed(() => props.ariaLabel ?? t.value.label)
@@ -49,7 +52,7 @@ provide(animatedSidebarPanelKey, {
     :animate="{ width }" :transition="reduce ? { duration: 0 } : SIDEBAR_MORPH_TRANSITION"
   >
     <motion.div
-      :initial="false" class="be-asb-surface" :class="[`be-asb-v-${variant}`, `be-asb-v-${variant}-${side}`, { 'be-asb-offcanvas': collapsible === 'offcanvas' }, panelClass]"
+      :initial="false" class="be-asb-surface" :class="[`be-asb-v-${variant}`, `be-asb-v-${variant}-${side}`, { 'be-asb-offcanvas': collapsible === 'offcanvas' }, panelClassName ?? panelClass]"
       :animate="{ opacity: offcanvas ? 0 : 1, x: offcanvas ? offscreen : '0%' }"
       :transition="reduce ? REDUCED_TRANSITION : PANEL_TRANSITION"
     >

@@ -13,7 +13,7 @@ import ThinkingShimmer from '../effects/ThinkingShimmer.vue'
 import ActivityRow from './ActivityRow.vue'
 import AgentIcon from './AgentIcon.vue'
 import AgentReveal from './AgentReveal.vue'
-import { agentActivityMessages, type ActivityContentType, type ActivityItem, type AgentActivityTranslate } from './activity-types'
+import { agentActivityMessages, type ActivityContentType, type ActivityItem, type AgentActivityTranslate, type AgentSearchResult } from './activity-types'
 import type { Labels } from './shared'
 
 const props = withDefaults(defineProps<{
@@ -21,6 +21,16 @@ const props = withDefaults(defineProps<{
   open?: boolean, defaultOpen?: boolean, collapseOnComplete?: boolean, activeLabel?: string, summary?: string, maxHeight?: number, labels?: Labels, contentClassName?: string
 }>(), { status: 'working', duration: 0, open: undefined, defaultOpen: false, collapseOnComplete: true, maxHeight: 208 })
 const emit = defineEmits<{ 'update:open': [value: boolean], openChange: [value: boolean] }>()
+defineSlots<{
+  /** Replaces the live status line while the run is working. */
+  renderWorkingStatus?(props: { label: string, duration: number }): unknown
+  /** Replaces the summary inside the completed disclosure trigger. */
+  renderCompletedStatus?(props: { summary: string, duration: number }): unknown
+  /** Replaces the row renderer for one item. */
+  item?(props: { item: ActivityItem }): unknown
+  'result-icon'?(props: { result: AgentSearchResult }): unknown
+  'trace-icon'?(props: { item: ActivityItem }): unknown
+}>()
 const { open: currentOpen, setOpen } = useOpenState(() => props.open, props.defaultOpen, next => { emit('update:open', next); emit('openChange', next) })
 
 const reduce = useReducedMotion()
@@ -84,6 +94,7 @@ const summaryParts = computed<{ text: string } | { before: string, duration: str
 const summaryText = computed(() => 'text' in summaryParts.value ? summaryParts.value.text : `${summaryParts.value.before}${summaryParts.value.duration}${summaryParts.value.after}`)
 
 let observer: ResizeObserver | undefined
+let measureFrame = 0
 onMounted(() => {
   const target = contentRef.value
   const node = target && '$el' in target ? target.$el : target
@@ -91,10 +102,19 @@ onMounted(() => {
   const measure = () => { contentHeight.value = node.offsetHeight }
   measure()
   if (typeof ResizeObserver === 'undefined') return
-  observer = new ResizeObserver(measure)
+  // Vue flushes the height change on a microtask, which still runs inside this
+  // observer round, so the resize it causes would trip a "ResizeObserver loop"
+  // error. React commits the same setState on a later task; match that here.
+  observer = new ResizeObserver(() => {
+    cancelAnimationFrame(measureFrame)
+    measureFrame = requestAnimationFrame(measure)
+  })
   observer.observe(node)
 })
-onBeforeUnmount(() => observer?.disconnect())
+onBeforeUnmount(() => {
+  observer?.disconnect()
+  cancelAnimationFrame(measureFrame)
+})
 
 watch(() => props.status, (next, previous) => {
   if (previous === 'working' && next === 'complete') setOpen(!props.collapseOnComplete)
@@ -115,10 +135,10 @@ const itemTransition = computed(() => reduce.value ? { duration: 0 } : { opacity
 <template>
   <div class="aa" :data-state="working ? 'working' : expanded ? 'open' : 'closed'" :data-content="contentType" :aria-busy="working">
     <div v-if="working" :id="triggerId" role="status" class="aa-status">
-      <slot name="working-status" :label="liveLabel" :duration="duration"><ThinkingShimmer>{{ liveLabel }}</ThinkingShimmer></slot>
+      <slot name="renderWorkingStatus" :label="liveLabel" :duration="duration"><ThinkingShimmer>{{ liveLabel }}</ThinkingShimmer></slot>
     </div>
     <button v-else :id="triggerId" type="button" class="aa-trigger" :aria-expanded="expanded" :aria-controls="contentId" @click="toggle">
-      <span class="aa-summary"><slot name="completed-status" :summary="summaryText" :duration="duration">
+      <span class="aa-summary"><slot name="renderCompletedStatus" :summary="summaryText" :duration="duration">
         <template v-if="'text' in summaryParts">{{ summaryParts.text }}</template>
         <template v-else>{{ summaryParts.before }}<span class="aa-tabular">{{ summaryParts.duration }}</span>{{ summaryParts.after }}</template>
       </slot></span>

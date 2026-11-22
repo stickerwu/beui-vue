@@ -67,6 +67,9 @@ const emit = defineEmits<{
 }>()
 
 defineSlots<{
+  /** Replaces a whole row's content, like the `renderItem` prop of the React version. */
+  renderItem?(props: { item: SwipeableListItem; index: number }): unknown
+  /** Alias of `renderItem`. */
   item?(props: { item: SwipeableListItem; index: number }): unknown
   /** Replaces the `leading` text of a row, e.g. with an icon tile. */
   leading?(props: { item: SwipeableListItem; index: number }): unknown
@@ -109,7 +112,10 @@ function handleAction(payload: SwipeableListActionPayload) {
       :labels="labels"
       @action="setOpenValue"
       @run="handleAction">
-      <template v-if="$slots.item" #default="scope"><slot name="item" v-bind="scope" /></template>
+      <template v-if="$slots.renderItem || $slots.item" #default="scope">
+        <slot v-if="$slots.renderItem" name="renderItem" v-bind="scope" />
+        <slot v-else name="item" v-bind="scope" />
+      </template>
       <template v-if="$slots.leading" #leading="scope"><slot name="leading" v-bind="scope" /></template>
       <template v-if="$slots.icon" #icon="scope"><slot name="icon" v-bind="scope" /></template>
     </SwipeableListRow>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onBeforeUnmount, shallowRef, watch } from 'vue'
-import { ShaderBackground, Tabs, type ShaderBackgroundVariant, type ShaderParameters } from 'beui-vue'
+import { ShaderBackground, Tabs, TabsList, TabsTrigger, type ShaderBackgroundVariant, type ShaderParameters } from 'beui-vue'
 
 type Choice = { id: string; label: string; variant: ShaderBackgroundVariant; params: Record<string, unknown> }
 // Verbatim from the upstream preview. Each entry carries its own prop shape, so the params are cast where they reach the component.
@@ -33,7 +33,6 @@ const choices: Choice[] = [
   { id: 'simplex-noise', label: 'Simplex', variant: 'simplex-noise', params: { colors: ['#ff6ec7', '#6ec7ff', '#000000'], speed: 0.4 } },
   { id: 'perlin-noise', label: 'Perlin', variant: 'perlin-noise', params: { colorFront: '#00ffd5', colorBack: '#000000', speed: 0.3 } },
 ]
-const items = choices.map(({ id, label }) => ({ value: id, label }))
 const selected = shallowRef('mesh-gradient')
 const hovering = shallowRef(false)
 const focused = shallowRef(false)
@@ -59,13 +58,19 @@ onBeforeUnmount(() => media?.removeEventListener('change', syncMotion))
 
 <template>
   <div class="shader-example" @pointerenter="hovering = true" @pointerleave="hovering = false" @focusin="focused = true" @focusout="focused = false">
-    <div class="panel"><ShaderBackground :key="choice.id" :variant="choice.variant" :params="(choice.params as ShaderParameters[ShaderBackgroundVariant])" /></div>
-    <Tabs v-model="selected" :items="items" :labels="{ list: 'Shader preset' }" />
+    <div class="panel"><ShaderBackground :key="choice.id" class="fill" :variant="choice.variant" :params="(choice.params as ShaderParameters[ShaderBackgroundVariant])" /></div>
+    <Tabs v-model="selected" :labels="{ list: 'Shader preset' }">
+      <TabsList class="presets">
+        <TabsTrigger v-for="entry in choices" :key="entry.id" :value="entry.id" class="preset">{{ entry.label }}</TabsTrigger>
+      </TabsList>
+    </Tabs>
   </div>
 </template>
 
 <style scoped>
-.shader-example { display: grid; gap: 1.25rem; box-sizing: border-box; width: 100%; max-width: 42rem; min-width: 0; margin: auto; padding: 1.5rem; }
-.panel { height: 20rem; border: 1px solid var(--beui-border); border-radius: 1rem; overflow: hidden; }
-.shader-example :deep(.be-trigger) { padding: .5rem 1rem; font-size: .875rem; }
+.shader-example { display: flex; flex-direction: column; gap: 1.25rem; box-sizing: border-box; width: 100%; max-width: 42rem; min-width: 0; margin: auto; padding: 1.5rem; }
+.panel { position: relative; width: 100%; height: 20rem; border: 1px solid var(--beui-border); border-radius: 1rem; overflow: hidden; }
+.fill { position: absolute; inset: 0; }
+.shader-example :deep(.presets) { flex-wrap: wrap; justify-content: center; gap: .5rem; border-radius: 1rem; }
+.shader-example :deep(.preset) { padding: .5rem 1rem; font-size: .875rem; }
 </style>

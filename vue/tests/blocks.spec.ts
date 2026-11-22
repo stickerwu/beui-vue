@@ -103,12 +103,15 @@ test('masonry reflows its columns without a ResizeObserver loop', async ({ page 
   await expect(gallery).toBeVisible()
   // A column needs 208px plus a 12px gap, and the frame takes 26px for its border and padding.
   // Start narrow so every step is a real change, whatever width the viewport gives the demo.
-  const lanes = gallery.locator('.be-masonry-cols > div')
+  // Columns are not elements: the virtualiser absolutely positions each item, so a column is a distinct horizontal offset.
+  const laneCount = () => gallery.evaluate(element => new Set(
+    Array.from(element.querySelectorAll<HTMLElement>('.be-masonry-content > [data-index]'), item => new DOMMatrix(getComputedStyle(item).transform).m41),
+  ).size)
   await gallery.evaluate(element => { element.style.width='200px' })
-  await expect(lanes).toHaveCount(1)
+  await expect.poll(laneCount).toBe(1)
   await gallery.evaluate(element => { element.style.width='520px' })
-  await expect(lanes).toHaveCount(2)
+  await expect.poll(laneCount).toBe(2)
   await gallery.evaluate(element => { element.style.width='200px' })
-  await expect(lanes).toHaveCount(1)
+  await expect.poll(laneCount).toBe(1)
   expect(errors.filter(message => message.includes('ResizeObserver'))).toEqual([])
 })

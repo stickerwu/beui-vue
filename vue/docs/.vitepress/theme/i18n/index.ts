@@ -5,7 +5,7 @@ import dictionary from './zh.json'
 export type Locale = 'zh' | 'en'
 
 /** Files served from `public/` at the site root, never under a locale. */
-const assetRoots = ['/brand/', '/fonts/', '/testimonials/', '/review/']
+const assetRoots = ['/brand/', '/fonts/']
 const isPage = (path: string) => !assetRoots.some(root => path.startsWith(root)) && !/\.[a-z0-9]+$/i.test(path)
 
 /**

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MorphingLightbox } from 'beui-vue'
+import { ImageViewer, ImageViewerCaption, ImageViewerClose, ImageViewerContent, ImageViewerCounter, ImageViewerGallery, ImageViewerNext, ImageViewerPrevious, ImageViewerThumbnail } from 'beui-vue'
 
 const photographs = [
   { id: 'architecture', photo: '1511818966892-d7d671e672a2', alt: 'Sculptural architecture', caption: '01 / Form and light' },
@@ -23,7 +23,20 @@ const photographs = [
       </div>
       <span class="count">3 photographs</span>
     </div>
-    <MorphingLightbox :images="photographs" label="Collected photographs" />
+    <ImageViewer :images="photographs" label="Collected photographs">
+      <ImageViewerGallery class="photos">
+        <ImageViewerThumbnail v-for="image in photographs" :key="image.id" :image-id="image.id" />
+      </ImageViewerGallery>
+      <ImageViewerContent>
+        <template #header>
+          <ImageViewerCounter />
+          <ImageViewerClose />
+        </template>
+        <ImageViewerPrevious />
+        <ImageViewerCaption />
+        <ImageViewerNext />
+      </ImageViewerContent>
+    </ImageViewer>
     <p class="hint">Open a photograph. Swipe or use the arrows to explore.</p>
   </div>
 </template>
@@ -34,5 +47,7 @@ const photographs = [
 .eyebrow { margin: 0 0 .25rem; font-size: 10px; line-height: 1.5; font-weight: 500; text-transform: uppercase; letter-spacing: .18em; color: var(--beui-muted-foreground); }
 .title { margin: 0; padding: 0; border: 0; font-size: 1.125rem; line-height: 1.75rem; font-weight: 500; letter-spacing: -.025em; color: var(--beui-foreground); }
 .count { font-size: .75rem; line-height: 1rem; color: var(--beui-muted-foreground); }
+.photos { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
+@media (min-width: 640px) { .photos { gap: .75rem; } }
 .hint { margin: 1rem 0 0; font-size: .75rem; line-height: 1rem; color: var(--beui-muted-foreground); }
 </style>

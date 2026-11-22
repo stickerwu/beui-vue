@@ -18,7 +18,7 @@ for (const locale of locales) {
   const index = await readFile(locale.llms, 'utf8')
   const page = path => join(root, locale.prefix + (path === '/' ? 'index' : path.slice(1)) + '.html')
   const url = path => siteURL + locale.prefix + path.slice(1)
-  for (const path of new Set([...groups.keys(), ...paths.values(), '/', '/catalog', '/verification', '/install'])) {
+  for (const path of new Set([...groups.keys(), ...paths.values(), '/', '/catalog', '/install'])) {
     const html = await readFile(page(path), 'utf8')
     assert(html.includes(`<html lang="${locale.lang}"`), `${locale.prefix}${path} lang`)
     assert(html.includes(canonical(url(path))), url(path))
@@ -38,11 +38,10 @@ for (const locale of locales) {
 const chinese = await readFile(join(root, 'index.html'), 'utf8')
 const english = await readFile(join(root, 'en', 'index.html'), 'utf8')
 assert(/[一-鿿]/.test(chinese), 'Chinese home copy')
-// The locale switcher keeps its own label, and testimonials quote real people;
+// The locale switcher keeps its own label;
 // everything else on the English home must come from the English dictionary.
 const stripQuotes = html => html
   .replace(/<script[\s\S]*?<\/script>/g, '')
-  .replace(/<div class="home-testimonial-wall"[\s\S]*?<\/section>/g, '')
   .replace(/简体中文/g, '')
 assert(!/[一-鿿]/.test(stripQuotes(english)), 'English home copy must not fall back to Chinese')
 assert(chinese.includes('application/ld+json') && chinese.includes('starc007/ui-components'))

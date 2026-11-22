@@ -12,6 +12,12 @@ const props = withDefaults(defineProps<{
   rel?: string
 }>(), { isActive: false, disabled: false, closeOnSelect: true })
 const emit = defineEmits<{ select: [] }>()
+defineSlots<{
+  /** Label of the row. */
+  default?: () => unknown
+  /** Icon before the label. Defaults to a small dot. */
+  icon?: () => unknown
+}>()
 const context = useAnimatedSidebar()
 
 function select(event: MouseEvent) {

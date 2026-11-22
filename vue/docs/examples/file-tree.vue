@@ -10,17 +10,17 @@ import { LucideIcon } from './layout-icons'
         <FileTreeFolder value="app" name="app">
           <FileTreeFolder value="components" name="components">
             <FileTreeFile value="file-tree" name="file-tree.tsx">
-              <template #icon><LucideIcon name="Braces" :size="16" style="color: #0ea5e9" /></template>
+              <template #icon><LucideIcon name="Braces" :size="16" style="color: oklch(0.685 0.169 237.323)" /></template>
             </FileTreeFile>
             <FileTreeFile value="button" name="button.tsx">
-              <template #icon><LucideIcon name="Braces" :size="16" style="color: #0ea5e9" /></template>
+              <template #icon><LucideIcon name="Braces" :size="16" style="color: oklch(0.685 0.169 237.323)" /></template>
             </FileTreeFile>
           </FileTreeFolder>
           <FileTreeFile value="page" name="page.tsx">
-            <template #icon><LucideIcon name="FileCode2" :size="16" style="color: #0ea5e9" /></template>
+            <template #icon><LucideIcon name="FileCode2" :size="16" style="color: oklch(0.685 0.169 237.323)" /></template>
           </FileTreeFile>
           <FileTreeFile value="styles" name="globals.css">
-            <template #icon><LucideIcon name="Palette" :size="16" style="color: #8b5cf6" /></template>
+            <template #icon><LucideIcon name="Palette" :size="16" style="color: oklch(0.606 0.25 292.717)" /></template>
           </FileTreeFile>
         </FileTreeFolder>
         <FileTreeFolder value="public" name="public">
@@ -28,7 +28,7 @@ import { LucideIcon } from './layout-icons'
           <FileTreeFile value="grid" name="grid.svg" />
         </FileTreeFolder>
         <FileTreeFile value="package" name="package.json">
-          <template #icon><LucideIcon name="FileJson2" :size="16" style="color: #f59e0b" /></template>
+          <template #icon><LucideIcon name="FileJson2" :size="16" style="color: oklch(0.769 0.188 70.08)" /></template>
         </FileTreeFile>
         <FileTreeFile value="readme" name="README.md">
           <template #icon><LucideIcon name="FileText" :size="16" style="color: var(--beui-muted-foreground)" /></template>

@@ -111,7 +111,6 @@ const resultUrl = (result: AgentSearchResult) => sourceUrl(result.url)
 .ar-result { display: flex; min-height: 1.75rem; align-items: center; gap: .5rem; padding-block: .25rem; text-align: left; text-decoration: none; color: inherit; outline: none; transition: color .15s, background-color .15s; }
 a.ar-result:focus-visible { box-shadow: 0 0 0 2px var(--beui-ring); }
 .ar-result-icon { display: grid; width: 1.25rem; height: 1.25rem; flex: none; place-items: center; color: var(--beui-muted-foreground); }
-.ar-result-icon :deep(svg) { width: .875rem; height: .875rem; }
 .ar-result-title { min-width: 0; font-weight: 500; color: color-mix(in oklab, var(--beui-foreground) 90%, transparent); }
 .ar-result-domain { min-width: 0; color: color-mix(in oklab, var(--beui-muted-foreground) 55%, transparent); }
 .ar-more { padding: .25rem .375rem .25rem 2rem; color: color-mix(in oklab, var(--beui-muted-foreground) 55%, transparent); }
@@ -120,7 +119,7 @@ a.ar-result:focus-visible { box-shadow: 0 0 0 2px var(--beui-ring); }
 .ar-strong { flex: none; font-weight: 500; color: color-mix(in oklab, var(--beui-foreground) 90%, transparent); }
 .ar-code { min-width: 0; border-radius: .5rem; background: color-mix(in oklab, var(--beui-muted) 80%, transparent); padding: .25rem .625rem; font-family: var(--font-mono, ui-monospace, monospace); font-size: .75rem; line-height: 1rem; color: color-mix(in oklab, var(--beui-muted-foreground) 70%, transparent); }
 .ar-diff { display: flex; flex: none; align-items: center; gap: .5rem; font-family: var(--font-mono, ui-monospace, monospace); font-variant-numeric: tabular-nums; }
-.ar-add { color: #10b981; }
-.ar-del { color: #f43f5e; }
+.ar-add { color: oklch(69.6% .17 162.48); }
+.ar-del { color: oklch(64.5% .246 16.439); }
 .ar-truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 </style>

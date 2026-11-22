@@ -1,17 +1,19 @@
 <script setup lang="ts">
-import { ColorSelector } from 'beui-vue'
-import { ref } from 'vue'
-
-const accent = ref('blue')
-const options = [
-  { value: 'blue', label: 'Blue', color: '#3478f6' },
-  { value: 'purple', label: 'Purple', color: '#9270e8' },
-  { value: 'pink', label: 'Pink', color: '#e66aa4' },
-  { value: 'red', label: 'Red', color: '#e55656' },
-  { value: 'orange', label: 'Orange', color: '#ed9141' },
-  { value: 'amber', label: 'Amber', color: '#e5b63c' },
-  { value: 'green', label: 'Green', color: '#65a65a' },
-  { value: 'teal', label: 'Teal', color: '#169d83' },
-]
+import { ColorSelector, ColorSelectorItem, ColorSelectorLabel, ColorSelectorList } from 'beui-vue'
 </script>
-<template><ColorSelector v-model="accent" :options="options" label="Accent" name="accent" /></template>
+
+<template>
+  <ColorSelector default-value="blue" name="accent">
+    <ColorSelectorLabel>Accent</ColorSelectorLabel>
+    <ColorSelectorList>
+      <ColorSelectorItem value="blue" color="#3478f6" label="Blue" />
+      <ColorSelectorItem value="purple" color="#9270e8" label="Purple" />
+      <ColorSelectorItem value="pink" color="#e66aa4" label="Pink" />
+      <ColorSelectorItem value="red" color="#e55656" label="Red" />
+      <ColorSelectorItem value="orange" color="#ed9141" label="Orange" />
+      <ColorSelectorItem value="amber" color="#e5b63c" label="Amber" />
+      <ColorSelectorItem value="green" color="#65a65a" label="Green" />
+      <ColorSelectorItem value="teal" color="#169d83" label="Teal" />
+    </ColorSelectorList>
+  </ColorSelector>
+</template>

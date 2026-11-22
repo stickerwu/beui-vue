@@ -325,7 +325,7 @@ const positionStyle = computed(() => ({ top: `${anchorRect.value.top}px`, left: 
         :initial="false"
         :animate="{ opacity: open ? 0 : 1 }"
         :transition="reduce ? { duration: 0 } : { duration: 0.1, delay: open ? 0.1 : 0.12, ease: easeOut }">
-        <svg viewBox="0 0 24 24" class="be-msearch-icon"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
+        <svg viewBox="0 0 24 24" class="be-msearch-icon" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
         <template v-if="!iconOnly">
           <span class="be-msearch-placeholder">{{ placeholder }}</span>
           <kbd v-if="shortcut" class="be-msearch-kbd is-key">{{ shortcut.toUpperCase() }}</kbd>
@@ -359,7 +359,7 @@ const positionStyle = computed(() => ({ top: `${anchorRect.value.top}px`, left: 
               :style="positionStyle"
               @keydown="onDialogKeyDown">
               <div class="be-msearch-header" :class="iconOnly ? 'is-icon' : 'is-field'">
-                <span class="be-msearch-lead"><svg viewBox="0 0 24 24" class="be-msearch-icon"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg></span>
+                <span class="be-msearch-lead"><svg viewBox="0 0 24 24" class="be-msearch-icon" aria-hidden="true"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg></span>
                 <div class="be-msearch-input-wrap">
                   <input
                     ref="input"
@@ -439,9 +439,9 @@ const positionStyle = computed(() => ({ top: `${anchorRect.value.top}px`, left: 
 .be-msearch-face.is-field { gap: .625rem; padding-inline: .875rem; }
 .be-msearch-face.is-icon { justify-content: center; }
 .be-msearch-face.is-locked { z-index: 120; }
-.be-msearch-icon { width: 1rem; height: 1rem; flex: none; fill: none; stroke: var(--beui-muted-foreground); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.be-msearch-icon { color: var(--beui-muted-foreground); width: 1rem; height: 1rem; flex: none; fill: none; stroke: var(--beui-muted-foreground); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .be-msearch-placeholder { min-width: 0; flex: 1 1 0%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .875rem; line-height: 1.25rem; color: var(--beui-muted-foreground); }
-.be-msearch-kbd { display: flex; height: 1.75rem; flex: none; align-items: center; box-sizing: border-box; padding-inline: .5rem; border: 1px solid var(--ms-border); border-radius: .375rem; font: inherit; font-size: .75rem; line-height: 1rem; color: var(--beui-muted-foreground); }
+.be-msearch-kbd { display: flex; height: 1.75rem; flex: none; align-items: center; box-sizing: border-box; padding-inline: .5rem; border: 1px solid var(--ms-border); border-radius: .375rem; font-family: var(--font-mono, "Geist Mono Variable", ui-monospace, monospace); font-size: .75rem; line-height: 1rem; color: var(--beui-muted-foreground); }
 .be-msearch-kbd.is-key { min-width: 1.75rem; justify-content: center; }
 
 .be-msearch-layer { pointer-events: none; position: fixed; left: 0; top: 0; z-index: 110; width: 0; height: 0; color: var(--beui-foreground); font-size: 1rem; line-height: 1.5; }

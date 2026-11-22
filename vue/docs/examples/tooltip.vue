@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Tooltip, TooltipProvider } from 'beui-vue'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from 'beui-vue'
 import { ref } from 'vue'
 import { PopIcon } from './popovers-icons'
 import { usePreviewVariant } from './use-preview-variant'
@@ -32,17 +32,22 @@ function toggle(id: string) {
     <TooltipProvider v-if="variant === 'toolbar'" :delay="300" :skip-delay="400">
       <div class="stack">
         <div class="toolbar">
-          <Tooltip v-for="action in actions" :key="action.id" as-label side="bottom" arrow>
-            <button type="button" class="tool" :class="{ on: active.includes(action.id) }" :aria-pressed="active.includes(action.id)" :aria-keyshortcuts="action.keys" @click="toggle(action.id)">
+          <Tooltip v-for="action in actions" :key="action.id" as-label>
+            <TooltipTrigger class="tool" :class="{ on: active.includes(action.id) }" :aria-pressed="active.includes(action.id)" :aria-keyshortcuts="action.keys" @click="toggle(action.id)">
               <PopIcon :name="action.icon" />
-            </button>
-            <template #content>
-              <span class="label">{{ action.label }}<!-- The shortcut is announced through aria-keyshortcuts, not as part of the name. --><span class="keys" aria-hidden="true">{{ action.shortcut }}</span></span>
-            </template>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" arrow>
+              <span class="label">
+                {{ action.label }}
+                <!-- The shortcut is announced through aria-keyshortcuts, not as part of the name. -->
+                <span class="keys" aria-hidden="true">{{ action.shortcut }}</span>
+              </span>
+            </TooltipContent>
           </Tooltip>
           <span class="rule" aria-hidden="true" />
-          <Tooltip as-label side="bottom" align="end" arrow :disabled="active.length === 0" content="Insert link">
-            <button type="button" class="tool" :disabled="active.length === 0"><PopIcon name="Link2" /></button>
+          <Tooltip as-label :disabled="active.length === 0">
+            <TooltipTrigger class="tool" :disabled="active.length === 0"><PopIcon name="Link2" /></TooltipTrigger>
+            <TooltipContent side="bottom" align="end" arrow>Insert link</TooltipContent>
           </Tooltip>
         </div>
         <p class="note narrow">The first label waits, the next ones open instantly. Click hides it until the pointer leaves.</p>
@@ -68,17 +73,17 @@ function toggle(id: string) {
 .variant { margin-bottom: .5rem; }
 .stack { display: flex; width: 100%; flex-direction: column; align-items: center; gap: 2rem; padding: 1.5rem 0; }
 .grid { display: grid; grid-template-columns: repeat(3, auto); column-gap: .75rem; row-gap: 1.25rem; }
-.place { display: inline-flex; height: 2.5rem; width: 5rem; align-items: center; justify-content: center; gap: .375rem; border: 1px solid var(--beui-border); border-radius: .5rem; background: var(--beui-card); font: inherit; font-size: .75rem; line-height: 1rem; font-weight: 500; color: var(--beui-foreground); cursor: pointer; transition: background-color .15s; }
+.place { display: inline-flex; height: 2.5rem; width: 5rem; align-items: center; justify-content: center; gap: .375rem; border: 1px solid var(--beui-border); border-radius: .5rem; background: var(--beui-card); font: inherit; font-size: .75rem; line-height: 1rem; font-weight: 500; color: var(--beui-foreground); cursor: pointer; transition: color .15s cubic-bezier(.4, 0, .2, 1), background-color .15s cubic-bezier(.4, 0, .2, 1), border-color .15s cubic-bezier(.4, 0, .2, 1), outline-color .15s cubic-bezier(.4, 0, .2, 1); }
 .place:hover { background: var(--beui-muted); }
-.place:focus-visible { outline: 2px solid color-mix(in srgb, var(--beui-foreground) 12%, transparent); outline-offset: 4px; }
+.place:focus-visible { outline: 2px solid var(--beui-ring); outline-offset: 4px; }
 .icon { color: var(--beui-muted-foreground); }
 .note { margin: 0; text-align: center; font-size: .75rem; line-height: 1rem; color: var(--beui-muted-foreground); }
 .note.narrow { max-width: 20rem; }
 .toolbar { display: flex; align-items: center; gap: .25rem; border: 1px solid var(--beui-border); border-radius: .75rem; background: var(--beui-card); padding: .25rem; }
-.tool { display: grid; width: 2rem; height: 2rem; place-items: center; border: 0; border-radius: .5rem; background: transparent; padding: 0; color: var(--beui-muted-foreground); outline: none; cursor: pointer; transition: background-color .15s, color .15s; }
+.tool { display: grid; width: 2rem; height: 2rem; place-items: center; border: 0; border-radius: .5rem; background: transparent; padding: 0; color: var(--beui-muted-foreground); outline: none; cursor: pointer; transition: color .15s cubic-bezier(.4, 0, .2, 1), background-color .15s cubic-bezier(.4, 0, .2, 1); }
 .tool:hover { background: var(--beui-muted); color: var(--beui-foreground); }
 .tool.on { background: var(--beui-muted); color: var(--beui-foreground); }
-.tool:focus-visible { box-shadow: 0 0 0 2px color-mix(in srgb, var(--beui-foreground) 12%, transparent); }
+.tool:focus-visible { box-shadow: 0 0 0 2px var(--beui-ring); }
 .tool:disabled { opacity: .4; cursor: default; }
 .rule { margin: 0 .25rem; width: 1px; height: 1.25rem; background: var(--beui-border); }
 .label { display: flex; align-items: center; gap: .5rem; }

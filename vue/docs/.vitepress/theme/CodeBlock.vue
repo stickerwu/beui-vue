@@ -67,6 +67,7 @@ const copyLabel = computed(() => t({
   failed: 'Copy failed',
 }[copyState.value]))
 let resizeObserver: ResizeObserver | undefined
+let measureFrame = 0
 let copyTimeout: ReturnType<typeof setTimeout> | undefined
 
 function measureCode() {
@@ -94,12 +95,18 @@ watch(() => props.code, async () => {
 
 onMounted(() => {
   measureCode()
-  resizeObserver = new ResizeObserver(measureCode)
+  // Collapsing the code resizes the observed element, so measuring inside the
+  // callback would trip WebKit's "ResizeObserver loop" error. Measure next frame.
+  resizeObserver = new ResizeObserver(() => {
+    cancelAnimationFrame(measureFrame)
+    measureFrame = requestAnimationFrame(measureCode)
+  })
   if (codeContent.value) resizeObserver.observe(codeContent.value)
 })
 
 onBeforeUnmount(() => {
   resizeObserver?.disconnect()
+  cancelAnimationFrame(measureFrame)
   clearTimeout(copyTimeout)
 })
 </script>

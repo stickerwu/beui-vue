@@ -13,11 +13,15 @@ export type BounceSidebarItem = {
 <script setup lang="ts">
 import { arc, useAnimate } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
-import { computed, onBeforeUnmount, onMounted, useTemplateRef, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, shallowRef, useTemplateRef, watch } from 'vue'
 
 const props = withDefaults(defineProps<{
   items: readonly BounceSidebarItem[]
+  /** Initial selection when `v-model` is not used. */
+  defaultValue?: string
   /** Accessible name of the navigation landmark. */
+  ariaLabel?: string
+  /** Same as `ariaLabel`. */
   label?: string
   className?: string
   listClassName?: string
@@ -29,7 +33,12 @@ const props = withDefaults(defineProps<{
 const value = defineModel<string>()
 const emit = defineEmits<{ valueChange: [value: string] }>()
 
-defineSlots<{ icon?(props: { item: BounceSidebarItem; index: number }): unknown }>()
+defineSlots<{
+  /** Icon before the label; replaces the item's `icon` text. */
+  icon?(props: { item: BounceSidebarItem; index: number }): unknown
+  /** Label of a row; replaces the item's `label`. */
+  label?(props: { item: BounceSidebarItem; index: number }): unknown
+}>()
 
 const DOT_SIZE = 6
 // A compact, lightly underdamped spring gives the dot a quick landing without
@@ -47,8 +56,9 @@ const list = useTemplateRef<HTMLUListElement>('list')
 const dotElement = useTemplateRef<HTMLElement>('dot')
 const [, animateDot] = useAnimate()
 
+const internal = shallowRef(props.defaultValue ?? props.items[0]?.id ?? '')
 const selectedValue = computed(() => {
-  const requested = value.value ?? props.items[0]?.id ?? ''
+  const requested = value.value ?? internal.value
   return props.items.some(item => item.id === requested) ? requested : (props.items[0]?.id ?? '')
 })
 const selectedIndex = computed(() => props.items.findIndex(item => item.id === selectedValue.value))
@@ -131,16 +141,17 @@ function selectItem(id: string, event?: Event) {
     event?.preventDefault()
     return
   }
+  if (value.value === undefined) internal.value = id
   value.value = id
   emit('valueChange', id)
 }
 
-const ariaLabel = computed(() => props.label ?? props.labels?.label ?? 'Sidebar navigation')
-const dotStyle = { width: `${DOT_SIZE}px`, height: `${DOT_SIZE}px`, insetInlineStart: `${DOT_LEFT}px` } as const
+const accessibleLabel = computed(() => props.ariaLabel ?? props.label ?? props.labels?.label ?? 'Sidebar navigation')
+const dotStyle = { width: `${DOT_SIZE}px`, height: `${DOT_SIZE}px`, left: `${DOT_LEFT}px` } as const
 </script>
 
 <template>
-  <nav :aria-label="ariaLabel" class="bounce-sidebar" :class="className">
+  <nav :aria-label="accessibleLabel" class="bounce-sidebar" :class="className">
     <ul ref="list" class="bounce-list" :class="listClassName">
       <li v-if="selectedIndex >= 0" aria-hidden="true" role="presentation" class="bounce-indicator">
         <span ref="dot" class="bounce-dot" :class="indicatorClassName" :style="dotStyle" />
@@ -162,7 +173,7 @@ const dotStyle = { width: `${DOT_SIZE}px`, height: `${DOT_SIZE}px`, insetInlineS
           <span v-if="item.icon || $slots.icon" aria-hidden="true" class="bounce-icon">
             <slot name="icon" :item="item" :index="index">{{ item.icon }}</slot>
           </span>
-          <span>{{ item.label }}</span>
+          <span><slot name="label" :item="item" :index="index">{{ item.label }}</slot></span>
         </a>
         <button
           v-else
@@ -176,7 +187,7 @@ const dotStyle = { width: `${DOT_SIZE}px`, height: `${DOT_SIZE}px`, insetInlineS
           <span v-if="item.icon || $slots.icon" aria-hidden="true" class="bounce-icon">
             <slot name="icon" :item="item" :index="index">{{ item.icon }}</slot>
           </span>
-          <span>{{ item.label }}</span>
+          <span><slot name="label" :item="item" :index="index">{{ item.label }}</slot></span>
         </button>
       </li>
     </ul>
@@ -202,7 +213,7 @@ const dotStyle = { width: `${DOT_SIZE}px`, height: `${DOT_SIZE}px`, insetInlineS
   position: absolute;
   top: 0;
   display: block;
-  border-radius: 50%;
+  border-radius: calc(infinity * 1px);
   background: var(--beui-primary);
 }
 
@@ -212,23 +223,24 @@ const dotStyle = { width: `${DOT_SIZE}px`, height: `${DOT_SIZE}px`, insetInlineS
   gap: .5rem;
   width: 100%;
   min-height: 2.25rem;
-  padding: .25rem .5rem;
+  padding: 0 .5rem;
   border: 0;
   border-radius: .5rem;
   background: transparent;
   color: var(--beui-muted-foreground);
   font: inherit;
   font-size: .875rem;
+  line-height: 1.25rem;
   font-weight: 500;
-  text-align: start;
+  text-align: left;
   text-decoration: none;
   outline: none;
   cursor: pointer;
-  transition: color .15s;
+  transition: color .15s cubic-bezier(.4, 0, .2, 1);
 }
 .bounce-link:hover { color: var(--beui-foreground); }
 .bounce-link.is-active { color: var(--beui-foreground); }
 .bounce-link.is-disabled { cursor: not-allowed; opacity: .4; }
-.bounce-link:focus-visible { outline: 2px solid var(--beui-ring); outline-offset: 2px; }
+.bounce-link:focus-visible { box-shadow: 0 0 0 2px var(--beui-background), 0 0 0 4px var(--beui-ring); }
 .bounce-icon { flex: none; display: grid; place-items: center; }
 </style>

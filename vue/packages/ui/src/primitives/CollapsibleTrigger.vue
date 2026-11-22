@@ -20,8 +20,8 @@ function activate(event: MouseEvent) {
 </template>
 
 <style scoped>
-.be-collapse-trigger { display: flex; align-items: center; gap: .75rem; width: 100%; min-height: 2.5rem; padding: .5rem .75rem; border: 0; border-radius: .75rem; background: transparent; color: inherit; text-align: start; font: inherit; font-size: .875rem; font-weight: 500; cursor: pointer; }
+.be-collapse-trigger { display: flex; align-items: center; gap: .75rem; width: 100%; min-height: 2.5rem; padding: .5rem .75rem; border: 0; border-radius: .75rem; background: transparent; color: inherit; text-align: start; font: inherit; font-size: .875rem; line-height: 1.25rem; font-weight: 500; cursor: pointer; transition: background-color .15s cubic-bezier(.4, 0, .2, 1); }
 .be-collapse-trigger:focus-visible { outline: 2px solid var(--beui-ring); }
 .be-collapse-trigger:disabled { pointer-events: none; opacity: .5; }
-@media (hover:hover) { .be-collapse-trigger:hover { background: color-mix(in srgb, var(--beui-muted) 60%, transparent); } }
+@media (hover:hover) { .be-collapse-trigger:hover { background: color-mix(in oklab, var(--beui-muted) 60%, transparent); } }
 </style>

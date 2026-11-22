@@ -34,7 +34,8 @@ const SECTIONS = Array.from({ length: 16 }, (_, index) => index + 1)
 <style scoped>
 .box { height: 16rem; width: 100%; max-width: 32rem; box-sizing: border-box; overflow-y: auto; border: 1px solid var(--beui-border); border-radius: 1rem; background: var(--beui-card); scrollbar-width: none; }
 .box::-webkit-scrollbar { display: none; }
-.sections { display: flex; flex-direction: column; gap: .75rem; padding: 1rem; }
+.sections { padding: 1rem; }
+.section:not(:last-child) { margin-bottom: .75rem; }
 .section { border-radius: .5rem; background: color-mix(in srgb, var(--beui-muted) 60%, transparent); padding: 1rem .75rem; font-size: .875rem; line-height: 1.25rem; color: var(--beui-muted-foreground); }
 .box :deep(.top) { position: sticky; bottom: .75rem; left: calc(100% - 3rem); z-index: 10; display: grid; width: 2.25rem; height: 2.25rem; place-items: center; padding: 0; border: 1px solid var(--beui-border); border-radius: 9999px; background: color-mix(in srgb, var(--beui-background) 80%, transparent); color: var(--beui-foreground); backdrop-filter: blur(8px); cursor: pointer; transition: background-color .15s; }
 .box :deep(.top:hover) { background: var(--beui-background); }

@@ -33,7 +33,6 @@ const zhThemeConfig = {
   nav: [
     { text: '安装', link: '/install' },
     { text: '组件目录', link: '/catalog' },
-    { text: '效果验收', link: '/verification' },
   ],
   socialLinks: [{ icon: 'github', link: repository }],
   outlineTitle: '本页内容',
@@ -53,7 +52,6 @@ const enThemeConfig = {
   nav: [
     { text: 'Installation', link: '/en/install' },
     { text: 'Components', link: '/en/catalog' },
-    { text: 'Verification', link: '/en/verification' },
   ],
   socialLinks: [{ icon: 'github', link: repository }],
   outlineTitle: 'On this page',
@@ -145,12 +143,16 @@ export default defineConfig({
       await mkdir(join(outDir, prefix), { recursive: true })
       await writeFile(join(outDir, `${prefix}components.html`), `<!doctype html><html lang="${prefix ? 'en' : 'zh-CN'}"><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=${target}"><link rel="canonical" href="${new URL(`${prefix}components/motion`, site)}"><title>beui-vue</title><a href="${target}">${prefix ? 'Components' : '组件'}</a></html>`)
     }
+    // The verification page was removed; keep old links landing on Installation.
+    for (const prefix of ['', 'en/']) {
+      const target = `${base}${prefix}install`
+      await writeFile(join(outDir, `${prefix}verification.html`), `<!doctype html><html lang="${prefix ? 'en' : 'zh-CN'}"><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0;url=${target}"><link rel="canonical" href="${new URL(`${prefix}install`, site)}"><title>beui-vue</title><a href="${target}">${prefix ? 'Installation' : '安装'}</a></html>`)
+    }
     const zh = [
       '# beui-vue', '',
       '> beUI 动效组件与界面区块的 Vue 3 实现，由 stickerwu 独立维护。', '',
       `- [安装与使用](${site}install)`,
       `- [组件目录](${site}catalog)`,
-      `- [效果验收](${site}verification)`,
       `- [English documentation](${site}en/)`,
       `- [Vue 源码](${repository})`,
       '- [上游 beUI](https://github.com/starc007/ui-components)', '',
@@ -162,7 +164,6 @@ export default defineConfig({
       '> beUI animated components and interface blocks, rebuilt for Vue 3 and maintained independently by stickerwu.', '',
       `- [Installation](${site}en/install)`,
       `- [Component catalog](${site}en/catalog)`,
-      `- [Verification](${site}en/verification)`,
       `- [中文文档](${site})`,
       `- [Vue source](${repository})`,
       '- [Upstream beUI](https://github.com/starc007/ui-components)', '',

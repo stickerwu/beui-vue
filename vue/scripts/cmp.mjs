@@ -3,7 +3,7 @@
 //   node scripts/cmp.mjs <slug> [variant] [--theme light|dark] [--out <dir>] [--motion] [--at 0,150,400]
 //
 // Needs the two dev servers (see .claude/launch.json):
-//   Vue docs from source   BEUI_VUE_URL   (default http://127.0.0.1:5175)
+//   Vue docs from source   BEUI_VUE_URL   (default http://127.0.0.1:5173)
 //   React reference        BEUI_REACT_URL (default http://127.0.0.1:4194)
 // Writes <out>/<slug>--<variant>-<theme>[-tNNN]-{react,vue,sbs}.png and prints the pixel mismatch ratio.
 // By default motion is reduced and the shot is the settled state; --motion keeps animations and
@@ -25,7 +25,7 @@ const offsets = flag('at', motion ? '0,120,300,800' : '').split(',').filter(Bool
 const [slug, variantArg] = args
 if (!slug) { console.error('usage: node scripts/cmp.mjs <slug> [variant] [--theme light|dark] [--motion] [--at ms,ms]'); process.exit(2) }
 
-const vueURL = process.env.BEUI_VUE_URL ?? 'http://127.0.0.1:5175'
+const vueURL = process.env.BEUI_VUE_URL ?? 'http://127.0.0.1:5173'
 const reactURL = process.env.BEUI_REACT_URL ?? 'http://127.0.0.1:4194'
 const {entries} = JSON.parse(await readFile(new URL('../catalog.json', import.meta.url), 'utf8'))
 const entry = entries.find(e => e.slug === slug)

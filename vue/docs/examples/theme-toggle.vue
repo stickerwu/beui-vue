@@ -21,7 +21,7 @@ const variants = [
 <style scoped>
 .theme-demo { display: flex; width: 100%; height: 100%; align-items: center; justify-content: center; gap: 1.25rem; }
 .theme-item { display: flex; flex-direction: column; align-items: center; gap: .5rem; }
-.theme-item span { font-size: 11px; line-height: 1rem; color: var(--beui-muted-foreground); }
+.theme-item span { font-size: 11px; line-height: 1.5; color: var(--beui-muted-foreground); }
 :deep(.theme-chip) { border-radius: .75rem; border: 1px solid var(--beui-border); background: var(--beui-background); padding: .625rem; }
 :deep(.theme-icon) { width: 1.25rem; height: 1.25rem; }
 </style>

@@ -9,6 +9,7 @@ const props = defineProps<{
   tile: TreemapTile; width: number; height: number; label: string; tabbable: boolean; selected: boolean; describedBy?: string
   valueText: string; index: number
 }>()
+defineSlots<{ default?(props: { tile: TreemapTile }): unknown }>()
 const emit = defineEmits<{ enter: [event: PointerEvent]; move: [event: PointerEvent]; press: []; focus: [] }>()
 const reduce = useReducedMotion()
 const button = useTemplateRef<{ $el: HTMLElement }>('button')
@@ -35,10 +36,12 @@ onBeforeUnmount(() => {
     @pointerenter="emit('enter', $event)" @pointermove="emit('move', $event)" @pointerdown="emit('press')" @click="emit('press')" @focus="emit('focus')"
   >
     <motion.span aria-hidden="true" class="content" :layout="reduce ? false : 'position'" :transition="reduce ? { duration: 0 } : layoutSpring">
-      <template v-if="showLabel()">
-        <span class="name">{{ tile.label }}</span>
-        <span v-if="showValue()" class="value">{{ valueText }}</span>
-      </template>
+      <slot :tile="tile">
+        <template v-if="showLabel()">
+          <span class="name">{{ tile.label }}</span>
+          <span v-if="showValue()" class="value">{{ valueText }}</span>
+        </template>
+      </slot>
     </motion.span>
     <motion.span aria-hidden="true" class="sheen" :initial="false" :animate="{ opacity: selected ? 1 : 0 }" :transition="{ type: 'tween', duration: 0.1, ease: easeOut }" />
   </motion.button>

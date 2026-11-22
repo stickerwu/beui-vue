@@ -15,13 +15,16 @@ import { useOpenState } from '../primitives/state'
 import AgentIcon from './AgentIcon.vue'
 import AgentReveal from './AgentReveal.vue'
 import './agent-tokens.css'
-import type { Labels } from './shared'
+import { useHasListener, type Labels } from './shared'
 
 const props = withDefaults(defineProps<{
   tool: string, title?: string, description?: string, status?: ToolApprovalStatus, parameters?: ToolApprovalParameter[],
-  open?: boolean, defaultOpen?: boolean, labels?: Labels, onAlwaysAllow?: () => void
+  open?: boolean, defaultOpen?: boolean, labels?: Labels
 }>(), { status: 'pending', parameters: () => [], open: undefined, defaultOpen: false })
-const emit = defineEmits<{ 'update:open': [value: boolean], openChange: [value: boolean], approve: [], deny: [] }>()
+const emit = defineEmits<{ 'update:open': [value: boolean], openChange: [value: boolean], approve: [], alwaysAllow: [], deny: [] }>()
+defineSlots<{ default?(): unknown, tool?(): unknown, title?(): unknown, description?(): unknown, parameter?(props: { parameter: ToolApprovalParameter }): unknown }>()
+// "Always allow" only shows when a listener is bound, like upstream's optional `onAlwaysAllow`.
+const hasAlwaysAllow = useHasListener('alwaysAllow')
 const reduce = useReducedMotion()
 const { open, setOpen } = useOpenState(() => props.open, props.defaultOpen, next => { emit('update:open', next); emit('openChange', next) })
 const uid = useId()
@@ -41,12 +44,12 @@ watch(() => props.status, (next, previous) => { if (previous === 'pending' && ne
       <div class="be-ta-main">
         <div class="be-ta-row">
           <div class="be-ta-heading">
-            <div class="be-ta-title">{{ title ?? t('title') }}</div>
-            <div class="be-ta-tool">{{ tool }}</div>
+            <div class="be-ta-title"><slot name="title">{{ title ?? t('title') }}</slot></div>
+            <div class="be-ta-tool"><slot name="tool">{{ tool }}</slot></div>
           </div>
           <span class="be-ta-badge" role="status" :data-tone="tone">{{ t(status) }}</span>
         </div>
-        <p v-if="description" class="be-ta-desc">{{ description }}</p>
+        <p v-if="description || $slots.description" class="be-ta-desc"><slot name="description">{{ description }}</slot></p>
         <button v-if="parameters.length || $slots.default" type="button" class="be-ta-toggle" :aria-expanded="open" :aria-controls="`${uid}-details`" @click="setOpen(!open)">
           {{ t('viewDetails') }}
           <motion.span aria-hidden="true" class="be-ta-chevron" :animate="{ rotate: open ? 180 : 0 }" :transition="reduce ? { duration: 0 } : swapSpring"><AgentIcon name="ChevronDown" :size="14" /></motion.span>
@@ -65,7 +68,7 @@ watch(() => props.status, (next, previous) => { if (previous === 'pending' && ne
     <AnimatePresence :initial="false">
       <motion.div v-if="pending" key="actions" class="be-ta-actions" :initial="reduce ? { opacity: 0 } : { opacity: 0, y: 4 }" :animate="{ opacity: 1, y: 0 }" :exit="{ opacity: 0 }" :transition="{ duration: reduce ? 0.12 : 0.22, ease: easeOut }">
         <motion.button type="button" class="be-ta-btn" data-kind="solid" :while-press="reduce ? undefined : { scale: 0.97 }" :transition="pressSpring" @click="emit('approve')">{{ t('allowOnce') }}</motion.button>
-        <motion.button v-if="onAlwaysAllow" type="button" class="be-ta-btn" data-kind="outline" :while-press="reduce ? undefined : { scale: 0.97 }" :transition="pressSpring" @click="onAlwaysAllow">{{ t('alwaysAllow') }}</motion.button>
+        <motion.button v-if="hasAlwaysAllow()" type="button" class="be-ta-btn" data-kind="outline" :while-press="reduce ? undefined : { scale: 0.97 }" :transition="pressSpring" @click="emit('alwaysAllow')">{{ t('alwaysAllow') }}</motion.button>
         <button type="button" class="be-ta-btn" data-kind="ghost" @click="emit('deny')">{{ t('deny') }}</button>
       </motion.div>
     </AnimatePresence>
@@ -81,7 +84,7 @@ watch(() => props.status, (next, previous) => { if (previous === 'pending' && ne
 .be-ta-heading { min-width: 0; }
 .be-ta-title { font-weight: 500; color: var(--beui-foreground); }
 .be-ta-tool { margin-top: 0.125rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-mono, ui-monospace, monospace); font-size: 0.75rem; line-height: 1rem; color: var(--beui-muted-foreground); }
-.be-ta-badge { flex: none; border: 1px solid; border-radius: 9999px; padding: 0.125rem 0.5rem; font-size: 11px; line-height: 1rem; font-weight: 500; transition: color 0.15s, background-color 0.15s, border-color 0.15s; }
+.be-ta-badge { flex: none; border: 1px solid; border-radius: 9999px; padding: 0.125rem 0.5rem; font-size: 11px; line-height: calc(1.25 / .875); font-weight: 500; transition: color 0.15s, background-color 0.15s, border-color 0.15s; }
 .be-ta-badge[data-tone=amber] { border-color: color-mix(in srgb, var(--ag-amber-500) 30%, transparent); background: color-mix(in srgb, var(--ag-amber-500) 10%, transparent); color: var(--ag-amber); }
 .be-ta-badge[data-tone=blue] { border-color: color-mix(in srgb, var(--ag-blue-500) 30%, transparent); background: color-mix(in srgb, var(--ag-blue-500) 10%, transparent); color: var(--ag-blue); }
 .be-ta-badge[data-tone=green] { border-color: color-mix(in srgb, var(--ag-green-500) 30%, transparent); background: color-mix(in srgb, var(--ag-green-500) 10%, transparent); color: var(--ag-green); }

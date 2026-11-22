@@ -41,7 +41,7 @@ const props = withDefaults(defineProps<{
   labels?: Partial<PlinkoMessages>
   /** Injectable random source, for reproducible drops. */
   random?: () => number
-}>(), { rows: 12, maxBalls: 12, defaultPegFlash: true, pegFlash: undefined, sound: undefined, defaultSound: false, random: Math.random })
+}>(), { rows: 12, maxBalls: 12, defaultPegFlash: true, pegFlash: undefined, sound: undefined, defaultSound: false, random: () => Math.random() })
 const emit = defineEmits<{
   land: [slot: number, value: PlinkoValue]
   'update:pegFlash': [value: boolean]; pegFlashChange: [value: boolean]

@@ -119,7 +119,7 @@ function src(side: TournamentSide) {
   line-height: 1.25rem;
   color: var(--beui-muted-foreground);
 }
-.be-match-rows { display: grid; gap: .625rem; }
+.be-match-rows { display: grid; grid-template-columns: minmax(0, 1fr); gap: .625rem; }
 .be-match-row { display: flex; align-items: center; gap: .75rem; }
 .be-match-crest {
   display: flex;

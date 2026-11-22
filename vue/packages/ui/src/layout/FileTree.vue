@@ -14,9 +14,10 @@ export interface FileTreeNode {
 <script setup lang="ts">
 import { AnimatePresence, motion } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
-import { Comment, Fragment, isVNode, shallowRef, useSlots, type Slot, type VNode } from 'vue'
+import { Comment, Fragment, isVNode, normalizeClass, shallowRef, useSlots, type Slot, type VNode } from 'vue'
 import { easeOut, layoutSpring, swapSpring } from '../core/motion'
-import { FileTreeFile, FileTreeFolder } from './file-tree-parts'
+import FileTreeFile from './FileTreeFile.vue'
+import FileTreeFolder from './FileTreeFolder.vue'
 import SharedLayoutBg from './SharedLayoutBg.vue'
 
 interface Item {
@@ -26,6 +27,7 @@ interface Item {
   children?: Item[]
   icon?: Slot
   disabled?: boolean
+  className?: string
   data?: FileTreeNode
 }
 interface Row { item: Item; depth: number; parentId: string | null; position: number; setSize: number }
@@ -36,20 +38,25 @@ const props = withDefaults(defineProps<{
   /** Selected id (`v-model`). */
   modelValue?: string | null
   defaultValue?: string | null
-  /** Expanded folder ids (`v-model:expanded`). */
+  /** Expanded folder ids (`v-model:expanded-ids`). */
+  expandedIds?: string[]
+  /** Same as `expandedIds`, bound with `v-model:expanded`. */
   expanded?: string[]
   defaultExpandedIds?: string[]
   /** Accessible name of the tree. */
+  ariaLabel?: string
+  /** Same as `ariaLabel`. */
   label?: string
   labels?: Partial<FileTreeMessages>
   /** Indent per level in px. */
   indent?: number
   className?: string
   classNames?: { tree?: string; item?: string; icon?: string; label?: string }
-}>(), { indent: 18, defaultValue: null, defaultExpandedIds: () => [], modelValue: undefined, expanded: undefined })
+}>(), { indent: 18, defaultValue: null, defaultExpandedIds: () => [], modelValue: undefined, expanded: undefined, expandedIds: undefined })
 const emit = defineEmits<{
   'update:modelValue': [id: string]
   'update:expanded': [ids: string[]]
+  'update:expandedIds': [ids: string[]]
   valueChange: [id: string]
   expandedChange: [ids: string[]]
 }>()
@@ -63,7 +70,7 @@ const internalValue = shallowRef<string | null>(props.defaultValue)
 const internalExpanded = shallowRef<string[]>([...props.defaultExpandedIds])
 const focusedId = shallowRef<string | null>(props.modelValue ?? props.defaultValue)
 const selectedId = () => (props.modelValue === undefined ? internalValue.value : props.modelValue)
-const expandedIds = () => props.expanded ?? internalExpanded.value
+const currentExpanded = () => props.expandedIds ?? props.expanded ?? internalExpanded.value
 
 const ROW_ENTER = { duration: 0.22, ease: easeOut } as const
 const BRANCH_DRAW = { duration: 0.3, ease: easeOut } as const
@@ -94,6 +101,7 @@ function fromSlot(nodes: VNode[] | undefined): Item[] {
     const parts = (node.children && typeof node.children === 'object' ? node.children : {}) as Record<string, Slot | undefined>
     items.push({
       id: String(p.value), name: String(p.name), type: isFolder ? 'folder' : 'file', icon: parts.icon,
+      className: p.class ? normalizeClass(p.class) : undefined,
       disabled: p.disabled === '' || p.disabled === true,
       children: isFolder ? fromSlot(parts.default?.() as VNode[] | undefined) : undefined,
     })
@@ -109,7 +117,7 @@ function flatten(items: Item[], open: ReadonlySet<string>, depth = 0, parentId: 
 }
 // Rows are rebuilt every render: the declarative slot has no reactive source of its own.
 function collect() {
-  const open = new Set(expandedIds())
+  const open = new Set(currentExpanded())
   const items = props.items ? fromData(props.items) : fromSlot(slots.default?.() as VNode[] | undefined)
   return { open, rows: flatten(items, open) }
 }
@@ -138,12 +146,13 @@ function selectItem(item: Item) {
   emit('valueChange', item.id)
 }
 function setExpanded(next: string[]) {
-  if (props.expanded === undefined) internalExpanded.value = next
+  if (props.expandedIds === undefined && props.expanded === undefined) internalExpanded.value = next
   emit('update:expanded', next)
+  emit('update:expandedIds', next)
   emit('expandedChange', next)
 }
 function toggleFolder(id: string) {
-  const next = new Set(expandedIds())
+  const next = new Set(currentExpanded())
   if (next.has(id)) next.delete(id)
   else next.add(id)
   setExpanded(Array.from(next))
@@ -180,7 +189,7 @@ function keydown(event: KeyboardEvent, row: Row) {
 </script>
 
 <template>
-  <SharedLayoutBg v-bind="{ role: 'tree', 'aria-label': label ?? t('label'), 'aria-multiselectable': 'false' }" :inset="0"
+  <SharedLayoutBg v-bind="{ role: 'tree', 'aria-label': ariaLabel ?? label ?? t('label'), 'aria-multiselectable': 'false' }" :inset="0"
     pill-class="be-ft-pill" pill-container-class="be-ft-pill-box" class="be-ft" :class="[className, classNames?.tree]">
     <template v-for="ctx in [collect()]" :key="'ctx'">
       <motion.div v-for="row in ctx.rows" :key="row.item.id" :layout="reduce ? false : 'position'"
@@ -188,7 +197,7 @@ function keydown(event: KeyboardEvent, row: Row) {
         :animate="{ opacity: row.item.disabled ? 0.42 : 1, y: 0, transition: reduce ? instant : { ...ROW_ENTER, delay: Math.min(row.position * 0.025, 0.1) } }"
         :transition="reduce ? instant : layoutSpring">
         <button :ref="element => setRowNode(row.item.id, element)" type="button" role="treeitem" class="be-ft-row"
-          :class="[{ 'is-selected': selectedId() === row.item.id }, classNames?.item]"
+          :class="[{ 'is-selected': selectedId() === row.item.id }, classNames?.item, row.item.className]"
           :aria-level="row.depth + 1" :aria-posinset="row.position" :aria-setsize="row.setSize" :aria-selected="selectedId() === row.item.id"
           :aria-expanded="row.item.type === 'folder' ? ctx.open.has(row.item.id) : undefined" :aria-disabled="row.item.disabled || undefined"
           :tabindex="tabStop(ctx.rows) === row.item.id ? 0 : -1" :style="{ paddingLeft: `${8 + row.depth * indent}px` }"

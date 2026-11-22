@@ -163,6 +163,10 @@ const activeVisualIndex = computed(() => {
   return index < 0 ? -1 : visualIndexFor(index)
 })
 
+// Upstream hands its spring config to `animate()` without `type: 'spring'`, which
+// motion resolves as its default tween, so the notch and a released tab glide on
+// that tween (about 300ms, ease-out) rather than on the spring the tab slots use.
+const GLIDE_LIKE_UPSTREAM = { stiffness: 700, damping: 50, mass: 0.5 }
 let surfaceAnimation: ReturnType<typeof animate> | undefined
 let dragAnimation: ReturnType<typeof animate> | undefined
 
@@ -174,7 +178,7 @@ watch([activeId, activeVisualIndex, draggingId, slotLefts], () => {
   if (!id || index < 0 || id === draggingId.value || target === undefined) return
   surfaceAnimation?.stop()
   if (draggingId.value) return
-  surfaceAnimation = animate(surfaceLeft, target, reduce.value ? { duration: 0 } : glideSpring)
+  surfaceAnimation = animate(surfaceLeft, target, reduce.value ? { duration: 0 } : GLIDE_LIKE_UPSTREAM)
 }, { flush: 'post' })
 
 function registerPosition(id: string, position: MotionValue<number> | null) {
@@ -228,15 +232,15 @@ function liquidTabPath(tabLeft: number, width: number, slot: number) {
 const anyDragging = computed(() => draggingId.value !== null)
 const showSurface = computed(() => Boolean(activeId.value) && surfaceWidth.value > SURFACE_INSET * 2)
 
-// While nothing is dragged the notch rides the settled surface value; a drag
-// hands it to the finger, or to the active tab's spring once another tab is
-// being pushed out of the way.
+// While nothing is dragged the notch rides the settled surface value; dragging the
+// active tab hands it to the finger, and dragging any other tab leaves it on the
+// active tab's own spring while that tab is pushed out of the way.
 watchEffect(cleanup => {
   positionsVersion.value
   const element = pathElement.value
   if (!element || !showSurface.value) return
   const driver = anyDragging.value
-    ? (draggingId.value ? dragLeft : positions.get(activeId.value ?? ''))
+    ? (draggingId.value === activeId.value ? dragLeft : positions.get(activeId.value ?? ''))
     : surfaceLeft
   if (!driver) return
   const update = (left: number) => element.setAttribute('d', liquidTabPath(left, surfaceWidth.value, tabWidth.value))
@@ -334,7 +338,7 @@ async function finishDrag(pointerId: number) {
 
   session.finishing = true
   const targetLeft = session.slotLefts[session.targetIndex] ?? SURFACE_INSET
-  const controls = animate(dragLeft, targetLeft, reduce.value ? { duration: 0 } : glideSpring)
+  const controls = animate(dragLeft, targetLeft, reduce.value ? { duration: 0 } : GLIDE_LIKE_UPSTREAM)
   dragAnimation = controls
 
   await controls.then(() => {})
@@ -467,7 +471,7 @@ function zIndexFor(item: TabItem) {
 
 <template>
   <div v-if="orderedItems.length" ref="root" class="morph-tabs" :class="[classNames?.root, className]">
-    <svg v-if="showSurface" class="morph-tabs-surface" :class="{ 'is-dragging': anyDragging }" aria-hidden="true" focusable="false"
+    <svg v-if="showSurface" class="morph-tabs-surface" :class="[{ 'is-dragging': anyDragging && draggingId === activeId }, classNames?.activeTab]" aria-hidden="true" focusable="false"
       :viewBox="`0 0 ${surfaceWidth} ${RAIL_HEIGHT + PANEL_RADIUS}`" preserveAspectRatio="none">
       <path ref="pathElement" fill="currentColor" />
     </svg>
@@ -537,20 +541,20 @@ function zIndexFor(item: TabItem) {
 .morph-tabs-rail { position: relative; z-index: 30; display: flex; height: 100%; gap: .75rem; }
 @media (min-width: 768px) { .morph-tabs-rail { gap: 1rem; } }
 .morph-tab-slot { position: relative; display: flex; align-items: stretch; }
-.morph-tab-hover { position: absolute; inset-inline: 0; top: 0; bottom: .5rem; border-radius: 1.25rem; background: transparent; transition: background-color .2s; }
+.morph-tab-hover { position: absolute; inset-inline: 0; top: 0; bottom: .5rem; border-radius: 1.25rem; background: transparent; transition: background-color .2s cubic-bezier(.4, 0, .2, 1); }
 .morph-tab:hover .morph-tab-hover { background: rgb(255 255 255 / .06); }
 .morph-tab-hover[data-dragging], .morph-tab:hover .morph-tab-hover[data-dragging] { background: #3a3a3a; }
-.morph-tab-button { position: relative; z-index: 10; display: flex; align-items: center; gap: .5rem; width: 100%; min-width: 0; height: 100%; overflow: hidden; padding-inline: .75rem; border: 0; border-start-start-radius: 1.5rem; border-start-end-radius: 1.5rem; background: transparent; font: inherit; font-size: 1rem; font-weight: 500; line-height: 1; letter-spacing: -.025em; text-align: start; outline: none; transition: color .2s, background-color .2s; }
+.morph-tab-button { position: relative; z-index: 10; display: flex; align-items: center; gap: .5rem; width: 100%; min-width: 0; height: 100%; overflow: hidden; padding-inline: .75rem; border: 0; border-start-start-radius: 1.5rem; border-start-end-radius: 1.5rem; background: transparent; font: inherit; text-align: left; cursor: pointer; outline: none; transition: color .15s cubic-bezier(.4, 0, .2, 1), background-color .15s cubic-bezier(.4, 0, .2, 1); }
 .morph-tab-button.is-active { color: var(--mt-panel-ink); }
 .morph-tab-button.is-idle { padding-bottom: .5rem; color: rgb(255 255 255 / .7); }
 .morph-tab-button:not(:disabled).is-idle:hover { color: var(--mt-rail-ink); }
 .morph-tab-button:disabled { cursor: not-allowed; }
 .morph-tab-icon { display: grid; place-items: center; width: 2rem; height: 2rem; flex: none; }
-.morph-tab-label { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.morph-tab-focus { pointer-events: none; position: absolute; inset-inline: .25rem; top: .25rem; bottom: .5rem; border: 2px solid rgb(255 255 255 / .6); border-radius: 1rem; opacity: 0; transition: opacity .15s; }
+.morph-tab-label { min-width: 0; font-size: 1rem; font-weight: 500; line-height: 1; letter-spacing: -.025em; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.morph-tab-focus { pointer-events: none; position: absolute; inset-inline: .25rem; top: .25rem; bottom: .5rem; border: 2px solid rgb(255 255 255 / .6); border-radius: 1rem; opacity: 0; transition: opacity .15s cubic-bezier(.4, 0, .2, 1); }
 .morph-tab-focus[data-active] { bottom: 0; border-color: rgb(0 0 0 / .2); border-bottom: 0; border-start-start-radius: 1.25rem; border-start-end-radius: 1.25rem; }
 .morph-tab-button:focus-visible .morph-tab-focus { opacity: 1; }
-.morph-tab-close { position: absolute; right: .5rem; top: 50%; z-index: 20; display: grid; place-items: center; width: 1.5rem; height: 1.5rem; translate: 0 -50%; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #9aa0a8; cursor: pointer; transition: background-color .2s, color .2s; }
+.morph-tab-close { position: absolute; right: .5rem; top: 50%; z-index: 20; display: grid; place-items: center; width: 1.5rem; height: 1.5rem; translate: 0 -50%; padding: 0; border: 0; border-radius: 50%; background: transparent; color: #9aa0a8; cursor: pointer; transition: background-color .15s cubic-bezier(.4, 0, .2, 1), color .15s cubic-bezier(.4, 0, .2, 1); }
 .morph-tab-close svg { width: .875rem; height: .875rem; }
 .morph-tab-close:hover { background: rgb(0 0 0 / .06); color: #4b5563; }
 .morph-tab-close.is-idle { top: calc(50% - 4px); color: rgb(255 255 255 / .45); }

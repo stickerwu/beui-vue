@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ReturnsCalendar } from 'beui-vue'
+import { ReturnsCalendar, ReturnsCalendarGrid, ReturnsCalendarTooltip } from 'beui-vue'
 
 const years = [2021, 2022, 2023, 2024, 2025]
 let seed = 2021
@@ -10,5 +10,7 @@ const returns = years.map((_, index) => Array.from({ length: 12 }, () => {
 </script>
 
 <template>
-  <ReturnsCalendar :years="years" :returns="returns" />
+  <ReturnsCalendar :years="years" :returns="returns">
+    <ReturnsCalendarGrid><ReturnsCalendarTooltip /></ReturnsCalendarGrid>
+  </ReturnsCalendar>
 </template>

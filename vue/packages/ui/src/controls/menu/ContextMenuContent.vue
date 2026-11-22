@@ -9,6 +9,10 @@ import './menu.css'
 // Always mounted, clipped to a small rounded rect at the click point and
 // opened to full size on one ease. Port of `ContextMenuContent`.
 defineOptions({ inheritAttrs: false })
+const props = defineProps<{
+  /** Accessible name of the menu. Overrides the root's `label`. */
+  ariaLabel?: string
+}>()
 const MORPH_DURATION = 0.3
 const root = useContextRoot('ContextMenuContent')
 const mounted = shallowRef(false)
@@ -120,7 +124,7 @@ const transition = computed(() => root.modality.value === 'keyboard'
     <div data-context-menu-portal="" :aria-hidden="!root.open.value" :inert="!root.open.value" class="be-ctx-portal"
       :style="{ left: `${position.x}px`, top: `${position.y}px`, pointerEvents: root.open.value ? 'auto' : 'none' }">
       <motion.div
-        v-bind="$attrs" :ref="setContent" :id="root.menuId" role="menu" :aria-label="$attrs['aria-label'] as string ?? root.label.value"
+        v-bind="$attrs" :ref="setContent" :id="root.menuId" role="menu" :aria-label="props.ariaLabel ?? ($attrs['aria-label'] as string | undefined) ?? root.label.value"
         :data-morph-ready="morphReady ? 'true' : 'false'" tabindex="-1" class="be-ctx-panel" :initial="false" :animate="animate" :transition="transition"
         @keydown="onKeydown" @contextmenu.prevent
       >

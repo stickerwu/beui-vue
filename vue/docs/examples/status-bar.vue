@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ButtonBase, StatusBar } from 'beui-vue'
+import { ButtonBase, StatusBar, StatusBarLegend, StatusBarPlot, StatusBarTooltip } from 'beui-vue'
 import { computed, ref } from 'vue'
 
 const incident = ref(false), replay = ref(0)
@@ -22,11 +22,16 @@ const api = computed(() => history.map((datum, day) => incident.value && day >= 
 <template>
   <div class="status-demo">
     <div class="top"><span>48 days of status</span><div><ButtonBase variant="ghost" size="sm" @click="replay++">Replay</ButtonBase><ButtonBase variant="ghost" size="sm" @click="incident = !incident">{{ incident ? 'Resolve incident' : 'Simulate incident' }}</ButtonBase></div></div>
-    <StatusBar :key="`api-${replay}`" label="API status" :data="api" :statuses="statuses" hide-legend>
-      <template #header><div class="line"><strong>API</strong><span>{{ incident ? 'Degraded' : 'Operational' }}</span></div></template>
+    <StatusBar :key="`api-${replay}`" label="API status" :data="api" :statuses="statuses">
+      <div class="line"><strong>API</strong><span>{{ incident ? 'Degraded' : 'Operational' }}</span></div>
+      <StatusBarPlot />
+      <StatusBarTooltip />
     </StatusBar>
     <StatusBar :key="`site-${replay}`" class="website" label="Website status" :data="website" :statuses="statuses">
-      <template #header><div class="line"><strong>Website</strong><span>Operational</span></div></template>
+      <div class="line"><strong>Website</strong><span>Operational</span></div>
+      <StatusBarPlot />
+      <StatusBarTooltip />
+      <StatusBarLegend class="legend-pad" />
     </StatusBar>
   </div>
 </template>
@@ -40,5 +45,6 @@ const api = computed(() => history.map((datum, day) => incident.value && day >= 
 .line { display: flex; align-items: center; justify-content: space-between; font-size: 14px; line-height: 20px; }
 .line strong { font-weight: 500; }
 .line span { color: var(--beui-muted-foreground); }
+.status-demo :deep(.legend-pad) { padding-top: 8px; }
 .website { padding-top: 24px; border-top: 1px solid var(--beui-border); }
 </style>

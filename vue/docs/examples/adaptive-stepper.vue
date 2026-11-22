@@ -1,13 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { AdaptiveStepper } from 'beui-vue'
-
-const guests = ref(2)
+import {
+  AdaptiveStepper,
+  AdaptiveStepperDecrement,
+  AdaptiveStepperIncrement,
+  AdaptiveStepperValue,
+} from 'beui-vue'
 </script>
 
 <template>
   <div class="stage">
-    <AdaptiveStepper v-model="guests" :min="0" :max="3" label="Guests" />
+    <AdaptiveStepper :default-value="2" :min="0" :max="3" aria-label="Guests">
+      <AdaptiveStepperDecrement />
+      <AdaptiveStepperValue />
+      <AdaptiveStepperIncrement />
+    </AdaptiveStepper>
   </div>
 </template>
 

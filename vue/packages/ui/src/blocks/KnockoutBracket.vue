@@ -350,7 +350,7 @@ function matchLabel(roundName: string, match: TournamentMatch) {
   line-height: 1.5;
 }
 .be-bracket-section { position: relative; margin-inline: auto; }
-.be-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.be-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
 
 .be-bracket-header { position: relative; }
 .be-bracket-titles { position: absolute; inset: 0; overflow: hidden; }
@@ -363,6 +363,7 @@ function matchLabel(roundName: string, match: TournamentMatch) {
   justify-content: center;
   height: 100%;
   font-size: .875rem;
+  line-height: 1.25rem;
   font-weight: 700;
   color: var(--beui-foreground);
 }

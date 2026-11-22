@@ -53,7 +53,7 @@ const SPRING = { type: 'spring', bounce: 0, duration: 0.3 } as const
 .bar-stage { display: flex; min-height: 18rem; width: 100%; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem; }
 .bar-row { display: flex; min-height: 6rem; width: 100%; align-items: center; justify-content: center; }
 .bar-controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .5rem; }
-.toggle { position: relative; display: flex; box-sizing: border-box; width: 110px; height: 2.25rem; align-items: center; justify-content: center; overflow: hidden; margin: 0; padding: 0; border: 1px solid var(--beui-border); border-radius: 9999px; background: var(--beui-card); color: var(--beui-foreground); font: inherit; font-size: .75rem; line-height: 1rem; font-weight: 500; cursor: pointer; transition: border-color .15s; }
+.toggle { position: relative; display: flex; box-sizing: border-box; width: 110px; height: 2.25rem; align-items: center; justify-content: center; overflow: hidden; margin: 0; padding: 0; border: 1px solid var(--beui-border); border-radius: 9999px; background: var(--beui-card); color: var(--beui-foreground); font: inherit; font-size: .75rem; line-height: 1rem; font-weight: 500; cursor: pointer; transition: color .15s cubic-bezier(.4, 0, .2, 1), background-color .15s cubic-bezier(.4, 0, .2, 1), border-color .15s cubic-bezier(.4, 0, .2, 1); }
 .toggle:hover { border-color: var(--border-strong, color-mix(in srgb, var(--beui-foreground) 16%, transparent)); }
 .toggle-inner { display: flex; align-items: center; gap: .375rem; }
 .toggle-icon { width: .875rem; height: .875rem; flex: none; }

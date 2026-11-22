@@ -18,6 +18,7 @@ export interface DrpProps {
   autoFocus?: boolean
   showSummary?: boolean
   closeOnSelect?: boolean
+  defaultOpen?: boolean
   labels?: Partial<DateRangePickerMessages>
 }
 
@@ -47,7 +48,7 @@ export function useDrpController(
     const controlled = controlledValue()
     return controlled === undefined ? internalValue.value : controlled
   })
-  const internalOpen = shallowRef(false)
+  const internalOpen = shallowRef(props.defaultOpen ?? false)
   const open = computed(() => controlledOpen() ?? internalOpen.value)
 
   const trigger = shallowRef<HTMLElement | null>(null)
@@ -357,7 +358,11 @@ export function useDrpController(
     announcement.value = ''
   })
 
+  const uid = useId()
+  const triggerId = `${uid}-trigger`
+  const contentId = `${uid}-content`
   return {
+    triggerId, contentId,
     value, change, open, setOpen, trigger, content, root, label, locale, t, today, canHover, reduce,
     disabled: computed(() => Boolean(props.disabled)), showSummary: computed(() => props.showSummary ?? true), presets: computed(() => props.presets ?? []),
     autoFocus: computed(() => Boolean(props.autoFocus)),

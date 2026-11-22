@@ -2,7 +2,7 @@
 import { useReducedMotion } from '../../core/reduced-motion'
 import { computed, onBeforeUnmount, provide, shallowRef, useId, watch } from 'vue'
 import ContextMenuContent from './ContextMenuContent.vue'
-import ContextMenuTrigger from './ContextMenuTrigger'
+import ContextMenuTrigger from './ContextMenuTrigger.vue'
 import ContextItemsView from './ContextItemsView.vue'
 import { contextKey, contextMenuMessages, type ContextMenuMessages, type OpenModality } from './context-shared'
 import type { Point } from './menu-shared'

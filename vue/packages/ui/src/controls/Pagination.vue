@@ -38,12 +38,14 @@ export function paginationRange(page: number, totalPages: number, siblings = 1, 
 <script setup lang="ts">
 import { AnimatePresence, LayoutGroup, motion } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
-import { computed, shallowRef, useId } from 'vue'
+import { computed, shallowRef, useId, useSlots, type FunctionalComponent } from 'vue'
 import { easeOut, layoutSpring } from '../core/motion'
 import PresenceGate from '../layout/PresenceGate.vue'
 
 const props = withDefaults(defineProps<{
   totalPages: number
+  /** The current page, 1-based. Bind it with `v-model:page` (or `v-model`) to control the pagination. */
+  page?: number
   /** Initial page when `v-model` is not used. */
   defaultPage?: number
   /** Pages shown either side of the current one. */
@@ -63,7 +65,20 @@ const props = withDefaults(defineProps<{
   /** Override any built-in string. `{count}` fills `back`/`forward`, `{page}` fills `page`. */
   labels?: Partial<PaginationMessages>
 }>(), { defaultPage: 1, siblings: 1, boundaries: 1, jump: 5 })
-const emit = defineEmits<{ change: [page: number] }>()
+const emit = defineEmits<{ change: [page: number]; 'update:page': [page: number] }>()
+defineSlots<{
+  /**
+   * Render each page link yourself, for your router's link. Receives the link `props` (href, class, aria
+   * attributes, click handler) to bind onto it, and `Children`, a component for the link's contents: render it inside with `<component :is="Children" />`.
+   * Only used together with `getHref`.
+   */
+  renderLink?: (props: { props: Record<string, unknown>; Children: FunctionalComponent }) => unknown
+}>()
+const slots = useSlots()
+// Hands one page link to the `renderLink` slot. Its attributes are the link props and its own
+// default slot is the link's contents.
+const RenderedLink: FunctionalComponent = (_props, { attrs, slots: own }) => slots.renderLink?.({ props: attrs, Children: () => own.default?.() })
+RenderedLink.inheritAttrs = false
 const model = defineModel<number>()
 
 const reduce = useReducedMotion()
@@ -73,7 +88,7 @@ const fill = (template: string, values: Record<string, string | number>) => temp
 const total = computed(() => Math.max(1, Math.floor(props.totalPages)))
 const clamp = (value: number) => Math.min(total.value, Math.max(1, Math.round(value)))
 const internal = shallowRef(props.defaultPage)
-const current = computed(() => clamp(model.value ?? internal.value))
+const current = computed(() => clamp(props.page ?? model.value ?? internal.value))
 const items = computed(() => paginationRange(current.value, total.value, props.siblings, props.boundaries))
 const fade = computed(() => ({ duration: reduce.value ? 0.12 : 0.16, ease: easeOut }))
 const pageName = computed(() => props.label ?? strings.value.label)
@@ -81,8 +96,9 @@ const pageName = computed(() => props.label ?? strings.value.label)
 function go(next: number) {
   const target = clamp(next)
   if (target === current.value) return
-  if (model.value === undefined) internal.value = target
+  if (props.page === undefined && model.value === undefined) internal.value = target
   model.value = target
+  emit('update:page', target)
   emit('change', target)
 }
 function click(event: MouseEvent, target: number) {
@@ -92,7 +108,7 @@ function click(event: MouseEvent, target: number) {
   }
   go(target)
 }
-const tag = (target: number, disabled = false) => (props.getHref && !disabled ? 'a' : 'button')
+const tag = (target: number, disabled = false) => (props.getHref && !disabled ? (slots.renderLink ? RenderedLink : 'a') : 'button')
 const attrs = (target: number, disabled = false) => (props.getHref && !disabled ? { href: props.getHref(target) } : { type: 'button', disabled })
 </script>
 
@@ -154,10 +170,10 @@ const attrs = (target: number, disabled = false) => (props.getHref && !disabled 
   </nav>
 </template>
 
-<style scoped>
+<style>
 .be-pagination { display: flex; }
 .be-pagination-list { position: relative; display: flex; align-items: center; gap: 0.125rem; margin: 0; padding: 0; list-style: none; }
-.be-pagination-list > :deep(li) { margin: 0; padding: 0; }
+.be-pagination-list > li { margin: 0; padding: 0; }
 .be-pagination-control {
   position: relative; display: inline-flex; box-sizing: border-box; height: 2rem; min-width: 2rem; align-items: center; justify-content: center;
   margin: 0; padding: 0 0.5rem; border: 0; border-radius: 9999px; background: transparent; color: var(--beui-muted-foreground);

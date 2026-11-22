@@ -44,7 +44,7 @@ function close(id: string) {
 .rooms-stage :deep(.rooms-tabs) { width: 100%; max-width: 64rem; }
 .room-panel { position: relative; min-height: 16rem; overflow: hidden; background-image: radial-gradient(circle at 1px 1px, #dfe2e3 1px, transparent 1.5px); background-size: 4.8rem 4.8rem; padding: 2rem 1.75rem; }
 .room-copy { position: relative; max-width: 36rem; }
-.room-eyebrow { margin: 0; font-size: .68rem; font-weight: 600; line-height: 1rem; letter-spacing: .24em; text-transform: uppercase; color: rgb(0 0 0 / .4); }
+.room-eyebrow { margin: 0; font-size: .68rem; font-weight: 600; line-height: 1.5; letter-spacing: .24em; text-transform: uppercase; color: rgb(0 0 0 / .4); }
 .room-title { margin: .75rem 0 0; border: 0; padding: 0; font-size: 1.875rem; line-height: 2.25rem; font-weight: 300; letter-spacing: -.055em; color: #151515; }
 .room-detail { margin: 1rem 0 0; max-width: 28rem; font-size: .875rem; line-height: 1.5rem; color: rgb(0 0 0 / .55); }
 .room-hint { margin-top: 2rem; display: flex; align-items: center; gap: .75rem; font-size: .75rem; line-height: 1rem; font-weight: 500; color: rgb(0 0 0 / .5); }

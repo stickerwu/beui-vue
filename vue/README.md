@@ -25,8 +25,6 @@ pnpm test:package
 
 在仓库根目录运行 `bun install --frozen-lockfile` 安装上游预览所需的依赖。Bun 测试目录限定为 `tests/`，Vue 的浏览器测试通过 Playwright 单独运行。回到 `vue/` 运行 `pnpm test:parity`，为六个样板在同一组数据与输入下采集亮暗主题的起始、中间和结束帧。原图、移植图、像素差异图和报告位于 `.artifacts/parity/`。`pnpm test:gallery` 采集固定上游目录的全部 172 组演示入口并生成 `.artifacts/gallery/index.html`，可逐组审看。两侧默认演示的数据、交互路径或内容仍有区别时，应先对齐再作结论。所有截图均在本地浏览器生成。
 
-使用 `pnpm docs:evidence` 将已生成的完整图库和六个样板的关键帧复制到文档静态目录，再运行 `pnpm docs:build`。这些图片只随文档分发。
-
 运行 `pnpm test:motion` 可为全部 172 组演示采集明暗主题下 0、120 和 900 毫秒的原图、Vue 图与差分图。`.artifacts/motion-review/report.json` 记录输入、两侧是否匹配到同一控件、各帧差异及待复核项目。在 GitHub Actions 手动运行 **Capture Vue visual comparisons** 也可下载全部原始材料。
 
 ## 发布

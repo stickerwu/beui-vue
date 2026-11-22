@@ -9,6 +9,7 @@ import type { Labels } from './shared'
 
 const CASCADE_STAGGER = 0.025
 const props = withDefaults(defineProps<{ phrases?: string[], variant?: 'cascade' | 'swap' | 'scramble', interval?: number, shimmerDuration?: number, labels?: Labels }>(), { variant: 'cascade', interval: 1800, shimmerDuration: 2.2 })
+defineSlots<{ indicator?(): unknown }>()
 const reduce = useReducedMotion()
 const index = shallowRef(0)
 const statusId = useId()

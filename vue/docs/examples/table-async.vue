@@ -80,11 +80,11 @@ const done = computed(() => page.value >= MAX_PAGES)
 .rounded { border-radius: 1rem; }
 .name { font-weight: 500; }
 .money { font-variant-numeric: tabular-nums; }
-.badge { display: inline-block; padding: .125rem .5rem; border-radius: 999px; font-size: .75rem; line-height: 1rem; font-weight: 500; text-transform: capitalize; }
-.badge[data-status='active'] { background: rgb(16 185 129 / .1); color: #059669; }
-.badge[data-status='invited'] { background: rgb(245 158 11 / .1); color: #d97706; }
-.badge[data-status='suspended'] { background: rgb(244 63 94 / .1); color: #e11d48; }
-:global(:is(.dark, [data-beui-theme='dark']) .people .badge[data-status='active']) { color: #34d399; }
-:global(:is(.dark, [data-beui-theme='dark']) .people .badge[data-status='invited']) { color: #fbbf24; }
-:global(:is(.dark, [data-beui-theme='dark']) .people .badge[data-status='suspended']) { color: #fb7185; }
+.badge { padding: .125rem .5rem; border-radius: 999px; font-size: .75rem; line-height: 1rem; font-weight: 500; text-transform: capitalize; }
+.badge[data-status='active'] { background: oklch(69.6% .17 162.48 / .1); color: oklch(59.6% .145 163.225); }
+.badge[data-status='invited'] { background: oklch(76.9% .188 70.08 / .1); color: oklch(66.6% .179 58.318); }
+.badge[data-status='suspended'] { background: oklch(64.5% .246 16.439 / .1); color: oklch(58.6% .253 17.585); }
+:global(:is(.dark, [data-beui-theme='dark']) .people .badge[data-status='active']) { color: oklch(76.5% .177 163.223); }
+:global(:is(.dark, [data-beui-theme='dark']) .people .badge[data-status='invited']) { color: oklch(82.8% .189 84.429); }
+:global(:is(.dark, [data-beui-theme='dark']) .people .badge[data-status='suspended']) { color: oklch(71.2% .194 13.428); }
 </style>

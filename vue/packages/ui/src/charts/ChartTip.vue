@@ -12,7 +12,7 @@ const { open, anchor = null, anchorPoint, side = 'top', id, followCursor = true,
   open: boolean
   anchor?: Element | null
   anchorPoint?: { x: number; y: number }
-  side?: 'top' | 'bottom'
+  side?: 'top' | 'bottom' | 'left' | 'right'
   id?: string
   /** Track the real pointer over the anchor (default). Off: hang from the anchor box itself. */
   followCursor?: boolean
@@ -27,7 +27,10 @@ const positioner = useTemplateRef('positioner')
 const origin = shallowRef('center bottom')
 let cursor: { x: number; y: number } | null = null
 let pointerFocus = false
-let chosen: 'top' | 'bottom' | null = null
+type Side = 'top' | 'bottom' | 'left' | 'right'
+const OPPOSITE: Record<Side, Side> = { top: 'bottom', bottom: 'top', left: 'right', right: 'left' }
+const ORIGIN: Record<Side, string> = { top: 'center bottom', bottom: 'center top', left: 'right center', right: 'left center' }
+let chosen: Side | null = null
 let frame = 0
 
 function place() {
@@ -35,21 +38,25 @@ function place() {
   const element = positioner.value
   if (!open || !anchor || !element) return
   const box = anchor.getBoundingClientRect()
-  const px = cursor?.x ?? box.left + box.width * (anchorPoint?.x ?? 0.5)
-  const py = cursor?.y ?? (anchorPoint ? box.top + box.height * anchorPoint.y : side === 'top' ? box.top : box.bottom)
+  const sideways = side === 'left' || side === 'right'
+  const px = cursor?.x ?? (anchorPoint || !sideways ? box.left + box.width * (anchorPoint?.x ?? 0.5) : side === 'left' ? box.left : box.right)
+  const py = cursor?.y ?? (anchorPoint || sideways ? box.top + box.height * (anchorPoint?.y ?? 0.5) : side === 'top' ? box.top : box.bottom)
   const width = element.offsetWidth
   const height = element.offsetHeight
   const gap = cursor ? 12 : 8
   const pad = 8
-  let resolved = chosen ?? side
-  const fits = (which: 'top' | 'bottom') => which === 'top' ? py - gap - height >= pad : py + gap + height <= window.innerHeight - pad
-  if (!fits(resolved) && fits(resolved === 'top' ? 'bottom' : 'top')) resolved = resolved === 'top' ? 'bottom' : 'top'
+  let resolved: Side = chosen ?? side
+  const fits = (which: Side) => which === 'top' ? py - gap - height >= pad
+    : which === 'bottom' ? py + gap + height <= window.innerHeight - pad
+      : which === 'left' ? px - gap - width >= pad : px + gap + width <= window.innerWidth - pad
+  if (!fits(resolved) && fits(OPPOSITE[resolved])) resolved = OPPOSITE[resolved]
   if (cursor) chosen = resolved
-  const x = Math.max(pad, Math.min(px - width / 2, window.innerWidth - pad - width))
-  const y = resolved === 'top' ? py - gap - height : py + gap
+  const across = resolved === 'left' || resolved === 'right'
+  const x = across ? (resolved === 'right' ? px + gap : px - gap - width) : Math.max(pad, Math.min(px - width / 2, window.innerWidth - pad - width))
+  const y = across ? Math.max(pad, Math.min(py - height / 2, window.innerHeight - pad - height)) : resolved === 'top' ? py - gap - height : py + gap
   const ratio = window.devicePixelRatio || 1
   element.style.transform = `translate3d(${Math.round(x * ratio) / ratio}px, ${Math.round(y * ratio) / ratio}px, 0)`
-  origin.value = resolved === 'top' ? 'center bottom' : 'center top'
+  origin.value = ORIGIN[resolved]
   ready.value = true
 }
 function schedule() { if (!frame) frame = requestAnimationFrame(place) }
@@ -86,6 +93,21 @@ watch(() => [anchor, followCursor] as const, ([element, follow], _, cleanup) => 
   })
 }, { immediate: true })
 
+// Like the upstream Tooltip's dismissal: Escape closes an open tip wherever focus is, and so does a tap that lands
+// outside both the anchor and the tip. Each chart decides what closing means by handling `dismiss`.
+watch(() => open, (value, _, cleanup) => {
+  if (!value) return
+  const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape') emit('dismiss') }
+  const onDown = (event: PointerEvent) => {
+    const target = event.target as Node | null
+    if (event.pointerType !== 'touch' || !target || anchor?.contains(target) || positioner.value?.contains(target)) return
+    emit('dismiss')
+  }
+  document.addEventListener('keydown', onKey)
+  document.addEventListener('pointerdown', onDown, true)
+  cleanup(() => { document.removeEventListener('keydown', onKey); document.removeEventListener('pointerdown', onDown, true) })
+}, { immediate: true })
+
 watch(() => open, value => {
   if (value) { rendered.value = true; chosen = null; nextTick(schedule) }
   else chosen = null
@@ -106,7 +128,7 @@ onBeforeUnmount(() => { if (frame) cancelAnimationFrame(frame) })
 <template>
   <Teleport to="body">
     <span v-if="rendered" ref="positioner" class="chart-tip-position" :style="{ visibility: ready ? 'visible' : 'hidden', '--chart-tip-origin': origin }" :inert="!open || undefined" :aria-hidden="!open || undefined">
-      <Transition appear name="chart-tip" @after-leave="rendered = false">
+      <Transition appear name="chart-tip" @after-leave="open || (rendered = false)">
         <span v-if="open" :id="id" role="tooltip" class="chart-tip" :style="maxWidth ? { maxWidth } : undefined"><slot /></span>
       </Transition>
     </span>

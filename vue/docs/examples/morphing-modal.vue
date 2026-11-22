@@ -89,7 +89,7 @@ h2 { margin: 0; color: var(--beui-foreground); }
 .x { display: inline-flex; width: 1.75rem; height: 1.75rem; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 999px; background: transparent; color: var(--beui-muted-foreground); font-size: 1rem; }
 .x:hover { background: color-mix(in srgb, var(--beui-foreground) 6%, transparent); }
 .rows { display: flex; flex-direction: column; gap: .5rem; }
-.row { display: flex; box-sizing: border-box; width: 100%; align-items: center; gap: .75rem; padding: .75rem 1rem; border: 0; border-radius: 1rem; background: color-mix(in srgb, var(--beui-foreground) 4%, transparent); color: var(--beui-foreground); font-size: .875rem; line-height: 1.25rem; font-weight: 500; text-align: left; }
+.row { display: flex; box-sizing: border-box; width: 100%; align-items: center; gap: .75rem; padding: .75rem 1rem; border: 0; border-radius: 1rem; background: color-mix(in srgb, var(--beui-foreground) 4%, transparent); color: var(--beui-foreground); font-size: .875rem; line-height: 1.25rem; font-weight: 500; }
 .row:hover { background: color-mix(in srgb, var(--beui-foreground) 8%, transparent); }
 .row.destructive { background: color-mix(in srgb, var(--beui-destructive) 10%, transparent); color: var(--beui-destructive); }
 .row.destructive:hover { background: color-mix(in srgb, var(--beui-destructive) 15%, transparent); }

@@ -4,8 +4,10 @@ import { motion } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
 import { useLineChart } from './chart-model'
 
+// The trailing follow suits a mouse; under a finger it reads as lag (upstream line-chart tooltip, component-specific tuning).
+const FOLLOW = { type: 'spring', stiffness: 260, damping: 28, mass: 0.7 } as const
 const { side = 'auto' } = defineProps<{ side?: 'auto' | 'left' | 'right' }>()
-const { data, visible, index, inspecting, tooltipId, overlay, geometry, domain, valueText } = useLineChart()
+const { data, visible, index, inspecting, touching, tooltipId, overlay, geometry, domain, valueText } = useLineChart()
 const panel = useTemplateRef('panel')
 const size = shallowRef({ width: 224, height: 96 })
 const reduced = useReducedMotion()
@@ -41,7 +43,7 @@ const position = computed(() => {
 
 <template>
   <Teleport v-if="overlay && inspecting" :to="overlay">
-    <motion.div class="tooltip-position" :initial="position" :animate="position" :transition="reduced ? { duration: 0 } : { type: 'spring', stiffness: 260, damping: 28, mass: .7 }">
+    <motion.div class="tooltip-position" :initial="position" :animate="position" :transition="reduced || touching ? { duration: 0 } : FOLLOW">
       <div ref="panel">
         <motion.div :id="tooltipId" class="tooltip" role="tooltip" :initial="{ opacity: 0, scale: reduced ? 1 : .94 }" :animate="{ opacity: 1, scale: 1 }" :transition="{ duration: .18, ease: [0.16, 1, 0.3, 1] }">
           <slot :category="category" :index="index" :rows="rows">

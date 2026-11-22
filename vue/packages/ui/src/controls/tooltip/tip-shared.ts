@@ -14,6 +14,18 @@ export interface TooltipTiming {
 }
 export const TIMING_KEY: InjectionKey<TooltipTiming> = Symbol('beui-tooltip-timing')
 
+/** What `TooltipContent` registers with its `Tooltip` when the tooltip is composed from parts. */
+export interface TooltipPart {
+  props: { side?: TooltipSide; align?: TooltipAlign; sideOffset?: number; arrow?: boolean; anchorPoint?: TooltipPoint; class?: unknown }
+  slots: { default?: () => unknown }
+}
+export interface TooltipParts {
+  open: Readonly<Ref<boolean>>
+  register: (part: TooltipPart) => void
+  unregister: (part: TooltipPart) => void
+}
+export const PARTS_KEY: InjectionKey<TooltipParts> = Symbol('beui-tooltip-parts')
+
 /* ---- grace corridor (ported from components/motion/tooltip/grace.ts) ------- */
 type Point = { x: number; y: number }
 type Box = { left: number; top: number; right: number; bottom: number }

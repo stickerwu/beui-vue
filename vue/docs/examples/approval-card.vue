@@ -49,7 +49,7 @@ onBeforeUnmount(() => clearTimeout(timer))
 <template>
   <div class="demo" :class="{ review: !isQuestions }" :data-example-variant="variant">
     <ApprovalCard v-if="isQuestions" :key="`q-${run}`" :questions="QUESTIONS" :status="status" result="Three responses sent to the agent." @submit="submit" />
-    <ApprovalCard v-else :key="`r-${run}`" title="Publish the component update?" description="The agent has prepared the release and is waiting for your decision." :status="status" :result="reviewResult" @approve="finish('approved')" :on-request-changes="() => finish('changes-requested')" @reject="finish('rejected')">
+    <ApprovalCard v-else :key="`r-${run}`" title="Publish the component update?" description="The agent has prepared the release and is waiting for your decision." :status="status" :result="reviewResult" @approve="finish('approved')" @request-changes="finish('changes-requested')" @reject="finish('rejected')">
       <dl class="facts">
         <div class="fact"><dt>Release</dt><dd class="mono">approval-card</dd></div>
         <div class="fact"><dt>Checks</dt><dd>4 passed</dd></div>

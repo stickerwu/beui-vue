@@ -29,7 +29,7 @@ const items = [
 .row { display: flex; flex-direction: column; gap: .25rem; padding: .75rem .5rem; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: pointer; outline: none; }
 .head { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
 .title { font-size: .875rem; line-height: 1.25rem; font-weight: 500; color: var(--beui-foreground); }
-.arrow { color: var(--beui-muted-foreground); transition: transform .15s; }
-.row:hover .arrow { transform: translate(.125rem, -.125rem); }
+.arrow { color: var(--beui-muted-foreground); transition: transform .15s cubic-bezier(.4, 0, .2, 1), translate .15s cubic-bezier(.4, 0, .2, 1); }
+.row:hover .arrow { translate: .125rem -.125rem; }
 .body { margin: 0; font-size: .875rem; line-height: 1.25rem; color: var(--beui-muted-foreground); }
 </style>

@@ -21,6 +21,7 @@ const props = withDefaults(defineProps<{
   radius?: number
   shadow?: boolean
   width?: string
+  contentClass?: string
 }>(), { side: 'bottom', align: 'end', sideOffset: 8, radius: 16, shadow: true })
 const emit = defineEmits<{ opened: [content: HTMLElement] }>()
 
@@ -160,6 +161,7 @@ usePresence({
       ref="inner"
       role="dialog"
       class="drp-surface"
+      :class="contentClass"
       :aria-labelledby="labelledBy"
       tabindex="-1"
       :initial="reduce ? false : innerInitial"

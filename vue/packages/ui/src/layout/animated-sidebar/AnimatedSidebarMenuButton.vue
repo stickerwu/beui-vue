@@ -26,6 +26,14 @@ const props = withDefaults(defineProps<{
   label?: string
 }>(), { isActive: false, ariaExpanded: undefined, disabled: false, closeOnSelect: undefined })
 const emit = defineEmits<{ select: [] }>()
+defineSlots<{
+  /** Label of the row. */
+  default?: () => VNode[]
+  /** Icon before the label. Stays visible in the icon rail. */
+  icon?: () => VNode[]
+  /** Trailing content such as a count; replaces `badge`. Hidden in the icon rail. */
+  badge?: () => VNode[]
+}>()
 const slots = useSlots()
 const context = useAnimatedSidebar()
 const panel = useAnimatedSidebarPanel()

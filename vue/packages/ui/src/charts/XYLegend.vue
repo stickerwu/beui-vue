@@ -23,9 +23,9 @@ const emit = defineEmits<{ toggle: [id: string]; hover: [id: string | null] }>()
 </template>
 
 <style scoped>
-.xy-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin: 0; padding: 0; list-style: none; font-size: 12px; line-height: 1.3333; }
+.xy-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin: 0; padding: 0; list-style: none; font-size: 12px; line-height: calc(4 / 3); }
 .xy-legend li { margin: 0; padding: 0; }
-.xy-legend button { display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; border: 0; border-radius: 6px; background: transparent; color: var(--beui-muted-foreground); font: inherit; font-size: 12px; line-height: 1.3333; cursor: pointer; transition: color .15s, opacity .15s; }
+.xy-legend button { display: flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 8px; border: 0; border-radius: 6px; background: transparent; color: var(--beui-muted-foreground); font: inherit; font-size: 12px; line-height: calc(4 / 3); cursor: pointer; transition: color .15s, opacity .15s; }
 @media (hover: hover) { .xy-legend button:hover { color: var(--beui-foreground); } }
 .xy-legend button:focus-visible { outline: 2px solid var(--beui-chart-ring, color-mix(in srgb, var(--beui-foreground) 12%, transparent)); outline-offset: 2px; }
 .xy-legend button.off { opacity: .5; }

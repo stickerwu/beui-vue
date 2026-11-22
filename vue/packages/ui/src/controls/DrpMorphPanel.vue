@@ -14,6 +14,7 @@ defineProps<{
   radius?: number
   shadow?: boolean
   width?: string
+  contentClass?: string
 }>()
 const emit = defineEmits<{ opened: [content: HTMLElement] }>()
 // The panel portals to the body, which does not exist during server rendering.
@@ -36,6 +37,7 @@ onMounted(() => { mounted.value = true })
         :radius="radius"
         :shadow="shadow"
         :width="width"
+        :content-class="contentClass"
         @opened="emit('opened', $event)"
       >
         <slot />

@@ -36,7 +36,13 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{ cardSelect: [id: string] }>()
 defineSlots<{
+  /** Draws the front of a card, like the `renderFace` prop of the React version. */
+  renderFace?(props: { card: Card }): unknown
+  /** Draws the back of a card, like the `renderBack` prop of the React version. */
+  renderBack?(props: { card: Card }): unknown
+  /** Alias of `renderFace`. */
   face?(props: { card: Card }): unknown
+  /** Alias of `renderBack`. */
   back?(props: { card: Card }): unknown
 }>()
 
@@ -214,11 +220,13 @@ onBeforeUnmount(() => observer?.disconnect())
           :transition="reduce ? { duration: 0 } : FLIGHT"
         >
           <span class="be-dealer-face">
-            <slot name="face" :card="entry.card">{{ entry.card.label }}</slot>
+            <slot name="renderFace" :card="entry.card"><slot name="face" :card="entry.card">{{ entry.card.label }}</slot></slot>
           </span>
           <span class="be-dealer-face be-dealer-back">
-            <slot name="back" :card="entry.card">
-              <span class="be-dealer-default-back" />
+            <slot name="renderBack" :card="entry.card">
+              <slot name="back" :card="entry.card">
+                <span class="be-dealer-default-back" />
+              </slot>
             </slot>
           </span>
         </motion.span>

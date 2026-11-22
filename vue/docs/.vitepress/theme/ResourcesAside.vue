@@ -65,16 +65,6 @@ const upstreamUrl = computed(() => {
             </span>
             <svg class="beui-resource-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
           </a>
-          <a class="beui-resource-link" :href="href('/verification')">
-            <span class="beui-resource-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M4 3h6a3 3 0 0 1 3 3v15a4 4 0 0 0-4-3H4zm16 0h-4a3 3 0 0 0-3 3v15a4 4 0 0 1 4-3h3Z" /></svg>
-            </span>
-            <span>
-              <span class="beui-resource-link-title">{{ t('Preview guide') }}</span>
-              <span class="beui-resource-link-description">{{ t('Review component parity and motion') }}</span>
-            </span>
-            <svg class="beui-resource-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5 7 7-7 7" /></svg>
-          </a>
         </div>
         <a class="beui-resource-footer-link" :href="href('/catalog')">
           {{ t('Browse all components') }}

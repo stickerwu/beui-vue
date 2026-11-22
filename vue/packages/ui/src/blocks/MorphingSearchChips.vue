@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { AnimatePresence, motion } from 'motion-v'
+import { AnimatePresence, motion, mountedStates } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
-import { computed, onBeforeUnmount, onMounted, shallowRef, useId, useSlots, useTemplateRef, watch } from 'vue'
+import { computed, onBeforeUnmount, onBeforeUpdate, onMounted, shallowRef, useId, useSlots, useTemplateRef, watch } from 'vue'
 import { easeOut, layoutSpring, swapSpring } from '../core/motion'
 import { formatMessage, morphingSearchChipsMessages } from './messages'
 
@@ -66,6 +66,8 @@ const props = withDefaults(defineProps<{
   // would read as an always-closed controlled surface.
   open: undefined,
   defaultOpen: false,
+  loading: false,
+  disabled: false,
 })
 
 const emit = defineEmits<{
@@ -513,6 +515,19 @@ const glassExit = computed(() => (reduce.value ? { opacity: 0, transition: { dur
 const contentStyle = computed(() => (panelFloor.value ? { minHeight: `${panelFloor.value}px` } : undefined))
 const contentInitial = computed(() => ({ opacity: 0, y: reduce.value ? 0 : below.value ? -6 : 6 }))
 const contentActive = computed(() => (reduce.value ? { opacity: 1, y: 0, transition: { duration: 0.15 } } : { opacity: 1, y: 0, transition: CONTENT_IN }))
+// React measures every layout box before any of the commit's DOM changes. A
+// motion component here measures in its own beforeUpdate, which Vue only runs
+// when its props change and after the siblings before it have already patched,
+// so the field would never glide aside as a chip arrives. Measuring the bar,
+// the chips and the field from this component's beforeUpdate restores that.
+onBeforeUpdate(() => {
+  const el = root.value
+  if (!el || reduce.value) return
+  for (const node of el.querySelectorAll<HTMLElement>('.chips-bar, .chip, .chips-field')) {
+    const state = mountedStates.get(node)
+    if (state && !state.isExiting) state.getSnapshot(true)
+  }
+})
 const fieldStyle = computed(() => (open.value ? undefined : { width: `${Math.max(placeholder.value.length, 6) + 2}ch` }))
 const chipOrigin = computed(() => (rtl.value ? 'right center' : 'left center'))
 const rowsLabel = computed(() => (trimmed.value ? text.value.suggestions : text.value.recentSearches))
@@ -543,7 +558,7 @@ const rowsLabel = computed(() => (trimmed.value ? text.value.suggestions : text.
                 <svg v-else class="chips-glyph" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.6" /><path d="m16 16 4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
                 <span class="chips-option-label">{{ before }}<strong v-if="match">{{ match }}</strong>{{ after }}</span>
                 <span v-if="row.kind === 'recent'" aria-hidden="true" class="chips-option-remove" @click="event => { event.stopPropagation(); removeRecent(row.label) }">
-                  <svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
                 </span>
               </div>
             </div>
@@ -611,21 +626,21 @@ const rowsLabel = computed(() => (trimmed.value ? text.value.suggestions : text.
 .chips-panel-wrap.is-above .chips-glass { bottom: 0; }
 .chips-content { position: relative; padding: .5rem; }
 .chips-head { display: flex; align-items: center; justify-content: space-between; height: 2.25rem; padding-inline: .75rem; }
-.chips-heading { color: var(--beui-muted-foreground); font-size: .75rem; font-weight: 500; }
-.chips-clear { padding: .125rem .375rem; border: 0; border-radius: .375rem; background: transparent; color: var(--beui-muted-foreground); font: inherit; font-size: .75rem; cursor: pointer; outline: none; }
+.chips-heading { color: var(--beui-muted-foreground); font-size: .75rem; line-height: calc(1 / .75); font-weight: 500; }
+.chips-clear { padding: .125rem .375rem; border: 0; border-radius: .375rem; background: transparent; color: var(--beui-muted-foreground); font: inherit; font-size: .75rem; line-height: calc(1 / .75); cursor: pointer; outline: none; transition: color .15s cubic-bezier(.4, 0, .2, 1); }
 .chips-clear:hover { color: var(--beui-foreground); }
 .chips-clear:focus-visible { outline: 2px solid var(--beui-ring); }
 .chips-list { max-height: min(20rem, 45vh); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
-.chips-option { position: relative; display: flex; align-items: center; gap: .75rem; height: 2.75rem; padding-inline: .75rem; border-radius: 1rem; color: var(--beui-foreground); font-size: .875rem; cursor: pointer; }
+.chips-option { position: relative; display: flex; align-items: center; gap: .75rem; height: 2.75rem; padding-inline: .75rem; border-radius: 1rem; color: var(--beui-foreground); font-size: .875rem; line-height: calc(1.25 / .875); cursor: pointer; }
 .chips-active { position: absolute; inset: 0; border-radius: 1rem; background: color-mix(in srgb, var(--beui-foreground) 6%, transparent); }
 .chips-glyph { position: relative; width: 1rem; height: 1rem; flex: none; color: var(--beui-muted-foreground); }
 .chips-option-label { position: relative; min-width: 0; flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .chips-option-label strong { font-weight: 600; }
-.chips-option-remove { position: relative; display: grid; place-items: center; width: 1.75rem; height: 1.75rem; flex: none; border-radius: 50%; color: var(--beui-muted-foreground); }
+.chips-option-remove { position: relative; display: grid; place-items: center; width: 1.75rem; height: 1.75rem; flex: none; border-radius: 50%; color: var(--beui-muted-foreground); transition: background-color .15s cubic-bezier(.4, 0, .2, 1), color .15s cubic-bezier(.4, 0, .2, 1); }
 .chips-option-remove svg { width: .875rem; height: .875rem; }
 .chips-option-remove:hover { background: color-mix(in srgb, var(--beui-foreground) 10%, transparent); color: var(--beui-foreground); }
-.chips-empty { padding: .25rem .75rem .5rem; color: var(--beui-muted-foreground); font-size: .875rem; }
-.chips-loading { display: flex; align-items: center; gap: .75rem; height: 2.75rem; padding-inline: .75rem; color: var(--beui-muted-foreground); font-size: .875rem; }
+.chips-empty { padding: .25rem .75rem .5rem; color: var(--beui-muted-foreground); font-size: .875rem; line-height: calc(1.25 / .875); }
+.chips-loading { display: flex; align-items: center; gap: .75rem; height: 2.75rem; padding-inline: .75rem; color: var(--beui-muted-foreground); font-size: .875rem; line-height: calc(1.25 / .875); }
 .chips-spinner { width: 1rem; height: 1rem; }
 @media (prefers-reduced-motion: no-preference) { .chips-spinner { animation: chips-spin 1s linear infinite; } }
 @keyframes chips-spin { to { transform: rotate(360deg); } }
@@ -637,19 +652,19 @@ const rowsLabel = computed(() => (trimmed.value ? text.value.suggestions : text.
 .chips-search { width: 1.25rem; height: 1.25rem; flex: none; color: var(--beui-muted-foreground); }
 .chips-row { position: relative; display: flex; align-items: center; gap: .375rem; min-width: 0; overflow-x: auto; scrollbar-width: none; }
 .chips-row[data-filled] { margin-inline: -.375rem; padding-inline: .75rem; mask-image: linear-gradient(to right, transparent, #000 12px, #000 calc(100% - 12px), transparent); }
-.chip { display: flex; align-items: center; gap: .25rem; height: 2.25rem; flex: none; padding-inline-start: .75rem; padding-inline-end: .25rem; border-radius: 999px; background: color-mix(in srgb, var(--beui-foreground) 7%, transparent); color: var(--beui-foreground); font-size: .875rem; transition: background-color .15s, box-shadow .15s; }
+.chip { display: flex; align-items: center; gap: .25rem; height: 2.25rem; flex: none; padding-inline-start: .75rem; padding-inline-end: .25rem; border-radius: 999px; background: color-mix(in srgb, var(--beui-foreground) 7%, transparent); color: var(--beui-foreground); font-size: .875rem; line-height: calc(1.25 / .875); transition: background-color .15s cubic-bezier(.4, 0, .2, 1), box-shadow .15s cubic-bezier(.4, 0, .2, 1); }
 /* Inset: the chip fills its scrolling row, which clips anything drawn outside it. */
 .chip[data-marked] { background: color-mix(in srgb, var(--beui-foreground) 12%, transparent); box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--beui-foreground) 40%, transparent); }
 .chip-label { max-width: 10rem; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.chip-remove { display: grid; place-items: center; width: 1.75rem; height: 1.75rem; flex: none; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--beui-muted-foreground); cursor: pointer; outline: none; transition: background-color .15s, color .15s; }
+.chip-remove { display: grid; place-items: center; width: 1.75rem; height: 1.75rem; flex: none; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--beui-muted-foreground); cursor: pointer; outline: none; transition: background-color .15s cubic-bezier(.4, 0, .2, 1), color .15s cubic-bezier(.4, 0, .2, 1); }
 .chip-remove svg { width: .875rem; height: .875rem; }
 .chip-remove:hover { background: color-mix(in srgb, var(--beui-foreground) 10%, transparent); color: var(--beui-foreground); }
 .chip-remove:focus-visible { outline: 2px solid var(--beui-ring); }
 .chip-remove:disabled { pointer-events: none; }
-.chips-field { height: 2.25rem; min-width: 6rem; border: 0; background: transparent; color: var(--beui-foreground); font: inherit; font-size: 1rem; outline: none; text-overflow: ellipsis; }
+.chips-field { height: 2.25rem; min-width: 6rem; margin: 0; padding: 0; border: 0; background: transparent; color: var(--beui-foreground); font: inherit; font-size: 1rem; outline: none; text-overflow: ellipsis; }
 .chips-field::placeholder { color: var(--beui-muted-foreground); }
 .chips-field:disabled { cursor: not-allowed; }
 .chips-bar[data-open] .chips-field { flex: 1; }
 .chips-actions { display: flex; flex: none; align-items: center; gap: .25rem; }
-.chips-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.chips-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; border: 0; clip: rect(0, 0, 0, 0); white-space: nowrap; }
 </style>

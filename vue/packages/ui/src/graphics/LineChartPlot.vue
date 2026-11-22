@@ -3,7 +3,7 @@ import { computed, onMounted, onBeforeUnmount, shallowRef, useId, useTemplateRef
 import { AnimatePresence, motion } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
 import TextShimmer from '../effects/TextShimmer.vue'
-import { easeInOut, swapSpring } from '../core/motion'
+import { easeInOut, layoutSpring, swapSpring } from '../core/motion'
 import { useLineChart } from './chart-model'
 import { seriesPaths, type Point } from './chart-geometry'
 import { useChartMotion } from './use-chart-motion'
@@ -11,7 +11,7 @@ import { useChartMotion } from './use-chart-motion'
 const { height = 288, strokeWidth = 2, showGrid = true, fadeEdges = true } = defineProps<{
   height?: number; strokeWidth?: number; showGrid?: boolean; fadeEdges?: boolean
 }>()
-const { props, data, visible, index, open, inspect, inspecting, geometry, domain, messages,
+const { props, data, visible, index, open, touching, inspect, inspecting, geometry, domain, messages,
   loading, label, valueText, tickText, hidden, hovered, tooltipId, overlay } = useLineChart()
 const stage = useTemplateRef('stage')
 const host = useTemplateRef('host')
@@ -19,7 +19,7 @@ const width = shallowRef(0)
 const revealed = shallowRef(false)
 const reduced = useReducedMotion()
 const ease = [0.16, 1, 0.3, 1] as const
-const glide = computed(() => reduced.value ? { duration: 0 } : { type: 'spring' as const, stiffness: 360, damping: 32, mass: .6 })
+const glide = computed(() => reduced.value || touching.value ? { duration: 0 } : layoutSpring)
 const id = useId()
 const left = 44
 const top = 12
@@ -96,6 +96,7 @@ let pressing = false
 let lastPoint: number | null = null
 function pointer(event: PointerEvent) {
   if (event.type === 'pointerdown') { pressing = true; pointerFocus = true; lastPoint = null }
+  if (event.pointerType === 'touch') touching.value = event.type !== 'pointerup'
   if (!pressing && (event.pointerType === 'touch' || !window.matchMedia('(any-hover: hover)').matches)) return
   const rect = (event.currentTarget as HTMLInputElement).getBoundingClientRect()
   const position = Math.round(Math.max(0, Math.min(1, (event.clientX - rect.left) / (rect.width || 1))) * (count.value - 1))
@@ -103,6 +104,7 @@ function pointer(event: PointerEvent) {
 }
 function leave(event: PointerEvent) {
   lastPoint = null
+  if (event.pointerType === 'touch') touching.value = false
   if (event.pointerType !== 'touch' && (pointerFocus || document.activeElement !== event.currentTarget)) open.value = false
 }
 function keydown(event: KeyboardEvent) {
@@ -198,8 +200,8 @@ function nativeInput(event: Event) {
         <input v-if="!loading && !empty" class="inspector" type="range" :min="0" :max="count - 1" step="1" :value="cursor"
           :aria-label="messages.inspect.replace('{label}', label)" :aria-valuetext="activeText" :aria-describedby="inspecting ? tooltipId : undefined"
           @focus="!pointerFocus && inspect(cursor)" @blur="open = false; pointerFocus = false; pressing = false"
-          @pointerenter="pointer" @pointermove="pointer" @pointerdown="pointer" @pointerleave="leave" @pointerup="pressing = false"
-          @pointercancel="pressing = false; pointerFocus = false; open = false" @keydown="keydown" @input="nativeInput" />
+          @pointerenter="pointer" @pointermove="pointer" @pointerdown="pointer" @pointerleave="leave" @pointerup="pressing = false; touching = false"
+          @pointercancel="pressing = false; pointerFocus = false; open = false; touching = false" @keydown="keydown" @input="nativeInput" />
       </div>
     </div>
     <motion.div v-if="!empty" aria-hidden="true" class="categories" :initial="false" :animate="{ opacity: loading ? 0 : 1 }" :transition="{ duration: .15, ease }">
@@ -226,7 +228,7 @@ function nativeInput(event: Event) {
 .drawing { position: absolute; inset: 0; overflow: visible; }
 .axis,.value-tick,.tick { color: var(--beui-chart-muted, var(--beui-muted-foreground)); }
 .axis-labels { position: absolute; inset: 0; pointer-events: none; }
-.value-tick { position: absolute; top: 0; left: 0; white-space: nowrap; font: 11px/1.3333 var(--font-geist-mono, 'Geist Mono Variable', ui-monospace, monospace); font-variant-numeric: tabular-nums; }
+.value-tick { position: absolute; top: 0; left: 0; white-space: nowrap; font: 11px/1.5 var(--font-geist-mono, 'Geist Mono Variable', ui-monospace, monospace); font-variant-numeric: tabular-nums; }
 .tick-y { display: block; text-align: right; transform: translateY(-50%); }
 .centered { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; margin: 0; font-size: 14px; line-height: 20px; color: var(--beui-muted-foreground); }
 .loading { position: absolute; left: 44px; right: 16px; top: 12px; bottom: 8px; display: flex; align-items: center; justify-content: center; pointer-events: none; font-size: 12px; line-height: 1.3333; color: var(--beui-muted-foreground); }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { ButtonBase, OrderBook } from 'beui-vue'
+import { ButtonBase, OrderBook, OrderBookBalance, OrderBookDepthSummary, OrderBookHeader, OrderBookSide, OrderBookSpread } from 'beui-vue'
 
 const tick = ref(0), playing = ref(true), chosen = ref<number | null>(null)
 // Illustrative snapshots only. Replace with your exchange's aggregated price levels.
@@ -29,7 +29,14 @@ onBeforeUnmount(() => clearInterval(timer))
         <ButtonBase variant="ghost" size="sm" @click="playing = false; tick++">Step</ButtonBase>
       </div>
     </div>
-    <OrderBook label="Simulated SOL / USD order book" base-symbol="SOL" quote-symbol="USD" v-bind="book" @level-select="level => chosen = level.price" />
+    <OrderBook label="Simulated SOL / USD order book" base-symbol="SOL" quote-symbol="USD" v-bind="book" @level-select="level => chosen = level.price">
+      <OrderBookHeader />
+      <OrderBookSide side="ask" />
+      <OrderBookSpread />
+      <OrderBookSide side="bid" />
+      <OrderBookDepthSummary />
+      <OrderBookBalance />
+    </OrderBook>
     <p class="hint" aria-live="polite">{{ chosen === null ? 'Click a price to use it, for example in an order ticket.' : `Selected ${chosen.toFixed(2)} USD` }}</p>
   </div>
 </template>
@@ -38,7 +45,7 @@ onBeforeUnmount(() => clearInterval(timer))
 .ob-demo { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 520px; }
 .top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; padding: 0 4px; }
 .pair { display: flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; font-weight: 500; }
-.sim { padding: 2px 6px; border: 1px solid var(--beui-border); border-radius: 4px; font-size: 9px; line-height: 16px; font-weight: 400; text-transform: uppercase; letter-spacing: .05em; color: var(--beui-muted-foreground); }
+.sim { padding: 2px 6px; border: 1px solid var(--beui-border); border-radius: 4px; font-size: 9px; line-height: 1.42857; font-weight: 400; text-transform: uppercase; letter-spacing: .05em; color: var(--beui-muted-foreground); }
 .actions { display: flex; align-items: center; gap: 8px; }
 .hint { margin: 0; padding: 0 4px; font-size: 12px; line-height: 16px; color: var(--beui-muted-foreground); }
 </style>

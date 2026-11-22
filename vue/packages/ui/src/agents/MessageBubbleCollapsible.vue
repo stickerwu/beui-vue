@@ -82,7 +82,7 @@ const { open: current, setOpen: set } = useOpenState(() => props.open, props.def
 .be-collapsible-trigger {
   display: inline-flex; align-items: center; gap: .25rem; height: 1.75rem; margin-top: .5rem;
   border: 0; border-radius: 999px; padding-inline: .5rem; background: transparent;
-  color: var(--beui-muted-foreground); font: inherit; font-size: .75rem; font-weight: 500;
+  color: var(--beui-muted-foreground); font: inherit; font-size: .75rem; line-height: 1rem; font-weight: 500;
   cursor: pointer; outline: none; transition: background-color .15s, color .15s;
 }
 .be-collapsible-trigger:is(:hover, :focus-visible) { background: var(--beui-muted); color: var(--beui-foreground); }

@@ -47,7 +47,11 @@ const labelId = computed(() => props.description && props.label && !props.ariaLa
 const describedBy = computed(() => [props.ariaDescribedby, descriptionId.value].filter(Boolean).join(' ') || undefined)
 const state = computed(() => checked.value ? 'checked' : props.indeterminate ? 'indeterminate' : 'unchecked')
 
-function toggle() {
+function toggle(event: MouseEvent) {
+  // WebKit treats a click on the check mark (an SVG child of the button) as a click on the label
+  // itself and sends the button a second, synthetic click, which would toggle it back. Cancelling
+  // the default action stops the label's activation behaviour; the button has no other default.
+  event.preventDefault()
   if (!props.disabled) checked.value = !checked.value
 }
 </script>
@@ -115,7 +119,7 @@ function toggle() {
   box-sizing: border-box; width: 1.25rem; height: 1.25rem; padding: 0; border-radius: 0.375rem;
   border: 2px solid color-mix(in srgb, var(--beui-muted-foreground) 50%, transparent);
   background: var(--beui-background); color: inherit; outline: none; cursor: inherit;
-  transition: color 0.2s, background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  transition: color 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 @media (hover: hover) {
   .be-checkbox-box:hover:not([data-state='checked'], [data-state='indeterminate']) { border-color: var(--beui-muted-foreground); }

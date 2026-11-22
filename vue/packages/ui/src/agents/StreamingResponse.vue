@@ -7,15 +7,18 @@ import AgentIcon from './AgentIcon.vue'
 import AgentReveal from './AgentReveal.vue'
 import CitationList from './CitationList.vue'
 import CitationStack from './CitationStack.vue'
-import { useValue, type CitationItem, type Labels } from './shared'
+import { useHasListener, useValue, type CitationItem, type Labels } from './shared'
 
 type Feedback = 'up' | 'down' | null
 const props = withDefaults(defineProps<{
-  status?: 'streaming' | 'complete' | 'error', copyText?: string, onCopy?: () => void | Promise<void>, onRetry?: () => void,
+  status?: 'streaming' | 'complete' | 'error', copyText?: string, onCopy?: () => void | Promise<void>,
   sources?: CitationItem[], sourcesOpen?: boolean, defaultSourcesOpen?: boolean, sourceIdPrefix?: string,
   feedback?: Feedback, defaultFeedback?: Feedback, announce?: boolean, showActions?: boolean, labels?: Labels, contentClassName?: string, actionsClassName?: string
 }>(), { status: 'streaming', sources: () => [], sourcesOpen: undefined, defaultSourcesOpen: false, defaultFeedback: null, announce: true, showActions: true })
-const emit = defineEmits<{ 'update:feedback': [value: Feedback], feedbackChange: [value: Feedback], 'update:sourcesOpen': [value: boolean], sourcesOpenChange: [value: boolean] }>()
+const emit = defineEmits<{ 'update:feedback': [value: Feedback], feedbackChange: [value: Feedback], 'update:sourcesOpen': [value: boolean], sourcesOpenChange: [value: boolean], retry: [] }>()
+defineSlots<{ default?(): unknown }>()
+// The retry action only shows when a listener is bound, like upstream's optional `onRetry`.
+const hasRetry = useHasListener('retry')
 const reduce = useReducedMotion()
 const baseId = useId()
 const { value: vote, set: setVote } = useValue(() => props.feedback, props.defaultFeedback, next => { emit('update:feedback', next); emit('feedbackChange', next) })
@@ -27,7 +30,7 @@ const streaming = computed(() => props.status === 'streaming')
 const complete = computed(() => props.status === 'complete')
 const canCopy = computed(() => Boolean(props.copyText || props.onCopy))
 const hasSources = computed(() => props.sources.length > 0)
-const showActions = computed(() => props.showActions && !streaming.value && (canCopy.value || Boolean(props.onRetry) || complete.value || hasSources.value))
+const showActions = computed(() => props.showActions && !streaming.value && (canCopy.value || hasRetry() || complete.value || hasSources.value))
 const sourcesContentId = `${baseId}-sources`
 const sourcePrefix = computed(() => props.sourceIdPrefix ?? `response-source-${baseId}`)
 const t = (key: string, fallback: string, values?: Record<string, string | number>) => (props.labels?.[key] ?? fallback).replace(/\{(\w+)\}/g, (match, name) => values?.[name] === undefined ? match : String(values[name]))
@@ -51,7 +54,7 @@ onBeforeUnmount(() => clearTimeout(copyTimer))
       <motion.div v-if="showActions" key="actions" class="sr-footer" :initial="reduce ? { opacity: 0 } : { opacity: 0, y: 4 }" :animate="{ opacity: 1, y: 0 }" :exit="{ opacity: 0 }" :transition="{ duration: reduce ? 0.12 : 0.22, ease: easeOut }">
         <div class="sr-actions" :class="actionsClassName">
           <motion.button v-if="canCopy" type="button" class="sr-action" :aria-label="copied ? (labels?.copied ?? 'Copied') : (labels?.copy ?? 'Copy response')" :title="copied ? (labels?.copied ?? 'Copied') : (labels?.copy ?? 'Copy response')" :while-press="reduce ? undefined : { scale: 0.9 }" :transition="pressSpring" @click="copy"><AgentIcon :name="copied ? 'Check' : 'Copy'" :size="14" /></motion.button>
-          <motion.button v-if="onRetry" type="button" class="sr-action" :aria-label="labels?.retry ?? 'Retry response'" :title="labels?.retry ?? 'Retry response'" :while-press="reduce ? undefined : { scale: 0.9 }" :transition="pressSpring" @click="onRetry()"><AgentIcon name="RotateCcw" :size="14" /></motion.button>
+          <motion.button v-if="hasRetry()" type="button" class="sr-action" :aria-label="labels?.retry ?? 'Retry response'" :title="labels?.retry ?? 'Retry response'" :while-press="reduce ? undefined : { scale: 0.9 }" :transition="pressSpring" @click="emit('retry')"><AgentIcon name="RotateCcw" :size="14" /></motion.button>
           <template v-if="complete">
             <motion.button type="button" class="sr-action" :data-active="vote === 'up' || undefined" :aria-pressed="vote === 'up'" :aria-label="labels?.helpful ?? 'Helpful'" :title="labels?.helpful ?? 'Helpful'" :while-press="reduce ? undefined : { scale: 0.9 }" :transition="pressSpring" @click="toggleVote('up')"><AgentIcon name="ThumbsUp" :size="14" /></motion.button>
             <motion.button type="button" class="sr-action" :data-active="vote === 'down' || undefined" :aria-pressed="vote === 'down'" :aria-label="labels?.notHelpful ?? 'Not helpful'" :title="labels?.notHelpful ?? 'Not helpful'" :while-press="reduce ? undefined : { scale: 0.9 }" :transition="pressSpring" @click="toggleVote('down')"><AgentIcon name="ThumbsDown" :size="14" /></motion.button>

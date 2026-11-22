@@ -35,6 +35,8 @@ const props = withDefaults(defineProps<{
 defineSlots<{
   /** Replace a toast's whole inner content (the React `renderToast`). */
   toast?(props: { toast: AnimatedToast }): unknown
+  /** Alias of `toast`, named after the React `renderToast` prop. */
+  renderToast?(props: { toast: AnimatedToast }): unknown
   /** Replace the status glyph inside the built-in layout. */
   icon?(props: { toast: AnimatedToast; status: ToastStatus }): unknown
 }>()
@@ -92,7 +94,7 @@ onBeforeUnmount(() => { portalTarget.value = null })
           :class-names="classNames"
           :icons="icons"
           :dismiss-label="text.dismiss">
-          <template v-if="$slots.toast" #default="scope"><slot name="toast" v-bind="scope" /></template>
+          <template v-if="$slots.toast || $slots.renderToast" #default="scope"><slot v-if="$slots.toast" name="toast" v-bind="scope" /><slot v-else name="renderToast" v-bind="scope" /></template>
           <template v-if="$slots.icon" #icon="scope"><slot name="icon" v-bind="scope" /></template>
         </ToastItem>
       </AnimatePresence>

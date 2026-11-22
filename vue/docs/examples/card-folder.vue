@@ -48,7 +48,7 @@ const detailsVisible = ref(false)
 .art-contours { position: absolute; inset: 0; width: 100%; height: 100%; }
 .art-glow { position: absolute; inset: 0; background: radial-gradient(circle at 78% 8%, rgb(255 255 255 / .11), transparent 32%); }
 .art-holder { position: absolute; left: 6%; top: 8%; display: flex; flex-direction: column; gap: .5rem; }
-.art-name { font-size: 10px; line-height: 1rem; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; color: rgb(255 255 255 / .55); }
+.art-name { font-size: 10px; line-height: 1.5; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; color: rgb(255 255 255 / .55); }
 .art-number { font-family: var(--font-mono, ui-monospace, monospace); font-size: .75rem; line-height: 1rem; letter-spacing: .13em; }
 .art-holder :deep(.art-dim) { color: rgb(255 255 255 / .65); }
 .art-holder :deep(.art-bright) { color: rgb(255 255 255 / .9); }
@@ -64,7 +64,7 @@ const detailsVisible = ref(false)
 .art-diamond { display: block; width: .625rem; height: .625rem; transform: rotate(45deg); border-radius: 2px; background: rgb(255 255 255 / .85); }
 .art-foot { position: absolute; right: 7%; bottom: 10%; display: flex; align-items: flex-end; gap: 1.25rem; }
 .art-col { display: flex; flex-direction: column; gap: .25rem; }
-.art-label { font-size: 8px; line-height: 1rem; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: rgb(255 255 255 / .4); }
+.art-label { font-size: 8px; line-height: 1.5; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: rgb(255 255 255 / .4); }
 .art-expiry { font-size: .75rem; line-height: 1rem; font-weight: 500; font-variant-numeric: tabular-nums; color: rgb(255 255 255 / .9); }
 .art-cvv { font-family: var(--font-mono, ui-monospace, monospace); font-size: .75rem; line-height: 1rem; font-weight: 500; color: rgb(255 255 255 / .9); }
 </style>

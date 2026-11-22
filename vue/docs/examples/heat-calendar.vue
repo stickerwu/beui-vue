@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { HeatCalendar } from 'beui-vue'
+import { HeatCalendar, HeatCalendarGrid, HeatCalendarLegend, HeatCalendarTooltip } from 'beui-vue'
 
 const activity = Array.from({ length: 16 }, (_, week) => Array.from({ length: 7 }, (_, day) => {
   const sample = Math.sin(week * 12.9898 + day * 78.233) * 43758.5453
@@ -9,5 +9,8 @@ const activity = Array.from({ length: 16 }, (_, week) => Array.from({ length: 7 
 </script>
 
 <template>
-  <HeatCalendar :values="activity" :weeks="16" :max-count="14" unit="commits" />
+  <HeatCalendar :values="activity" :weeks="16" :max-count="14" unit="commits">
+    <HeatCalendarGrid><HeatCalendarTooltip /></HeatCalendarGrid>
+    <HeatCalendarLegend />
+  </HeatCalendar>
 </template>

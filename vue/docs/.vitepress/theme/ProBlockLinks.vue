@@ -11,7 +11,7 @@ const blocks = computed(() => PRO_BLOCKS[props.pageKey] ?? [])
 
 <template>
   <section v-if="blocks.length" class="beui-pro-blocks" :class="{ 'is-category': category }" :aria-label="t('Related original beUI Pro blocks')">
-    <h2>{{ category ? t('Built with these components') : t('Used in these beUI Pro blocks') }}</h2>
+    <h2>{{ category ? t('Popular beUI Pro blocks') : t('Used in these Pro blocks') }}</h2>
     <div class="beui-pro-block-grid">
       <a v-for="block in blocks" :key="block.path" :href="`https://pro.beui.dev${block.path}`" target="_blank" rel="noopener noreferrer">
         <span>{{ block.name }}</span>

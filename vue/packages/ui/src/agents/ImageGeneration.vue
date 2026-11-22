@@ -5,10 +5,15 @@ import { computed, useSlots } from 'vue'
 import { easeInOut, easeOut, pressSpring } from '../core/motion'
 import AgentIcon from './AgentIcon.vue'
 import DitherField from './DitherField.vue'
-import type { Labels } from './shared'
+import { useHasListener, type Labels } from './shared'
 
 type Status = 'queued' | 'generating' | 'refining' | 'complete' | 'error'
-const props = withDefaults(defineProps<{ status?: Status, label?: string, prompt?: string, resolution?: string, aspectRatio?: number | string, size?: 'compact' | 'fluid', interactive?: boolean, statusText?: string, showStatus?: boolean, onRetry?: () => void, labels?: Labels, mediaClassName?: string, statusClassName?: string }>(), { status: 'generating', resolution: '1024 × 1024', aspectRatio: '1 / 1', size: 'compact', interactive: true, showStatus: true })
+const props = withDefaults(defineProps<{ status?: Status, label?: string, prompt?: string, resolution?: string, aspectRatio?: number | string, size?: 'compact' | 'fluid', interactive?: boolean, statusText?: string, showStatus?: boolean, labels?: Labels, mediaClassName?: string, statusClassName?: string }>(), { status: 'generating', resolution: '1024 × 1024', aspectRatio: '1 / 1', size: 'compact', interactive: true, showStatus: true })
+
+const emit = defineEmits<{ retry: [] }>()
+defineSlots<{ default?(): unknown }>()
+// The retry button only shows when a listener is bound, like upstream's optional `onRetry`.
+const hasRetry = useHasListener('retry')
 
 const MEDIA_STATE: Record<Status, { filter: string, opacity: number, scale: number }> = {
   queued: { filter: 'blur(4px) saturate(0.75)', opacity: 0, scale: 1.02 },
@@ -56,7 +61,7 @@ const animate = computed(() => reduce.value ? { opacity: media.value.opacity } :
         <p v-if="prompt" class="ig-prompt">{{ quoted }}</p>
       </div>
 
-      <motion.button v-if="status === 'error' && onRetry" type="button" class="ig-retry" :while-press="reduce ? undefined : { scale: 0.96 }" :transition="pressSpring" @click="onRetry()">
+      <motion.button v-if="status === 'error' && hasRetry()" type="button" class="ig-retry" :while-press="reduce ? undefined : { scale: 0.96 }" :transition="pressSpring" @click="emit('retry')">
         <AgentIcon name="RotateCcw" :size="16" />{{ labels?.retry ?? 'Try again' }}
       </motion.button>
     </div>
@@ -72,7 +77,7 @@ const animate = computed(() => reduce.value ? { opacity: media.value.opacity } :
 .ig-media > :deep(*) { width: 100%; height: 100%; object-fit: cover; }
 .ig-media :deep(img) { width: 100%; height: 100%; object-fit: cover; }
 .ig-dither { position: absolute; inset: 0; }
-.ig-resolution { position: absolute; z-index: 10; top: .5rem; right: .5rem; border-radius: 9999px; background: color-mix(in oklab, var(--beui-background) 75%, transparent); padding: .125rem .5rem; font-family: var(--font-mono, ui-monospace, monospace); font-size: 10px; line-height: 1rem; font-variant-numeric: tabular-nums; color: var(--beui-muted-foreground); }
+.ig-resolution { position: absolute; z-index: 10; top: .5rem; right: .5rem; border-radius: 9999px; background: color-mix(in oklab, var(--beui-background) 75%, transparent); padding: .125rem .5rem; font-family: var(--font-mono, ui-monospace, monospace); font-size: 10px; line-height: 1.5; font-variant-numeric: tabular-nums; color: var(--beui-muted-foreground); }
 .ig-caption { margin-top: .75rem; text-align: left; }
 .ig-status { display: flex; min-height: 1.25rem; align-items: center; gap: .5rem; font-size: .875rem; line-height: 1.25rem; font-weight: 500; color: var(--beui-foreground); }
 .ig-status[data-error] { color: var(--beui-destructive); }

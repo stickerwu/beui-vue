@@ -1,0 +1,393 @@
+{
+ "combobox": {
+  "introduction": "Combobox 将文本输入与可筛选的列表框结合起来，并始终让焦点停留在输入框中。它负责管理搜索、当前选项的导航、选择以及浮层定位，但不持有选项数据，也不接管外围表单。",
+  "composition": {
+   "description": "把可搜索的输入框放进触发器，再在通过 Portal 渲染的内容中组合列表框的各个基础组件。",
+   "tree": "Combobox\n├── ComboboxTrigger\n│   └── ComboboxInput\n└── ComboboxContent\n    └── ComboboxList\n        ├── ComboboxEmpty\n        ├── ComboboxGroup\n        │   ├── ComboboxLabel\n        │   └── ComboboxItem\n        └── ComboboxSeparator"
+  },
+  "connections": []
+ },
+ "animated-sidebar": {
+  "introduction": "应用侧边栏是承载常驻导航的响应式外壳。它协调桌面端的折叠、移动端的呈现方式、嵌套的目的地以及内容区的内边距，但不持有这些区域中渲染的数据。",
+  "composition": {
+   "description": "在侧边栏中组合各个导航分组，并把应用主体放进相邻的 inset 区域。",
+   "tree": "AnimatedSidebarProvider\n├── AnimatedSidebar\n│   ├── AnimatedSidebarHeader\n│   ├── AnimatedSidebarContent\n│   │   └── AnimatedSidebarMenu\n│   ├── AnimatedSidebarFooter\n│   └── AnimatedSidebarRail\n└── AnimatedSidebarInset"
+  },
+  "connections": [
+   {
+    "slug": "ai-sidebar",
+    "name": "AI Sidebar",
+    "description": "将外壳与可编辑的项目、文件夹、文件和书签组合在一起。"
+   }
+  ]
+ },
+ "message-bubble": {
+  "introduction": "气泡是单条消息的可见载体，而不是整段对话本身。它应当让内容有清晰的阅读形态，同时不接管发送者身份、送达状态或滚动行为。",
+  "composition": {
+   "description": "把气泡放在消息内容之中，让身份与布局和可见的回复载体保持分离。",
+   "tree": "Message\n├── MessageAvatar\n└── MessageContent\n    └── MessageBubble\n        └── MessageBubbleContent"
+  },
+  "connections": [
+   {
+    "slug": "message",
+    "name": "Message",
+    "description": "增加发送者对齐、元信息和头像位置。"
+   },
+   {
+    "slug": "streaming-response",
+    "name": "Streaming Response",
+    "description": "提供回复从进行中到完成的生命周期。"
+   }
+  ]
+ },
+ "message": {
+  "introduction": "Message 是对话中的一行。它协调头像、元信息、内容载体和送达详情，而内容本身可以是气泡、智能体活动、工具结果或组合而成的回复。",
+  "composition": {
+   "description": "用相互独立的身份、内容和元信息基础组件来搭建每一行对话。",
+   "tree": "MessageGroup\n└── Message\n    ├── MessageAvatar\n    └── MessageContent\n        ├── MessageHeader\n        ├── MessageBubble\n        └── MessageFooter"
+  },
+  "connections": [
+   {
+    "slug": "message-bubble",
+    "name": "Message Bubble",
+    "description": "提供行内的可见载体。"
+   },
+   {
+    "slug": "message-scroller",
+    "name": "Message Scroller",
+    "description": "把消息行放进能感知读者位置的对话记录中。"
+   },
+   {
+    "slug": "agent-activity",
+    "name": "Agent Activity",
+    "description": "把智能体逐步展开的工作渲染为消息内容。"
+   }
+  ]
+ },
+ "message-scroller": {
+  "introduction": "流式对话记录不同于普通的溢出滚动：读者停留在实时末端时，它必须跟随新输出；而一旦读者选择回看之前的内容，它就要立刻停止移动。",
+  "composition": {
+   "description": "让滚动视口处于它所跟随的消息基础组件之外。",
+   "tree": "MessageScroller\n└── MessageGroup\n    └── Message\n        └── MessageContent"
+  },
+  "connections": [
+   {
+    "slug": "message",
+    "name": "Message",
+    "description": "为对话记录提供稳定、语义化的行。"
+   },
+   {
+    "slug": "prompt-input",
+    "name": "Prompt Input",
+    "description": "发起新一轮对话，但不接管对话记录的滚动。"
+   },
+   {
+    "slug": "streaming-response",
+    "name": "Streaming Response",
+    "description": "提供视口所跟随的持续增长的内容。"
+   }
+  ]
+ },
+ "prompt-input": {
+  "introduction": "输入框是人与智能体之间的交接点。它应当让当前指令保持可编辑，让可用能力易于发现，并清晰地区分“发送”与“停止正在进行的工作”。",
+  "composition": {
+   "description": "把输入框放在对话记录旁边，使撰写内容不会成为滚动消息历史的一部分。",
+   "tree": "Chat\n├── MessageScroller\n│   └── MessageGroup\n└── PromptInput"
+  },
+  "connections": [
+   {
+    "slug": "message-scroller",
+    "name": "Message Scroller",
+    "description": "让对话在输入框周围保持稳定。"
+   },
+   {
+    "slug": "tool-approval",
+    "name": "Tool Approval",
+    "description": "暂时用限定范围的权限请求取代自由输入。"
+   },
+   {
+    "slug": "approval-card",
+    "name": "Approval Card",
+    "description": "在运行暂停期间收集结构化的人工输入。"
+   }
+  ]
+ },
+ "todo-list": {
+  "introduction": "智能体的计划应当说明还剩哪些工作，而不是把每个内部想法都当作任务。待办列表用于那些持久存在、其状态对跟进运行的人有意义的工作项。",
+  "composition": {
+   "description": "当计划属于对话式的智能体运行时，把它渲染为消息内容。",
+   "tree": "Message\n└── MessageContent\n    └── TodoList"
+  },
+  "connections": [
+   {
+    "slug": "agent-activity",
+    "name": "Agent Activity",
+    "description": "按时间顺序展示任务之间发生的事件。"
+   },
+   {
+    "slug": "loading-states",
+    "name": "Agent Loading States",
+    "description": "覆盖持久计划出现之前的工作阶段。"
+   },
+   {
+    "slug": "tool-result",
+    "name": "Tool Result",
+    "description": "呈现正在执行的任务所产生的证据。"
+   }
+  ]
+ },
+ "code-block": {
+  "introduction": "生成的代码变化得比传统的静态代码片段更快。代码块必须在新行不断到达时保持可读，保留语法结构，并让最终结果的复制行为可预期。",
+  "composition": {
+   "description": "把生成的源码嵌套在负责其流式生命周期的回复之中。",
+   "tree": "StreamingResponse\n└── CodeBlock"
+  },
+  "connections": [
+   {
+    "slug": "file-diff",
+    "name": "File Diff",
+    "description": "围绕高亮代码说明新增与删除的内容。"
+   },
+   {
+    "slug": "tool-result",
+    "name": "Tool Result",
+    "description": "把生成的代码包裹进执行结果中。"
+   },
+   {
+    "slug": "streaming-response",
+    "name": "Streaming Response",
+    "description": "将高亮代码嵌入内容丰富的回答。"
+   }
+  ]
+ },
+ "approval-card": {
+  "introduction": "人工介入是一次临时的控制权转移。卡片应当清楚地陈述待决定的事项，只收集必需的输入，并把一个持久的答复交还给暂停中的智能体运行。",
+  "composition": {
+   "description": "把审批载体放进使智能体运行暂停的那条消息之中。",
+   "tree": "Message\n└── MessageContent\n    └── ApprovalCard"
+  },
+  "connections": [
+   {
+    "slug": "tool-approval",
+    "name": "Tool Approval",
+    "description": "处理更窄的情形，即单个工具的权限。"
+   },
+   {
+    "slug": "message",
+    "name": "Message",
+    "description": "把决定放进对话历史之中。"
+   },
+   {
+    "slug": "todo-list",
+    "name": "Todo List",
+    "description": "展示哪些计划中的工作因这一决定而暂停。"
+   }
+  ]
+ },
+ "file-diff": {
+  "introduction": "文件差异用来说明一次拟议或已完成的编辑。它应当保留新旧行之间的对应关系，并让改动的规模和状态一目了然。",
+  "composition": {
+   "description": "把补丁放进产生该文件改动的工具输出之中。",
+   "tree": "ToolResult\n└── ToolResultOutput\n    └── FileDiff"
+  },
+  "connections": [
+   {
+    "slug": "code-block",
+    "name": "Code Block",
+    "description": "为源码行提供统一的语法呈现。"
+   },
+   {
+    "slug": "tool-result",
+    "name": "Tool Result",
+    "description": "概括产生该补丁的命令或编辑。"
+   },
+   {
+    "slug": "agent-activity",
+    "name": "Agent Activity",
+    "description": "在周围的智能体事件中记录这次文件编辑。"
+   }
+  ]
+ },
+ "tool-result": {
+  "introduction": "工具结果是一次执行留下的证据，而不是另一个聊天气泡。它应当把简明的运行摘要与检查、恢复或复用所需的输出联系起来。",
+  "composition": {
+   "description": "用输出基础组件承载终端文本、请求详情、生成的代码或其他结构化结果。",
+   "tree": "ToolResult\n└── ToolResultOutput"
+  },
+  "connections": [
+   {
+    "slug": "tool-approval",
+    "name": "Tool Approval",
+    "description": "在执行开始之前收集权限。"
+   },
+   {
+    "slug": "code-block",
+    "name": "Code Block",
+    "description": "渲染工具返回的高亮代码。"
+   },
+   {
+    "slug": "agent-activity",
+    "name": "Agent Activity",
+    "description": "在较长的运行中概括这次工具调用。"
+   }
+  ]
+ },
+ "streaming-response": {
+  "introduction": "回复有两个不同的阶段：内容仍在到达，随后答案才可以被操作。布局应当在这一边界前后保持稳定，同时让富内容继续正常渲染。",
+  "composition": {
+   "description": "把回复状态保持在消息载体内部，让外层的行保持稳定。",
+   "tree": "Message\n└── MessageContent\n    └── MessageBubble\n        └── StreamingResponse"
+  },
+  "connections": [
+   {
+    "slug": "message",
+    "name": "Message",
+    "description": "把回复放进稳定的助手消息行。"
+   },
+   {
+    "slug": "citations",
+    "name": "Citations",
+    "description": "把已完成的论断与支撑它的来源联系起来。"
+   },
+   {
+    "slug": "code-block",
+    "name": "Code Block",
+    "description": "在内容丰富的回复中渲染结构化源码。"
+   }
+  ]
+ },
+ "image-generation": {
+  "introduction": "生成的媒体应在像素就绪之前就占据其最终空间。载体保持一块稳定的画布，随着生成状态逐步显露结果，最后落定为一张便于查看的普通图片。",
+  "composition": {
+   "description": "把生成的媒体放进持有其提示词和完成状态的回复行之中。",
+   "tree": "Message\n└── MessageContent\n    └── ImageGeneration\n        └── GeneratedMedia"
+  },
+  "connections": [
+   {
+    "slug": "message",
+    "name": "Message",
+    "description": "让生成结果始终附着在对应的助手回合上。"
+   },
+   {
+    "slug": "streaming-response",
+    "name": "Streaming Response",
+    "description": "在媒体结果之前或之后承载配套的文本。"
+   },
+   {
+    "slug": "prompt-input",
+    "name": "Prompt Input",
+    "description": "收集发起生成的指令。"
+   }
+  ]
+ },
+ "tool-approval": {
+  "introduction": "工具审批是一道权限边界。用户必须清楚将要运行什么、需要什么访问权限，以及自己的选择只生效一次还是会改变后续行为。",
+  "composition": {
+   "description": "当决定取决于对可执行源码的审阅时，把它放进审批请求之中。",
+   "tree": "Message\n└── MessageContent\n    └── ToolApproval\n        └── ToolApprovalCode"
+  },
+  "connections": [
+   {
+    "slug": "approval-card",
+    "name": "Approval Card",
+    "description": "处理更宽泛的问题和审阅决定。"
+   },
+   {
+    "slug": "agent-activity",
+    "name": "Agent Activity",
+    "description": "展示待处理以及恢复执行时的上下文。"
+   },
+   {
+    "slug": "tool-result",
+    "name": "Tool Result",
+    "description": "在获批的工具运行后展示结果。"
+   }
+  ]
+ },
+ "citations": {
+  "introduction": "引用把论断与支撑材料联系起来，又不打断回答。行内标记应保持轻量，而来源集合则提供足够的信息供人核查证据。",
+  "composition": {
+   "description": "把行内引用标记与由同一条回复持有的来源展开区配对使用。",
+   "tree": "StreamingResponse\n├── Citation\n└── Citations\n    ├── CitationStack\n    └── CitationList"
+  },
+  "connections": [
+   {
+    "slug": "streaming-response",
+    "name": "Streaming Response",
+    "description": "在回答完成时显示来源摘要。"
+   },
+   {
+    "slug": "message",
+    "name": "Message",
+    "description": "让带引用的回答保持在语义化的对话行之中。"
+   }
+  ]
+ },
+ "agent-activity": {
+  "introduction": "智能体活动用来说明工作进展，而不暴露未经过滤的内部记录。事件应按时间顺序到达、便于扫读，并在运行结束时收敛为有用的摘要。",
+  "composition": {
+   "description": "把逐步展开的工作渲染为消息内容，使其始终附着在产生它的那一回合上。",
+   "tree": "Message\n└── MessageContent\n    └── AgentActivity"
+  },
+  "connections": [
+   {
+    "slug": "loading-states",
+    "name": "Agent Loading States",
+    "description": "覆盖第一个结构化事件之前的间隔。"
+   },
+   {
+    "slug": "todo-list",
+    "name": "Todo List",
+    "description": "把持久的计划工作与瞬时事件区分开。"
+   },
+   {
+    "slug": "tool-result",
+    "name": "Tool Result",
+    "description": "把一次已完成的执行展开为可检视的输出。"
+   }
+  ]
+ },
+ "loading-states": {
+  "introduction": "智能体的加载状态应当表明工作仍在进行，而不是凭空编造进度。请选择与系统实际所知相匹配的最小信号，并在工作持续期间保持措辞稳定。",
+  "composition": {
+   "description": "根据智能体能如实提供的进度信息量，选择一种加载基础组件。",
+   "tree": "Message\n└── MessageContent\n    ├── ThinkingShimmer\n    ├── AgentProgress\n    └── ReasoningText"
+  },
+  "connections": [
+   {
+    "slug": "agent-activity",
+    "name": "Agent Activity",
+    "description": "在结构化的执行事件出现后接管展示。"
+   },
+   {
+    "slug": "todo-list",
+    "name": "Todo List",
+    "description": "在计划出现后展示持久的进度。"
+   },
+   {
+    "slug": "streaming-response",
+    "name": "Streaming Response",
+    "description": "在回答内容开始到达时取代加载状态。"
+   }
+  ]
+ },
+ "ai-sidebar": {
+  "introduction": "AI 侧边栏组织的是不断变化的工作区资源，而不只是在固定的目的地之间导航。文件夹和项目行可以展开其子项，文件和书签则成为当前资源，并且可以移动或重命名，而不会破坏周围的工作区。",
+  "composition": {
+   "description": "把资源树放进 Animated Sidebar 的内容区，并让选中资源的呈现面保持在相邻的 inset 之中。",
+   "tree": "AnimatedSidebarProvider\n├── AnimatedSidebar\n│   ├── AnimatedSidebarContent\n│   │   └── AISidebar\n│   │       ├── Folder or project\n│   │       └── File or bookmark\n│   └── AnimatedSidebarRail\n└── AnimatedSidebarInset"
+  },
+  "connections": [
+   {
+    "slug": "message-scroller",
+    "name": "Message Scroller",
+    "description": "可以用选中的对话填满 inset。"
+   },
+   {
+    "slug": "prompt-input",
+    "name": "Prompt Input",
+    "description": "可以把输入框固定在当前资源内容之下。"
+   }
+  ]
+ }
+}

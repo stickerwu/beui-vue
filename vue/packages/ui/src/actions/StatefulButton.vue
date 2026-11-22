@@ -19,12 +19,24 @@ import { easeOut, swapSpring } from '../core/motion'
 
 const props = defineProps<{
   state?: ButtonState
+  variant?: 'primary' | 'secondary' | 'ghost' | 'outline'
+  size?: 'sm' | 'md' | 'lg' | 'icon'
+  pressScale?: number
+  /** Spawn a Material-style ripple from the press point. Off by default. */
+  ripple?: boolean
   disabled?: boolean
   loadingText?: string
   successText?: string
   errorText?: string
   /** Override any built-in string. */
   labels?: Partial<StatefulButtonMessages>
+}>()
+
+defineSlots<{
+  /** The idle label. */
+  default(): unknown
+  /** Shown after the idle label while the button is idle. */
+  icon?(): unknown
 }>()
 
 const CASCADE_STAGGER = 0.025
@@ -97,12 +109,17 @@ function syncWidth() {
   const next = measure.value?.offsetWidth
   if (next && next !== width.value) width.value = next
 }
-onMounted(syncWidth)
+onMounted(() => {
+  syncWidth()
+  // The label is measured with the fallback font when the web font is still loading; measure again
+  // once it is in, or the last glyph is clipped by the narrower slot.
+  void document.fonts?.ready.then(syncWidth)
+})
 watch([textKey, cascade], () => nextTick(syncWidth), { flush: 'post' })
 </script>
 
 <template>
-  <ButtonBase :disabled="disabled || busy" :aria-busy="busy" :hover="false">
+  <ButtonBase :variant="variant" :size="size" :press-scale="pressScale" :ripple="ripple" :disabled="disabled || busy" :aria-busy="busy" :hover="false">
     <span class="be-stateful-row" aria-live="polite">
       <AnimatePresence :initial="false">
         <motion.span v-if="state === 'loading'" key="loading-icon" class="be-stateful-icon" v-bind="iconMotion">

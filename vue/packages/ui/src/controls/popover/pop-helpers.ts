@@ -1,4 +1,4 @@
-import { onBeforeUnmount, onMounted, shallowRef, watch, type Ref } from 'vue'
+import { onBeforeUnmount, onMounted, shallowRef, watch, type InjectionKey, type Ref } from 'vue'
 
 /** Elements that can usually take keyboard focus (mirrors `lib/focusable.ts`). */
 export const FOCUSABLE_SELECTOR = [
@@ -132,3 +132,26 @@ export function elementOf(ref: unknown): HTMLElement | null {
   const $el = (ref as { $el?: unknown } | null)?.$el
   return $el instanceof HTMLElement ? $el : null
 }
+
+/** What `PopoverContent` registers with its `Popover` when the popover is composed from parts. */
+export interface PopoverPart {
+  attrs: Record<string, unknown>
+  slots: { default?: (props: { close: () => void }) => unknown }
+}
+export interface PopoverParts {
+  register: (part: PopoverPart) => void
+  unregister: (part: PopoverPart) => void
+}
+export const POPOVER_PARTS_KEY: InjectionKey<PopoverParts> = Symbol('beui-popover-parts')
+
+/** What `MorphPopoverContent` registers with its `PopoverMorph` when the popover is composed from parts. */
+export interface MorphPart {
+  props: { side?: 'top' | 'bottom'; align?: 'start' | 'end'; sideOffset?: number; radius?: number; shadow?: boolean; initialFocus?: HTMLElement | null | (() => HTMLElement | null); onOpenAutoFocus?: (content: HTMLElement) => void }
+  attrs: Record<string, unknown>
+  slots: { default?: (props: { close: () => void }) => unknown }
+}
+export interface MorphParts {
+  register: (part: MorphPart) => void
+  unregister: (part: MorphPart) => void
+}
+export const MORPH_PARTS_KEY: InjectionKey<MorphParts> = Symbol('beui-morph-popover-parts')

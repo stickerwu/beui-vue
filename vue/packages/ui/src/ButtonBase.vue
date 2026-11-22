@@ -53,16 +53,16 @@ function activate(event: MouseEvent) {
 </template>
 
 <style scoped>
-.be-button { position: relative; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; flex: none; height: 2.5rem; gap: .5rem; padding: 0 1.25rem; border: 1px solid transparent; border-radius: 999px; font: inherit; font-size: .875rem; font-weight: 500; line-height: 1; text-decoration: none; user-select: none; cursor: pointer; transition: background-color .15s, color .15s; }
+.be-button { position: relative; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; flex: none; height: 2.5rem; gap: .5rem; padding: 0 1.25rem; border: 0 solid var(--beui-border); border-radius: 999px; font: inherit; font-size: .875rem; font-weight: 500; line-height: 1.25rem; text-decoration: none; user-select: none; cursor: pointer; transition: color .15s cubic-bezier(.4, 0, .2, 1), background-color .15s cubic-bezier(.4, 0, .2, 1), border-color .15s cubic-bezier(.4, 0, .2, 1); }
 .be-button[data-variant=primary] { background: var(--beui-primary); color: var(--beui-primary-foreground); }
-.be-button[data-variant=secondary] { background: var(--beui-card); color: var(--beui-foreground); border-color: var(--beui-border); }
-.be-button[data-variant=outline] { background: transparent; color: var(--beui-foreground); border-color: var(--beui-border); }
+.be-button[data-variant=secondary] { background: var(--beui-card); color: var(--beui-foreground); border-width: 1px; }
+.be-button[data-variant=outline] { background: transparent; color: var(--beui-foreground); border-width: 1px; }
 .be-button[data-variant=ghost] { background: transparent; color: var(--beui-muted-foreground); }
-.be-button[data-size=sm] { height: 2rem; padding: 0 .75rem; font-size: .75rem; gap: .375rem; }
-.be-button[data-size=lg] { height: 3rem; padding: 0 1.5rem; font-size: 1rem; }
+.be-button[data-size=sm] { height: 2rem; padding: 0 .75rem; font-size: .75rem; line-height: 1rem; gap: .375rem; }
+.be-button[data-size=lg] { height: 3rem; padding: 0 1.5rem; font-size: 1rem; line-height: 1.5rem; }
 .be-button[data-size=icon] { height: 2rem; width: 2rem; padding: 0; border-radius: .5rem; }
 .be-button:disabled, .be-button[aria-disabled=true] { opacity: .5; cursor: default; pointer-events: none; }
 .be-ripple-mask { position: absolute; inset: 0; pointer-events: none; overflow: hidden; border-radius: inherit; }
 .be-ripple { position: absolute; border-radius: 50%; background: currentColor; }
-@media (hover: hover) { .be-button[data-variant=primary]:hover { background: color-mix(in srgb, var(--beui-primary) 90%, transparent); } .be-button:is([data-variant=ghost], [data-variant=outline]):hover { color: var(--beui-foreground); background: color-mix(in srgb, var(--beui-muted) 60%, transparent); } }
+@media (hover: hover) { .be-button[data-variant=primary]:hover { background: color-mix(in oklab, var(--beui-primary) 90%, transparent); } .be-button:is([data-variant=ghost], [data-variant=outline]):hover { color: var(--beui-foreground); background: color-mix(in oklab, var(--beui-muted) 60%, transparent); } }
 </style>

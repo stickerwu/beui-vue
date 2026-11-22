@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { CylinderCarousel, ShaderBackground, Tabs } from 'beui-vue'
+import { CylinderCarousel, ShaderBackground, Tabs, TabsList, TabsTrigger } from 'beui-vue'
 
 const variant = ref<'concave' | 'convex'>('concave')
-const tabs = [{ value: 'concave', label: 'Concave' }, { value: 'convex', label: 'Convex' }]
 // Each variant has its own prop shape; the slides only spread their own preset.
 const slides = [
   { id: 'dithering', variant: 'dithering', props: { colorBack: '#1a1030', colorFront: '#b98cff', speed: 0.3 } },
@@ -19,7 +18,12 @@ const slides = [
 
 <template>
   <div class="display">
-    <Tabs v-model="variant" :items="tabs" variant="segment" />
+    <Tabs v-model="variant" variant="segment">
+      <TabsList>
+        <TabsTrigger value="concave">Concave</TabsTrigger>
+        <TabsTrigger value="convex">Convex</TabsTrigger>
+      </TabsList>
+    </Tabs>
     <!-- clip-path (not overflow) so the rounded corner also clips the GPU-composited balls -->
     <div class="frame">
       <CylinderCarousel :items="slides" :variant="variant" :item-size="230" :height="310" label="Shader carousel">

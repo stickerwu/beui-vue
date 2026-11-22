@@ -274,13 +274,13 @@ const outcomeGroup = useId()
 .be-pm-outcomes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: center; gap: .5rem; width: 100%; box-sizing: border-box; padding: .375rem; border-radius: 9999px; background: var(--beui-card); }
 .be-pm-outcome-cell { position: relative; flex: none; min-width: 0; }
 .be-pm-pill { position: absolute; inset: 0; border-radius: 9999px; }
-.be-pm-pill.is-yes { background: rgb(16 185 129 / .2); }
-.be-pm-pill.is-no { background: rgb(239 68 68 / .1); }
-:global(:is(.dark, [data-beui-theme='dark']) .be-pm-pill.is-no) { background: rgb(239 68 68 / .15); }
+.be-pm-pill.is-yes { background: oklch(69.6% .17 162.48 / .2); }
+.be-pm-pill.is-no { background: oklch(63.7% .237 25.331 / .1); }
+:global(:is(.dark, [data-beui-theme='dark']) .be-pm-pill.is-no) { background: oklch(63.7% .237 25.331 / .15); }
 .be-pm-outcome { position: relative; z-index: 1; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; width: 100%; height: 3.5rem; padding: 0; border: 0; border-radius: 1.35rem; background: transparent; font-size: 1rem; line-height: 1.5; font-weight: 600; white-space: nowrap; cursor: pointer; transition: color .15s, transform .1s; }
 .be-pm-outcome:active { transform: scale(.99); }
 .be-pm-outcome.is-yes { color: var(--beui-muted-foreground); }
-.be-pm-outcome.is-no { color: rgb(252 165 165 / .55); }
+.be-pm-outcome.is-no { color: oklch(80.8% .114 19.571 / .55); }
 /* The selected label is drawn over the pill in the primary foreground, as the original tab overlay does. */
 .be-pm-outcome.is-selected { color: var(--beui-primary-foreground); }
 
@@ -310,9 +310,9 @@ const outcomeGroup = useId()
 .be-pm-quote { display: flex; align-items: flex-end; justify-content: space-between; gap: .75rem; margin-bottom: 1rem; }
 .be-pm-quote-copy { min-width: 0; flex: 0 1 auto; }
 .be-pm-quote-title { display: flex; align-items: center; gap: .5rem; font-size: 1.25rem; line-height: 1.75rem; font-weight: 600; color: var(--beui-foreground); }
-.be-pm-banknote { color: #10b981; }
+.be-pm-banknote { color: oklch(69.6% .17 162.48); }
 .be-pm-avg { margin: 0; font-size: .875rem; line-height: 1.25rem; font-weight: 500; color: var(--beui-muted-foreground); }
-.be-pm-payout { display: flex; justify-content: flex-end; flex: none; min-width: 0; margin-left: auto; white-space: nowrap; text-align: right; font-weight: 600; line-height: 1; letter-spacing: -.025em; color: #10b981; font-variant-numeric: tabular-nums; transition: font-size .2s; }
+.be-pm-payout { display: flex; justify-content: flex-end; flex: none; min-width: 0; margin-left: auto; white-space: nowrap; text-align: right; font-weight: 600; line-height: 1; letter-spacing: -.025em; color: oklch(69.6% .17 162.48); font-variant-numeric: tabular-nums; transition: font-size .2s; }
 .be-pm-payout.is-p0 { font-size: 2.25rem; } .be-pm-payout.is-p1 { font-size: 1.875rem; } .be-pm-payout.is-p2 { font-size: 1.5rem; } .be-pm-payout.is-p3 { font-size: 1.25rem; }
 @media (min-width: 640px) { .be-pm-payout.is-p3 { font-size: 1.5rem; } }
 .be-pm-action { width: 100%; height: 3rem; border-radius: 1rem !important; font-size: 1rem; font-weight: 600; }

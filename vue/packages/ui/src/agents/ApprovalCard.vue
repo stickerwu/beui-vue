@@ -10,7 +10,7 @@ export type ApprovalCardStatus = 'pending' | 'submitting' | 'approved' | 'reject
 <script setup lang="ts">
 import { AnimatePresence, motion } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
-import { computed, getCurrentInstance, onBeforeUnmount, useId } from 'vue'
+import { computed, onBeforeUnmount, useId } from 'vue'
 import ButtonBase from '../ButtonBase.vue'
 import { easeOut, swapSpring } from '../core/motion'
 import AgentIcon from './AgentIcon.vue'
@@ -18,7 +18,7 @@ import AgentReveal from './AgentReveal.vue'
 import AgentRollText from './AgentRollText.vue'
 import ApprovalChoice from './ApprovalChoice.vue'
 import './agent-tokens.css'
-import { useValue, type Labels, type Option } from './shared'
+import { useHasListener, useValue, type Labels, type Option } from './shared'
 
 export type ApprovalAnswer = { selected: string[], custom?: string }
 export type ApprovalAnswers = Record<string, ApprovalAnswer>
@@ -27,13 +27,16 @@ export type ApprovalQuestion = { id: string, title: string, description?: string
 const props = withDefaults(defineProps<{
   title?: string, description?: string, questions?: ApprovalQuestion[], answers?: ApprovalAnswers, defaultAnswers?: ApprovalAnswers, step?: number, defaultStep?: number,
   status?: ApprovalCardStatus, approveLabel?: string, submitLabel?: string, result?: string,
-  labels?: Labels, onRequestChanges?: () => void, onDismiss?: () => void
+  labels?: Labels
 }>(), { questions: () => [], defaultAnswers: () => ({}), defaultStep: 0, status: 'pending' })
-const emit = defineEmits<{ 'update:answers': [value: ApprovalAnswers], answersChange: [value: ApprovalAnswers], 'update:step': [value: number], stepChange: [value: number], submit: [value: ApprovalAnswers], approve: [], reject: [] }>()
+const emit = defineEmits<{ 'update:answers': [value: ApprovalAnswers], answersChange: [value: ApprovalAnswers], 'update:step': [value: number], stepChange: [value: number], submit: [value: ApprovalAnswers], approve: [], reject: [], requestChanges: [], dismiss: [] }>()
+defineSlots<{ default?(): unknown, title?(): unknown, description?(): unknown, approveLabel?(): unknown, submitLabel?(): unknown, result?(): unknown }>()
 const reduce = useReducedMotion()
 const uid = useId()
-const instance = getCurrentInstance()
-const hasReject = () => Boolean(instance?.vnode.props?.onReject)
+// Optional actions only show when a listener is bound, like upstream's optional callback props.
+const hasReject = useHasListener('reject')
+const hasRequestChanges = useHasListener('requestChanges')
+const hasDismiss = useHasListener('dismiss')
 const { value: answers, set: setAnswers } = useValue<ApprovalAnswers>(() => props.answers, props.defaultAnswers, value => { emit('update:answers', value); emit('answersChange', value) })
 const steps = useValue(() => props.step, props.defaultStep, value => { emit('update:step', value); emit('stepChange', value) })
 
@@ -91,10 +94,10 @@ const dotState = (index: number) => ({ scale: reduce.value || index === step.val
       <span aria-hidden="true" class="be-ac-icon" :data-tone="iconTone"><AgentIcon :name="icon" :size="16" :class="{ 'be-ag-spin': busy && !reduce }" /></span>
       <div class="be-ac-main">
         <div class="be-ac-head">
-          <h3 class="be-ac-title"><AgentRollText :value="titleKey">{{ displayTitle }}</AgentRollText></h3>
+          <h3 class="be-ac-title"><AgentRollText :value="titleKey"><slot name="title">{{ displayTitle }}</slot></AgentRollText></h3>
           <template v-if="questionMode && interactive"><span v-if="multipleQuestions" class="be-ac-step">{{ t('stepCount', { current: step + 1, total: questions.length }) }}</span></template>
           <span v-else class="be-ac-badge" :data-tone="tone">{{ statusLabel }}</span>
-          <button v-if="onDismiss" type="button" class="be-ac-dismiss" :aria-label="t('dismiss')" @click="onDismiss"><AgentIcon name="X" :size="16" /></button>
+          <button v-if="hasDismiss()" type="button" class="be-ac-dismiss" :aria-label="t('dismiss')" @click="emit('dismiss')"><AgentIcon name="X" :size="16" /></button>
         </div>
         <AgentReveal :open="interactive">
           <AnimatePresence v-if="questionMode && question" :initial="false" mode="wait">
@@ -110,7 +113,7 @@ const dotState = (index: number) => ({ scale: reduce.value || index === step.val
             </motion.div>
           </AnimatePresence>
           <div v-else>
-            <p v-if="description" class="be-ac-desc">{{ description }}</p>
+            <p v-if="description || $slots.description" class="be-ac-desc"><slot name="description">{{ description }}</slot></p>
             <div v-if="$slots.default" class="be-ac-children"><slot /></div>
           </div>
           <div v-if="questionMode" class="be-ac-footer">
@@ -120,13 +123,13 @@ const dotState = (index: number) => ({ scale: reduce.value || index === step.val
             </template>
             <ButtonBase :size="last ? 'sm' : 'icon'" class="be-ac-round be-ac-next" :aria-label="last ? t('submit') : t('nextQuestion')" :disabled="busy || !ready" @click="proceed">
               <AgentIcon v-if="busy" name="LoaderCircle" :size="16" :class="{ 'be-ag-spin': !reduce }" />
-              <template v-else-if="last">{{ submitLabel ?? t('submit') }}<AgentIcon name="ArrowRight" :size="14" /></template>
+              <template v-else-if="last"><slot name="submitLabel">{{ submitLabel ?? t('submit') }}</slot><AgentIcon name="ArrowRight" :size="14" /></template>
               <AgentIcon v-else name="ArrowRight" :size="16" />
             </ButtonBase>
           </div>
           <div v-else class="be-ac-actions">
-            <ButtonBase size="sm" class="be-ac-round" :disabled="busy" @click="emit('approve')">{{ approveLabel ?? t('approve') }}</ButtonBase>
-            <ButtonBase v-if="onRequestChanges" variant="secondary" size="sm" class="be-ac-round" :disabled="busy" @click="onRequestChanges">{{ t('requestChanges') }}</ButtonBase>
+            <ButtonBase size="sm" class="be-ac-round" :disabled="busy" @click="emit('approve')"><slot name="approveLabel">{{ approveLabel ?? t('approve') }}</slot></ButtonBase>
+            <ButtonBase v-if="hasRequestChanges()" variant="secondary" size="sm" class="be-ac-round" :disabled="busy" @click="emit('requestChanges')">{{ t('requestChanges') }}</ButtonBase>
             <ButtonBase v-if="hasReject()" variant="ghost" size="sm" class="be-ac-round be-ac-reject" :disabled="busy" @click="emit('reject')">{{ t('reject') }}</ButtonBase>
           </div>
         </AgentReveal>
@@ -146,7 +149,7 @@ const dotState = (index: number) => ({ scale: reduce.value || index === step.val
 .be-ac-head { display: flex; min-width: 0; align-items: flex-start; gap: 0.75rem; }
 .be-ac-title { min-width: 0; flex: 1; margin: 0; padding: 0; border: 0; letter-spacing: normal; font-size: 1rem; line-height: 1.25rem; font-weight: 500; color: var(--beui-foreground); }
 .be-ac-step { flex: none; font-size: 0.75rem; line-height: 1rem; font-variant-numeric: tabular-nums; color: color-mix(in srgb, var(--beui-muted-foreground) 65%, transparent); }
-.be-ac-badge { flex: none; border: 1px solid; border-radius: 9999px; padding: 0.125rem 0.5rem; font-size: 11px; line-height: 1rem; font-weight: 500; transition: color 0.15s, background-color 0.15s, border-color 0.15s; }
+.be-ac-badge { flex: none; border: 1px solid; border-radius: 9999px; padding: 0.125rem 0.5rem; font-size: 11px; line-height: calc(1.25 / .875); font-weight: 500; transition: color 0.15s, background-color 0.15s, border-color 0.15s; }
 .be-ac-badge[data-tone=amber] { border-color: color-mix(in srgb, var(--ag-amber-500) 30%, transparent); background: color-mix(in srgb, var(--ag-amber-500) 10%, transparent); color: var(--ag-amber); }
 .be-ac-badge[data-tone=blue] { border-color: color-mix(in srgb, var(--ag-blue-500) 30%, transparent); background: color-mix(in srgb, var(--ag-blue-500) 10%, transparent); color: var(--ag-blue); }
 .be-ac-badge[data-tone=green] { border-color: color-mix(in srgb, var(--ag-green-500) 30%, transparent); background: color-mix(in srgb, var(--ag-green-500) 10%, transparent); color: var(--ag-green); }

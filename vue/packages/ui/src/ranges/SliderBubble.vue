@@ -89,7 +89,7 @@ const stretch = useTransform(lean, value => 1 - Math.abs(value) * 0.12)
 }
 .be-range-bubble-track:active { cursor: grabbing; }
 .be-range-bubble-fill { position: absolute; top: 0; bottom: 0; left: 0; border-radius: 999px; background: var(--beui-foreground); }
-.be-range-bubble-thumb { position: absolute; top: 50%; box-sizing: border-box; width: 1.25rem; height: 1.25rem; border: 2px solid var(--beui-foreground); border-radius: 999px; background: var(--beui-background); box-shadow: 0 1px 2px 0 rgb(0 0 0 / .05); }
+.be-range-bubble-thumb { position: absolute; top: 50%; box-sizing: border-box; width: 1.25rem; height: 1.25rem; border: 2px solid var(--beui-foreground); border-radius: 999px; background: var(--beui-background); box-shadow: 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1); }
 .be-range-bubble-anchor { position: absolute; bottom: 1.5rem; pointer-events: none; }
 .be-range-bubble-pop {
   position: relative; padding: .25rem .625rem; border-radius: .75rem; background: var(--beui-foreground); color: var(--beui-background);

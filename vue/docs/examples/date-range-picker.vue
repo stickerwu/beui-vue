@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { DateRangePicker, type DateRange } from 'beui-vue'
+import {
+  DateRangePicker, DateRangePickerCalendar, DateRangePickerClear, DateRangePickerContent, DateRangePickerFooter,
+  DateRangePickerGrid, DateRangePickerHeader, DateRangePickerSelection, DateRangePickerTrigger, type DateRange,
+} from 'beui-vue'
 import { ref } from 'vue'
 
 const date = (daysAgo: number) => {
@@ -10,4 +13,23 @@ const date = (daysAgo: number) => {
 const today = date(0)
 const range = ref<DateRange | null>({ from: date(6), to: today })
 </script>
-<template><DateRangePicker v-model="range" label="Reporting period" :default-month="today" :max="today" /></template>
+<template>
+  <DateRangePicker v-model="range" label="Reporting period" :default-month="today" :max="today">
+    <DateRangePickerTrigger />
+    <DateRangePickerContent>
+      <DateRangePickerCalendar bare>
+        <DateRangePickerHeader />
+        <DateRangePickerGrid />
+        <DateRangePickerFooter>
+          <div class="footer">
+            <DateRangePickerSelection />
+            <DateRangePickerClear />
+          </div>
+        </DateRangePickerFooter>
+      </DateRangePickerCalendar>
+    </DateRangePickerContent>
+  </DateRangePicker>
+</template>
+<style scoped>
+.footer { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+</style>

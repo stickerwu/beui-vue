@@ -50,7 +50,6 @@ const themes = computed(() => [
 const documentationPages = computed(() => [
   { slug: 'installation', title: t('Installation'), description: t('Install and use beui-vue in Vue 3, Vite and Nuxt.'), category: t('Guides'), path: '/install' },
   { slug: 'catalog', title: t('Component catalog'), description: t('Browse every Vue component and variant.'), category: t('Guides'), path: '/catalog' },
-  { slug: 'verification', title: t('Verification'), description: t('Review component parity and visual verification.'), category: t('Guides'), path: '/verification' },
 ])
 const searchItems = computed(() => {
   const locale = isZh.value ? 'zh' : 'en'

@@ -51,5 +51,6 @@ onBeforeUnmount(() => { clearInterval(ticker); for (const timer of timers) clear
 </template>
 
 <style scoped>
-.attachment-demo { box-sizing: border-box; width: 100%; max-width: 42rem; padding: 1.5rem; }
+.attachment-demo { box-sizing: border-box; width: 100%; max-width: 42rem; padding: 1.5rem .75rem; }
+@media (min-width: 640px) { .attachment-demo { padding-inline: 1.5rem; } }
 </style>

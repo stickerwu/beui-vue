@@ -1,19 +1,47 @@
+<script lang="ts">
+export interface InputClassNames {
+  root?: string
+  label?: string
+  field?: string
+  input?: string
+  leftIcon?: string
+  rightIcon?: string
+  successIcon?: string
+  errorMessage?: string
+}
+</script>
+
 <script setup lang="ts">
-import { animate, motion } from 'motion-v'
+import { AnimatePresence, animate, motion } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
 import { computed, shallowRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
 
 defineOptions({ inheritAttrs: false })
-const { label, error, success, reserveErrorLine = false, id } = defineProps<{
+const { label, error, success, reserveErrorLine = false, id, modelValue, defaultValue, classNames } = defineProps<{
   label?: string
+  /** Controlled text. Use `v-model`. */
+  modelValue?: string
+  /** Initial text of an uncontrolled field. Bind `v-model` instead to control it. */
+  defaultValue?: string
   /** Truthy error triggers a shake, red border and (if a string) a message. */
   error?: string | boolean
   /** Reserve one message line so validation does not shift nearby content. */
   reserveErrorLine?: boolean
   success?: boolean
   id?: string
+  /** Extra classes for the inner parts of the field. */
+  classNames?: InputClassNames
 }>()
-const value = defineModel<string>({ default: '' })
+const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
+// Unbound, the field keeps its own text after starting at `defaultValue`.
+const internal = shallowRef(defaultValue ?? '')
+const value = computed({
+  get: () => modelValue ?? internal.value,
+  set: next => {
+    if (modelValue === undefined) internal.value = next
+    emit('update:modelValue', next)
+  },
+})
 defineSlots<{ leftIcon?: () => unknown; rightIcon?: () => unknown }>()
 const attrs = useAttrs()
 const uid = useId()
@@ -39,24 +67,34 @@ watch(hasError, next => {
 </script>
 
 <template>
-  <div class="be-input" :class="attrs.class" :style="attrs.style as Record<string, string>">
-    <label v-if="label" :for="inputId" class="be-input-label">{{ label }}</label>
-    <div ref="field" class="be-input-field" :data-state="state">
-      <span v-if="$slots.leftIcon" class="be-input-left"><slot name="leftIcon" /></span>
-      <input v-bind="{ ...attrs, class: undefined, style: undefined }" :id="inputId" v-model="value" class="be-input-native"
+  <div class="be-input" :class="[attrs.class, classNames?.root]" :style="attrs.style as Record<string, string>">
+    <label v-if="label" :for="inputId" class="be-input-label" :class="classNames?.label">{{ label }}</label>
+    <div ref="field" class="be-input-field" :class="classNames?.field" :data-state="state">
+      <span v-if="$slots.leftIcon" class="be-input-left" :class="classNames?.leftIcon"><slot name="leftIcon" /></span>
+      <input v-bind="{ ...attrs, class: undefined, style: undefined }" :id="inputId" v-model="value" class="be-input-native" :class="classNames?.input"
         :aria-invalid="hasError || undefined" :aria-describedby="describedBy"
         :data-left="$slots.leftIcon ? '' : undefined" :data-right="showRight && $slots.rightIcon || success ? '' : undefined"
         @focus="focused = true" @blur="focused = false" />
-      <svg v-if="success" viewBox="0 0 24 24" fill="none" class="be-input-success" aria-hidden="true">
+      <svg v-if="success" viewBox="0 0 24 24" fill="none" class="be-input-success" :class="classNames?.successIcon">
         <motion.path d="M5 12.5l4.5 4.5L19 7.5" stroke="currentColor" :stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
           :initial="reduce ? { pathLength: 1 } : { pathLength: 0 }" :animate="{ pathLength: 1 }" :transition="{ duration: 0.35, ease: 'easeOut' }" />
       </svg>
-      <span v-else-if="$slots.rightIcon" class="be-input-right"><slot name="rightIcon" /></span>
+      <span v-else-if="$slots.rightIcon" class="be-input-right" :class="classNames?.rightIcon"><slot name="rightIcon" /></span>
     </div>
     <div :class="reserveErrorLine ? 'be-input-reserve' : 'be-input-contents'">
-      <Transition name="be-input-error">
-        <p v-if="errorMessage" :id="`${inputId}-error`" role="alert" class="be-input-error">{{ errorMessage }}</p>
-      </Transition>
+      <AnimatePresence :initial="false">
+        <motion.p
+          v-if="errorMessage"
+          :id="`${inputId}-error`"
+          role="alert"
+          class="be-input-error"
+          :class="classNames?.errorMessage"
+          :initial="reduce ? { opacity: 0 } : { opacity: 0, y: -4, filter: 'blur(4px)' }"
+          :animate="{ opacity: 1, y: 0, filter: 'blur(0px)' }"
+          :exit="reduce ? { opacity: 0 } : { opacity: 0, y: -4, filter: 'blur(4px)' }"
+          :transition="{ duration: 0.2 }"
+        >{{ errorMessage }}</motion.p>
+      </AnimatePresence>
     </div>
   </div>
 </template>
@@ -64,7 +102,7 @@ watch(hasError, next => {
 <style scoped>
 .be-input { display: flex; flex-direction: column; gap: .375rem; }
 .be-input-label { padding-inline: .25rem; font-size: .875rem; line-height: 1.25rem; font-weight: 500; color: var(--beui-foreground); }
-.be-input-field { position: relative; box-sizing: border-box; height: 2.75rem; overflow: hidden; border: 1px solid var(--beui-border); border-radius: 999px; transition: border-color .2s, box-shadow .2s; }
+.be-input-field { position: relative; box-sizing: border-box; height: 2.75rem; overflow: hidden; border: 1px solid var(--beui-border); border-radius: 999px; transition: color .2s cubic-bezier(.4, 0, .2, 1), background-color .2s cubic-bezier(.4, 0, .2, 1), border-color .2s cubic-bezier(.4, 0, .2, 1); }
 .be-input-field:has(.be-input-native:disabled) { opacity: .6; }
 .be-input-field[data-state=focused] { border-color: color-mix(in srgb, var(--beui-foreground) 40%, transparent); box-shadow: 0 0 0 2px color-mix(in srgb, var(--beui-foreground) 5%, transparent); }
 .be-input-field[data-state=error] { border-color: var(--beui-destructive); box-shadow: 0 0 0 2px color-mix(in srgb, var(--beui-destructive) 25%, transparent); }
@@ -82,10 +120,4 @@ watch(hasError, next => {
 .be-input-contents { display: contents; }
 .be-input-reserve { min-height: 1rem; }
 .be-input-error { margin: 0; padding-inline: .25rem; font-size: .75rem; line-height: 1rem; color: var(--beui-destructive); }
-.be-input-error-enter-active, .be-input-error-leave-active { transition: opacity .2s, transform .2s, filter .2s; }
-.be-input-error-enter-from, .be-input-error-leave-to { opacity: 0; transform: translateY(-4px); filter: blur(4px); }
-@media (prefers-reduced-motion: reduce) {
-  .be-input-error-enter-active, .be-input-error-leave-active { transition: opacity .2s; }
-  .be-input-error-enter-from, .be-input-error-leave-to { opacity: 0; transform: none; filter: none; }
-}
 </style>

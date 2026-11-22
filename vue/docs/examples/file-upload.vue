@@ -88,7 +88,7 @@ onBeforeUnmount(() => { for (const timer of timers.values()) clearInterval(timer
 .upload-demo-sub { font-size: .75rem; line-height: 1rem; color: var(--beui-muted-foreground); }
 .upload-demo-tools { display: flex; align-items: center; gap: .375rem; }
 .upload-demo-switch { display: flex; padding: .25rem; border: 1px solid var(--beui-border); border-radius: 9999px; background: var(--beui-muted); }
-.upload-demo-switch button { height: 1.75rem; padding: 0 .75rem; border: 0; border-radius: 9999px; background: transparent; color: var(--beui-muted-foreground); font: inherit; font-size: .75rem; font-weight: 500; cursor: pointer; transition: background-color .15s, color .15s, transform .15s; }
+.upload-demo-switch button { height: 1.75rem; padding: 0 .75rem; border: 0; border-radius: 9999px; background: transparent; color: var(--beui-muted-foreground); font: inherit; font-size: .75rem; line-height: 1rem; font-weight: 500; cursor: pointer; transition: background-color .15s, color .15s, transform .15s; }
 .upload-demo-switch button:hover { color: var(--beui-foreground); }
 .upload-demo-switch button:active { transform: scale(.95); }
 .upload-demo-switch button[data-selected='true'] { background: var(--beui-background); color: var(--beui-foreground); }

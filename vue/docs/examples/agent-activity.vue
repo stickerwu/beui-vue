@@ -160,7 +160,7 @@ onBeforeUnmount(() => cancelAnimationFrame(frame))
       :default-open="reduce" :collapse-on-complete="!reduce" :max-height="settings.maxHeight" :active-label="variant === 'agent-trace' ? 'Running the agent trace…' : undefined"
     >
       <template #result-icon="{ result }">
-        <svg v-if="MARKS[result.id]" aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><path v-for="d in MARKS[result.id]" :key="d" :d="d" /></svg>
+        <svg v-if="MARKS[result.id]" aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path v-for="d in MARKS[result.id]" :key="d" :d="d" /></svg>
       </template>
     </AgentActivity>
     <button type="button" class="be-agent-replay" @click="run++"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path d="M3 3v5h5" /></svg>Replay</button>

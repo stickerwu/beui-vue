@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { animate, motion, useMotionValue, useMotionValueEvent, useTransform } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
-import { computed, onBeforeUnmount, onMounted, shallowRef, useSlots, useTemplateRef } from 'vue'
+import { computed, onBeforeUnmount, onMounted, shallowRef, useTemplateRef, type VNode } from 'vue'
 import { easeOut, layoutSpring, pressSpring } from '../core/motion'
 import { capturePointer, releasePointer } from '../core/touch'
 import { slideActionButtonMessages, type SlideActionButtonMessages } from './slide-action-messages'
@@ -23,7 +23,12 @@ const props = withDefaults(defineProps<{
 }>(), { threshold: .82, resetDelay: 1200 })
 
 const emit = defineEmits<{ complete: [] }>()
-const slots = useSlots()
+const slots = defineSlots<{
+  /** Track label. A plain string also names the thumb for assistive technology. */
+  default?: () => VNode[]
+  /** Shown on the track once the slide completes; wins over the `completeLabel` prop. */
+  completeLabel?: () => VNode[]
+}>()
 
 const reduce = useReducedMotion()
 const text = computed(() => ({ ...slideActionButtonMessages, ...props.labels }))
@@ -156,7 +161,7 @@ onBeforeUnmount(() => {
       class="be-slide-complete"
       :animate="{ opacity: completed ? 1 : 0 }"
       :transition="{ duration: reduce ? 0 : .15, ease: easeOut }"
-    >{{ completed ? (completeLabel ?? text.complete) : '' }}</motion.span>
+    ><slot v-if="completed" name="completeLabel">{{ completeLabel ?? text.complete }}</slot></motion.span>
 
     <motion.button
       ref="thumb"
@@ -202,21 +207,21 @@ onBeforeUnmount(() => {
 }
 .be-slide-label {
   pointer-events: none; position: absolute; inset: 0; display: grid; place-items: center;
-  padding-left: 2.5rem; color: var(--beui-foreground); font-size: .875rem; font-weight: 500;
+  padding-left: 2.5rem; color: var(--beui-foreground); font-size: .875rem; line-height: 1.25rem; font-weight: 500;
 }
 .be-slide-complete {
   pointer-events: none; position: absolute; inset: 0; display: grid; place-items: center;
-  color: var(--beui-primary-foreground, #fff); font-size: .875rem; font-weight: 500;
+  color: var(--beui-primary-foreground, #fff); font-size: .875rem; line-height: 1.25rem; font-weight: 500;
 }
 .be-slide-thumb {
   position: relative; z-index: 10; display: grid; place-items: center; width: 3.5rem; height: 3.5rem;
   border: 0; border-radius: 18px; background: var(--beui-primary);
-  color: var(--beui-primary-foreground, #fff); box-shadow: 0 1px 2px rgb(0 0 0 / .12);
+  color: var(--beui-primary-foreground, #fff); box-shadow: 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1);
   cursor: grab; touch-action: none; outline: none;
   -webkit-touch-callout: none; user-select: none; -webkit-user-select: none;
 }
 .be-slide-thumb:active { cursor: grabbing; }
-.be-slide-thumb:focus-visible { box-shadow: 0 0 0 2px var(--beui-primary), 0 0 0 4px var(--beui-background); }
+.be-slide-thumb:focus-visible { box-shadow: 0 0 0 2px var(--beui-background), 0 0 0 4px var(--beui-primary); }
 .be-slide-thumb:disabled { pointer-events: none; opacity: .5; }
 .be-slide-thumb.is-complete { cursor: default; background: var(--beui-background); color: var(--beui-foreground); }
 .be-slide-glyph { width: 1.25rem; height: 1.25rem; pointer-events: none; outline: none; }

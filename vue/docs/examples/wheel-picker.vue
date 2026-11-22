@@ -25,9 +25,9 @@ watch(dayCount, count => { if (Number(day.value) > count) day.value = String(cou
       Born <span class="born">{{ month }} {{ day }}, {{ year }}</span>
     </span>
     <div class="wheels">
-      <WheelPicker v-model="month" class-name="wheel month" :options="MONTHS" :visible-count="7" :item-height="42" :sound="sound" label="Month" />
-      <WheelPicker v-model="day" class-name="wheel day" :options="days" :visible-count="7" :item-height="42" :sound="sound" label="Day" />
-      <WheelPicker v-model="year" class-name="wheel year" :options="YEARS" :visible-count="7" :item-height="42" :sound="sound" label="Year" />
+      <WheelPicker v-model="month" class="wheel month" :options="MONTHS" :visible-count="7" :item-height="42" :sound="sound" aria-label="Month" />
+      <WheelPicker v-model="day" class="wheel day" :options="days" :visible-count="7" :item-height="42" :sound="sound" aria-label="Day" />
+      <WheelPicker v-model="year" class="wheel year" :options="YEARS" :visible-count="7" :item-height="42" :sound="sound" aria-label="Year" />
     </div>
     <Switch class="sound" :checked="sound" label="Tick sound" @update:checked="sound = $event" />
   </div>
@@ -40,7 +40,7 @@ watch(dayCount, count => { if (Number(day.value) > count) day.value = String(cou
 .wheels { display: flex; align-items: stretch; gap: .25rem; padding: .5rem; border: 1px solid var(--beui-border); border-radius: 1.5rem; background: var(--beui-background); }
 .sound { transform-origin: left; transform: scale(.85); }
 .sound :deep(label) { font-size: .875rem; }
-.wheels :deep(.wheel) { border: 0; background: transparent; min-width: 0; }
+.wheels :deep(.wheel) { border: 0; background: transparent; }
 .wheels :deep(.month) { width: 8rem; }
 .wheels :deep(.day) { width: 3.5rem; }
 .wheels :deep(.year) { width: 5rem; }

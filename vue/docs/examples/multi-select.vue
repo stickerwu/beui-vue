@@ -1,33 +1,39 @@
 <script setup lang="ts">
-import { MultiSelect } from 'beui-vue'
-import { ref } from 'vue'
+import { MultiSelect, MultiSelectContent, MultiSelectEmpty, MultiSelectGroup, MultiSelectInput, MultiSelectItem, MultiSelectLabel, MultiSelectList, MultiSelectTrigger, MultiSelectValue } from 'beui-vue'
 
 // Mirrors components/previews/motion/multi-select.preview.tsx.
-const teams = ref(['design', 'engineering'])
-const options = [
-  { value: 'design', label: 'Design', group: 'Product teams' },
-  { value: 'engineering', label: 'Engineering', group: 'Product teams' },
-  { value: 'product', label: 'Product', group: 'Product teams' },
-  { value: 'research', label: 'Research', group: 'Product teams' },
-  { value: 'marketing', label: 'Marketing', group: 'Business teams' },
-  { value: 'operations', label: 'Operations', group: 'Business teams' },
+const GROUPS = [
+  { label: 'Product teams', teams: [{ value: 'design', label: 'Design' }, { value: 'engineering', label: 'Engineering' }, { value: 'product', label: 'Product' }, { value: 'research', label: 'Research' }] },
+  { label: 'Business teams', teams: [{ value: 'marketing', label: 'Marketing' }, { value: 'operations', label: 'Operations' }] },
 ]
 </script>
 <template>
   <div class="ms-demo">
     <div class="ms-box">
-      <MultiSelect v-model="teams" :options="options" label="Search teams" placeholder="Choose teams" empty="No teams found." :labels="{ listLabel: 'Teams' }">
-        <template #option="{ option }">
-          <span class="ms-row">
-            <svg class="ms-dot" :data-tone="option.value" aria-hidden="true" viewBox="0 0 24 24" width="10" height="10" fill="currentColor" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" /></svg>
-            {{ option.label }}
-          </span>
-        </template>
+      <MultiSelect :default-value="['design', 'engineering']">
+        <MultiSelectTrigger>
+          <MultiSelectValue placeholder="Choose teams" />
+          <MultiSelectInput aria-label="Search teams" />
+        </MultiSelectTrigger>
+        <MultiSelectContent>
+          <MultiSelectList aria-label="Teams">
+            <MultiSelectGroup v-for="group in GROUPS" :key="group.label">
+              <MultiSelectLabel>{{ group.label }}</MultiSelectLabel>
+              <MultiSelectItem v-for="team in group.teams" :key="team.value" :value="team.value" :text-value="team.label">
+                <span class="ms-row">
+                  <svg class="ms-dot" :data-tone="team.value" aria-hidden="true" viewBox="0 0 24 24" width="10" height="10" fill="currentColor" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" /></svg>
+                  {{ team.label }}
+                </span>
+              </MultiSelectItem>
+            </MultiSelectGroup>
+            <MultiSelectEmpty>No teams found.</MultiSelectEmpty>
+          </MultiSelectList>
+        </MultiSelectContent>
       </MultiSelect>
     </div>
   </div>
 </template>
-<style scoped>
+<style>
 .ms-demo { display: flex; width: 100%; min-height: 420px; box-sizing: border-box; align-items: flex-start; justify-content: center; padding: 6rem 1rem 0; }
 .ms-box { width: 100%; max-width: 24rem; }
 .ms-row { display: flex; align-items: center; gap: .625rem; }

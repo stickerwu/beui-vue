@@ -58,11 +58,11 @@ function onAction({ item, action }: { item: SwipeableListItem, action: { id: str
 <style scoped>
 .swipe-demo { display: flex; box-sizing: border-box; min-height: 24rem; width: 100%; align-items: center; justify-content: center; }
 .swipe-demo-panel { box-sizing: border-box; width: 100%; max-width: 24rem; padding: .75rem; border: 1px solid var(--beui-border); border-radius: 2rem; background: var(--beui-background); box-shadow: 0 25px 50px -12px rgb(0 0 0 / .25); }
-.swipe-demo-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .5rem; margin-bottom: .75rem; padding-inline: .25rem; }
+.swipe-demo-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: .75rem; padding-inline: .25rem; }
 .swipe-demo-head p { margin: 0; }
 .swipe-demo-title { font-size: .875rem; line-height: 1.25rem; font-weight: 600; color: var(--beui-foreground); }
 .swipe-demo-sub { font-size: .75rem; line-height: 1rem; color: var(--beui-muted-foreground); }
-.swipe-demo-reset { display: inline-flex; align-items: center; gap: .375rem; height: 2rem; padding: 0 .75rem; border: 1px solid var(--beui-border); border-radius: 9999px; background: transparent; color: var(--beui-muted-foreground); font: inherit; font-size: .75rem; font-weight: 500; cursor: pointer; transition: color .15s; }
+.swipe-demo-reset { display: inline-flex; align-items: center; gap: .375rem; height: 2rem; padding: 0 .75rem; border: 1px solid var(--beui-border); border-radius: 9999px; background: transparent; color: var(--beui-muted-foreground); font: inherit; font-size: .75rem; line-height: 1rem; font-weight: 500; cursor: pointer; transition: color .15s; }
 .swipe-demo-reset:hover { color: var(--beui-foreground); }
 .swipe-demo-leading { display: grid; width: 2.5rem; height: 2.5rem; place-items: center; border: 1px solid var(--beui-border); border-radius: .75rem; background: var(--beui-background); color: var(--beui-muted-foreground); }
 .swipe-demo-foot { display: flex; align-items: center; justify-content: space-between; margin-top: .75rem; padding-inline: .25rem; font-size: 11px; font-weight: 500; color: var(--beui-muted-foreground); }

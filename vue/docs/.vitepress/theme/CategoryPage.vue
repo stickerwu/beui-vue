@@ -15,12 +15,13 @@ const section = computed(() => {
 const categoryPages = computed(() => section.value?.entries ?? pages.map(page => localizePage(page, locale.value)))
 const recent = computed(() => categoryPages.value.filter(item => item.isNew))
 const remaining = computed(() => categoryPages.value.filter(item => !item.isNew))
+// beui.dev's AGENT_CATEGORY_GROUPS (src/routes/-pages/category-page.tsx) and Docs.category.agentGroups copy.
 const agentGroups = computed(() => [
-  { title: t('Conversation'), description: t('The building blocks of a conversation, from the first prompt to the last message.'), slugs: ['prompt-input', 'message', 'message-bubble', 'message-scroller'] },
-  { title: t('Responses'), description: t('Streaming text, generated images and the sources behind an answer.'), slugs: ['streaming-response', 'image-generation', 'citations'] },
-  { title: t('Progress'), description: t('Keep the work visible while your agent thinks, plans and acts.'), slugs: ['loading-states', 'todo-list', 'agent-activity'] },
-  { title: t('Tools'), description: t('Show tool calls, code and file changes as they happen.'), slugs: ['tool-result', 'code-block', 'file-diff'] },
-  { title: t('Human control'), description: t('Give people a clear way to review and approve the next step.'), slugs: ['tool-approval', 'approval-card'] },
+  { id: 'conversation', title: t('Conversation components'), description: t('Compose prompts, arrange sender-aware messages, shape conversational surfaces, and keep streamed turns stable while the reader moves through the transcript.'), slugs: ['prompt-input', 'message', 'message-bubble', 'message-scroller'] },
+  { id: 'responses', title: t('Response and evidence components'), description: t('Render rich answers as they arrive, reveal completion actions at the right time, and connect generated claims to inspectable sources.'), slugs: ['streaming-response', 'image-generation', 'citations'] },
+  { id: 'progress', title: t('Progress and planning components'), description: t('Communicate unknown waits, durable task plans, and chronological agent activity without inventing precision or exposing an unfiltered trace.'), slugs: ['loading-states', 'todo-list', 'agent-activity'] },
+  { id: 'tools', title: t('Tool and code components'), description: t('Present execution outcomes, generated source, and file changes with bounded streaming, stable highlighting, and inspectable completion states.'), slugs: ['tool-result', 'code-block', 'file-diff'] },
+  { id: 'human-control', title: t('Human-in-the-loop components'), description: t('Pause agent work for a scoped permission, clarification, review, or decision, then preserve the resolved outcome in the run history.'), slugs: ['tool-approval', 'approval-card'] },
 ])
 const groups = computed(() => agentGroups.value.map(group => ({
   ...group,
@@ -40,7 +41,7 @@ const groups = computed(() => agentGroups.value.map(group => ({
       <a :href="`https://beui.dev${section?.path ?? '/components/motion'}`" target="_blank" rel="noopener noreferrer">React ↗</a>
     </nav>
     <div v-if="category === 'agents'" class="beui-agent-groups">
-      <section v-for="group in groups" :key="group.title">
+      <section v-for="group in groups" :id="group.id" :key="group.id">
         <h2>{{ group.title }}</h2>
         <p>{{ group.description }}</p>
         <div class="beui-category-grid">
@@ -57,7 +58,7 @@ const groups = computed(() => agentGroups.value.map(group => ({
       </section>
       <ProBlockLinks v-if="category" :page-key="category" category />
       <section class="beui-category-section">
-        <h2>{{ recent.length ? `${t('All')} ${section?.name ?? t('Components')}` : section?.name ?? t('All components') }}</h2>
+        <h2>{{ section?.allLabel ?? t('All components') }}</h2>
         <div class="beui-category-grid">
           <PreviewTile v-for="item in remaining" :key="item.path" :page="item" detailed />
         </div>

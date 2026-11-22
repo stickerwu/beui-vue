@@ -1,31 +1,51 @@
 <script setup lang="ts">
 import { AnimatePresence, motion } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
-import { computed, nextTick, onBeforeUnmount, onMounted, shallowRef, useTemplateRef, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, shallowRef, useTemplateRef, watch } from 'vue'
 import { easeOut } from '../core/motion'
 import { useValue } from '../agents/shared'
 import { expandableTabsMessages } from './messages'
 
-export type FoldingTab = { id: string; label: string; icon?: string; content?: string; disabled?: boolean }
+export type FoldingTab = {
+  id: string
+  /** Shown inside the active tab and used as the button's accessible name. */
+  label: string
+  icon?: string
+  /** Text shown in the panel above the bar when this tab is active; use the `panel` slot for anything richer. */
+  content?: string
+  disabled?: boolean
+}
+
+export type ExpandableTabsClassNames = {
+  root?: string
+  panel?: string
+  bar?: string
+  tab?: string
+  activeTab?: string
+  icon?: string
+  label?: string
+  pill?: string
+}
+
+// The shell is the root element, so attributes (`class`, `style`, ...) land on it
+// as they do upstream; the off-screen label measurer is its sibling.
+defineOptions({ inheritAttrs: false })
 
 const props = withDefaults(defineProps<{
   items: readonly FoldingTab[]
   modelValue?: string | null
+  /** Active tab id, or null/undefined for the closed (bar-only) state. */
   value?: string | null
   defaultValue?: string | null
-  /** Kept from the original port; the measured shell morphs in every mode, so it changes nothing today. */
-  morph?: boolean
   ariaLabel?: string
-  /** Shows a close affordance on the open tab, also bound to Delete on it. */
-  onClose?: (id: string) => void
+  classNames?: ExpandableTabsClassNames
+  /** Override any built-in string. */
   labels?: Partial<typeof expandableTabsMessages>
 }>(), { defaultValue: null })
 
 const emit = defineEmits<{
   'update:modelValue': [value: string | null]
   valueChange: [value: string | null]
-  /** Kept from the original port. The bar is not reorderable, so it never fires. */
-  orderChange: [ids: string[]]
 }>()
 
 defineSlots<{
@@ -61,7 +81,7 @@ const LABEL_GAP = 7
 const PANEL_DOCK_GAP = 4
 
 const reduce = useReducedMotion()
-const root = useTemplateRef<HTMLElement>('root')
+const root = useTemplateRef<{ $el?: HTMLElement }>('root')
 const sizer = useTemplateRef<HTMLElement>('sizer')
 
 const model = useValue<string | null>(
@@ -73,8 +93,6 @@ const model = useValue<string | null>(
 const activeId = computed(() => model.value.value)
 const activeIndex = computed(() => props.items.findIndex(item => item.id === activeId.value))
 const active = computed(() => (activeIndex.value < 0 ? null : props.items[activeIndex.value] ?? null))
-const firstEnabledId = computed(() => props.items.find(item => !item.disabled)?.id ?? null)
-const tabStopId = computed(() => activeId.value ?? firstEnabledId.value)
 
 const size = shallowRef<Size | null>(null)
 const labelWidths = shallowRef<Record<string, number>>({})
@@ -82,7 +100,7 @@ const labelNodes: Record<string, HTMLElement | null> = {}
 
 // Outside click / Escape closes it: an open panel behaves like an open menu.
 function outside(event: Event) {
-  if (event.target instanceof Node && root.value?.contains(event.target)) return
+  if (event.target instanceof Node && root.value?.$el?.contains(event.target)) return
   model.set(null)
 }
 function escape(event: KeyboardEvent) { if (event.key === 'Escape') model.set(null) }
@@ -125,7 +143,6 @@ const contentVariants = computed(() => (reduce.value
     }))
 
 const label = computed(() => props.ariaLabel ?? props.labels?.label ?? expandableTabsMessages.label)
-const closeLabel = (name: string) => `Close ${name}`
 
 /* ---- measurement --------------------------------------------------------- */
 
@@ -172,89 +189,59 @@ onBeforeUnmount(() => {
 
 /* ---- interaction --------------------------------------------------------- */
 
-function tabElement(id: string) {
-  return Array.from(root.value?.querySelectorAll<HTMLElement>('[role="tab"]') ?? []).find(tab => tab.dataset.tabId === id)
-}
 
 function select(id: string) {
   model.set(activeId.value === id ? null : id)
 }
 
-// Roving tab stop: arrows walk the bar, Home/End jump to its ends, Delete
-// dismisses the focused tab when the host allows it, Escape closes the panel.
-async function keydown(event: KeyboardEvent, item: FoldingTab) {
-  const enabled = props.items.filter(entry => !entry.disabled)
-  const index = enabled.findIndex(entry => entry.id === item.id)
-  if (index < 0) return
-  const step: Record<string, number> = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: 1, ArrowUp: -1 }
-  let next: FoldingTab | undefined
-  if (event.key in step) next = enabled[(index + step[event.key]! + enabled.length) % enabled.length]
-  else if (event.key === 'Home') next = enabled[0]
-  else if (event.key === 'End') next = enabled[enabled.length - 1]
-  else if (event.key === 'Escape') { event.preventDefault(); model.set(null); return }
-  else if (event.key === 'Delete' && props.onClose) { event.preventDefault(); props.onClose(item.id); return }
-  if (!next) return
-  event.preventDefault()
-  if (activeId.value !== null) model.set(next.id)
-  await nextTick()
-  tabElement(next.id)?.focus({ preventScroll: true })
-}
 </script>
 
 <template>
-  <div ref="root" class="be-fold">
-    <motion.div class="fold-shell" :initial="false" :animate="shellTarget" :transition="reduce ? { duration: 0 } : SHELL_SPRING" :style="{ transformOrigin: 'bottom center' }">
-      <div ref="sizer" aria-hidden="true" class="fold-sizer" :style="{ paddingBottom: `${BAR_H + PANEL_DOCK_GAP}px` }">
-        <div v-for="(item, index) in items" :key="item.id" class="fold-sizer-cell">
-          <slot name="panel" :item="item" :index="index">{{ item.content }}</slot>
-        </div>
+  <motion.div ref="root" v-bind="$attrs" class="fold-shell" :class="classNames?.root" :initial="false" :animate="shellTarget"
+    :transition="reduce ? { duration: 0 } : SHELL_SPRING" :style="{ transformOrigin: 'bottom center' }">
+    <div ref="sizer" aria-hidden="true" class="fold-sizer" :class="classNames?.panel" :style="{ paddingBottom: `${BAR_H + PANEL_DOCK_GAP}px` }">
+      <div v-for="(item, index) in items" :key="item.id" class="fold-sizer-cell">
+        <slot name="panel" :item="item" :index="index">{{ item.content }}</slot>
       </div>
-
-      <div class="fold-panel" :style="{ bottom: `${BAR_H + PANEL_DOCK_GAP}px` }">
-        <AnimatePresence mode="popLayout" :initial="false">
-          <motion.div v-if="active" :key="active.id" :variants="contentVariants" initial="enter" animate="center" exit="exit"
-            :transition="reduce ? { duration: 0.15, ease: easeOut } : CONTENT_SPRING" class="fold-panel-content">
-            <slot name="panel" :item="active" :index="activeIndex">{{ active.content }}</slot>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      <div role="tablist" aria-orientation="horizontal" :aria-label="label" class="fold-bar" :style="{ height: `${BAR_H}px` }">
-        <div v-for="(item, index) in items" :key="item.id" class="fold-slot">
-          <motion.button :data-tab-id="item.id" type="button" role="tab" :aria-selected="activeId === item.id" :aria-label="item.label"
-            :aria-controls="`${item.id}-panel`" :disabled="item.disabled" :tabindex="tabStopId === item.id ? 0 : -1"
-            :layout="reduce ? false : 'position'" :animate="{ width: activeId === item.id && active ? activeTabWidth(item) : TAB_W }"
-            :transition="reduce ? { duration: 0 } : TAB_CHANGE_SPRING" class="fold-tab" :class="{ 'is-active': activeId === item.id }"
-            @click="select(item.id)" @keydown="keydown($event, item)">
-            <span v-if="activeId === item.id" class="fold-pill" />
-            <span class="fold-icon"><slot name="icon" :item="item" :index="index">{{ item.icon ?? item.label.slice(0, 1) }}</slot></span>
-            <motion.span aria-hidden="true" :initial="false"
-              :animate="{ width: activeId === item.id ? (labelWidths[item.id] ?? 0) : 0, opacity: activeId === item.id ? 1 : 0, marginLeft: activeId === item.id ? LABEL_GAP : 0, filter: reduce || activeId === item.id ? 'blur(0px)' : 'blur(3px)' }"
-              :transition="reduce ? { duration: 0 } : activeId === item.id ? LABEL_OPEN : LABEL_CLOSE" class="fold-label">{{ item.label }}</motion.span>
-          </motion.button>
-          <button v-if="onClose && activeId === item.id" type="button" class="fold-close" :aria-label="closeLabel(item.label)" @click="onClose?.(item.id)">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
-          </button>
-        </div>
-      </div>
-    </motion.div>
-
-    <div aria-hidden="true" class="fold-measure">
-      <span v-for="item in items" :key="item.id" :ref="element => setLabelNode(item.id, element)" class="fold-measure-label">{{ item.label }}</span>
     </div>
+
+    <div class="fold-panel" :class="classNames?.panel" :style="{ bottom: `${BAR_H + PANEL_DOCK_GAP}px` }">
+      <AnimatePresence mode="popLayout" :initial="false">
+        <motion.div v-if="active" :key="active.id" :variants="contentVariants" initial="enter" animate="center" exit="exit"
+          :transition="reduce ? { duration: 0.15, ease: easeOut } : CONTENT_SPRING" class="fold-panel-content">
+          <slot name="panel" :item="active" :index="activeIndex">{{ active.content }}</slot>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+
+    <div role="tablist" aria-orientation="horizontal" :aria-label="label" class="fold-bar" :class="classNames?.bar" :style="{ height: `${BAR_H}px` }">
+      <motion.button v-for="(item, index) in items" :key="item.id" type="button" role="tab" :aria-selected="activeId === item.id"
+        :aria-label="item.label" :disabled="item.disabled" :layout="reduce ? false : 'position'"
+        :animate="{ width: activeId === item.id && active ? activeTabWidth(item) : TAB_W }"
+        :transition="reduce ? { duration: 0 } : TAB_CHANGE_SPRING" class="fold-tab"
+        :class="[{ 'is-active': activeId === item.id }, classNames?.tab, activeId === item.id && classNames?.activeTab]" @click="select(item.id)">
+        <span v-if="activeId === item.id" class="fold-pill" :class="classNames?.pill" />
+        <span class="fold-icon" :class="classNames?.icon"><slot name="icon" :item="item" :index="index">{{ item.icon ?? item.label.slice(0, 1) }}</slot></span>
+        <motion.span aria-hidden="true" :initial="false"
+              :animate="{ width: activeId === item.id ? (labelWidths[item.id] ?? 0) : 0, opacity: activeId === item.id ? 1 : 0, marginLeft: activeId === item.id ? LABEL_GAP : 0, filter: reduce || activeId === item.id ? 'blur(0px)' : 'blur(3px)' }"
+          :transition="reduce ? { duration: 0 } : activeId === item.id ? LABEL_OPEN : LABEL_CLOSE" class="fold-label" :class="classNames?.label">{{ item.label }}</motion.span>
+      </motion.button>
+    </div>
+  </motion.div>
+
+  <div aria-hidden="true" class="fold-measure">
+    <span v-for="item in items" :key="item.id" :ref="element => setLabelNode(item.id, element)" class="fold-measure-label" :class="classNames?.label">{{ item.label }}</span>
   </div>
 </template>
 
 <style scoped>
-.be-fold { position: relative; display: inline-block; max-width: 100%; }
 .fold-shell { position: relative; overflow: hidden; border: 1px solid var(--beui-border); border-radius: 26px; background: var(--beui-card); color: var(--beui-foreground); }
 .fold-sizer { pointer-events: none; visibility: hidden; position: absolute; left: 0; top: 0; display: grid; width: max-content; padding-inline: .5rem; padding-top: .5rem; }
 .fold-sizer-cell { grid-column-start: 1; grid-row-start: 1; width: max-content; }
 .fold-panel { position: absolute; left: 0; right: 0; top: 0; z-index: 10; overflow: hidden; padding-inline: .5rem; padding-top: .5rem; }
 .fold-panel-content { width: max-content; transform-origin: top center; will-change: transform, opacity, filter; }
 .fold-bar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 20; display: flex; align-items: center; justify-content: space-between; gap: .25rem; width: 100%; padding: .5rem; }
-.fold-slot { position: relative; display: flex; flex: none; align-items: center; }
-.fold-tab { position: relative; isolation: isolate; display: flex; align-items: center; justify-content: center; height: 2.25rem; min-width: 2rem; flex: none; overflow: hidden; padding-inline: .5rem; border: 0; border-radius: 18px; background: transparent; color: var(--beui-muted-foreground); font: inherit; font-size: .875rem; font-weight: 500; outline: none; cursor: pointer; }
+.fold-tab { position: relative; isolation: isolate; display: flex; align-items: center; justify-content: center; height: 2.25rem; min-width: 2rem; flex: none; overflow: hidden; padding-inline: .5rem; border: 0; border-radius: 18px; background: transparent; color: var(--beui-muted-foreground); font: inherit; font-size: .875rem; line-height: calc(1.25 / .875); font-weight: 500; outline: none; cursor: pointer; }
 .fold-tab:hover:not(.is-active) { color: var(--beui-foreground); }
 .fold-tab:disabled { cursor: not-allowed; opacity: .5; }
 .fold-tab.is-active { min-width: 0; justify-content: flex-start; padding-left: .625rem; padding-right: 1rem; color: var(--beui-foreground); }
@@ -262,10 +249,6 @@ async function keydown(event: KeyboardEvent, item: FoldingTab) {
 .fold-pill { position: absolute; inset: 0; z-index: -1; border-radius: 18px; background: color-mix(in srgb, var(--beui-foreground) 10%, transparent); }
 .fold-icon { display: grid; place-items: center; flex: none; }
 .fold-label { display: inline-block; overflow: hidden; white-space: nowrap; }
-.fold-close { position: absolute; right: .25rem; top: 50%; display: grid; place-items: center; width: 1.1rem; height: 1.1rem; translate: 0 -50%; padding: 0; border: 0; border-radius: 50%; background: color-mix(in srgb, var(--beui-foreground) 12%, transparent); color: var(--beui-muted-foreground); cursor: pointer; }
-.fold-close svg { width: .7rem; height: .7rem; }
-.fold-close:hover { color: var(--beui-foreground); }
-.fold-close:focus-visible { outline: 2px solid var(--beui-ring); outline-offset: 1px; }
 .fold-measure { pointer-events: none; position: fixed; left: 0; top: 0; z-index: -10; display: flex; opacity: 0; }
 .fold-measure-label { white-space: nowrap; font-size: .875rem; font-weight: 500; line-height: 1; }
 </style>

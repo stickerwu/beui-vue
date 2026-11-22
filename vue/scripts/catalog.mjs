@@ -3,8 +3,9 @@ import { mkdir, readFile, readdir, unlink, writeFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 import ts from 'typescript'
 import { readPorts } from './ports.mjs'
-import { approvedExamples, expectedExamples } from './acceptance.mjs'
+import { expectedExamples } from './acceptance.mjs'
 import { componentRoutes } from './routes.mjs'
+import { apiDocs } from './api-docs.mjs'
 
 const baseline = 'c0a936f59eb767e263c0e81b93dd323511dc9b6b'
 const root = new URL('../', import.meta.url)
@@ -71,7 +72,6 @@ if (process.argv.includes('--docs')) {
   const readJson = async path => JSON.parse(await readFile(new URL(path, docs), 'utf8'))
   const pagesZh = await readJson('.vitepress/theme/i18n/pages.zh.json')
   const sectionsZh = await readJson('.vitepress/theme/i18n/sections.zh.json')
-  const apiEn = await readJson('.vitepress/theme/i18n/api.en.json')
   const {paths, groups: routeGroups} = componentRoutes(entries)
   const packageSource = new URL('packages/ui/src/', root)
   const exports = new Map()
@@ -79,79 +79,102 @@ if (process.argv.includes('--docs')) {
     if (!filename.endsWith('.ts')) continue
     const file = new URL(filename.replaceAll('\\', '/'), packageSource)
     const source = await readFile(file, 'utf8')
-    for (const match of source.matchAll(/export \{ default as (\w+) \} from '([^']+\.vue)'/g)) {
+    for (const match of source.matchAll(/export \{\s*default as (\w+)\s*\} from '([^']+\.vue)'/g)) {
       exports.set(match[1], new URL(match[2], file))
     }
   }
+  // Section copy follows beui.dev's Docs.category messages, with React → Vue (and without the
+  // Tailwind/shadcn wording, which does not apply to this package).
   const sectionCopy = {
-    motion: ['Components', '/components/motion', 'Animated Vue components', 'Explore free, open-source animated Vue components built with Motion. Bring the TypeScript source into your app and customize every interaction.'],
-    blocks: ['Blocks', '/components/blocks', 'Animated interface blocks', 'Composed Vue interfaces, from command palettes and dynamic islands to forms, navigation and productivity tools.'],
-    agents: ['AI Agents', '/components/agents', 'Components for AI interfaces', 'Build conversations, streaming responses and agent workflows with animated Vue components.'],
-    charts: ['Charts', '/charts', 'Animated charts', 'Interactive SVG charts with responsive layouts, accessible data and motion that makes changes easy to follow.'],
-    casino: ['Casino', '/casino', 'Interactive casino components', 'Animated game interfaces rebuilt for Vue, with keyboard controls and reduced-motion support.'],
+    motion: ['Components', '/components/motion', 'Animated Vue components', 'Explore free, open-source animated Vue components built with Motion. Copy the TypeScript source into your app and customize every interaction.', 'All animated components'],
+    blocks: ['Blocks', '/components/blocks', 'Animated Vue UI blocks', 'Explore product-ready animated Vue blocks built with Motion. Copy complete interactions into your app and adapt the source to your product.', 'All animated blocks'],
+    agents: ['AI Agents', '/components/agents', 'Animated AI agent components', 'Build clear, responsive AI experiences with open-source Vue components for agent reasoning, progress, tool activity, and conversation states.', 'All agent components'],
+    charts: ['Charts', '/charts', 'Animated Vue charts', 'Explore interactive activity heatmaps, monthly returns, and price target charts. Copy the Vue source and customize it for your data.', 'All charts'],
+    casino: ['Casino', '/casino', 'Animated Vue casino games', 'Explore animated crash, mines, plinko and slide games with fair built-in outcomes or server-decided results. Copy the Vue source and wire it to your own game logic.', 'All casino games'],
   }
+  const guidesZh = await readJson('.vitepress/theme/i18n/guides.zh.json').catch(() => ({}))
+  const {componentDates} = await import(moduleURL(pinnedModule('lib/component-dates.ts')))
+  const nativeCatalog = JSON.parse(execFileSync('git', ['show', `${baseline}:lib/native/catalog.json`], {cwd: repo, encoding: 'utf8', maxBuffer: 1 << 28}))
+  const isNewBadge = item => item.badge === 'new' && Date.parse(`${item.launchedAt}T00:00:00Z`) + 7 * 86400000 > Date.now()
+  const creditOf = credit => credit ? {name: credit.name, url: credit.url, avatar: credit.avatar ?? null} : null
   const pages = [...routeGroups].map(([path, group]) => {
     const page = registry.flatMap(category => category.components).find(page => page.slug === path.split('/').at(-1))
     const description = page.description.replaceAll('React', 'Vue')
+    // Same credit rules as beui.dev: one shared contributor shows once under the title,
+    // otherwise "Includes designs by" lists each contributor and links to their example.
+    const exampleCredits = page.examples?.map(example => example.credit) ?? []
+    const sharedCredit = exampleCredits.length > 0 && exampleCredits.every(credit => credit && credit.url === exampleCredits[0]?.url) ? exampleCredits[0] : undefined
+    const pageCredit = page.credit ?? sharedCredit
+    const creditGroups = pageCredit ? [] : Object.values((page.examples ?? []).reduce((groups, example) => {
+      if (!example.credit) return groups
+      groups[example.credit.url] ??= {credit: creditOf(example.credit), examples: []}
+      groups[example.credit.url].examples.push(example.slug)
+      return groups
+    }, {}))
+    const native = nativeCatalog.components.find(component => component.slug === page.slug)
+    const guide = page.guide ? {
+      introduction: page.guide.introduction,
+      composition: page.guide.composition,
+      connections: page.guide.connections.map(({slug, name, description}) => ({slug, name, description})),
+    } : null
     return {
       slug: page.slug, title: page.name, description,
-      zh: pagesZh[page.slug] ?? {description},
+      zh: {...(pagesZh[page.slug] ?? {description}), ...(guidesZh[page.slug] ? {guide: guidesZh[page.slug]} : {})},
       category: group[0].category, path,
       relatedSlugs: relatedComponents(group[0].category, page.slug, 3).map(item => item.slug),
       launchedAt: page.launchedAt ?? null,
-      isNew: page.badge === 'new' && Date.parse(`${page.launchedAt}T00:00:00Z`) + 7 * 86400000 > Date.now(),
+      isNew: isNewBadge(page),
+      credit: creditOf(pageCredit), sharedCredit: Boolean(sharedCredit), creditGroups,
+      guide,
+      updatedAt: componentDates(group[0].category, page.slug).updatedAt,
+      native: native ? {description: native.description} : null,
       entries: group.map(entry => ({
         slug: entry.slug, title: entry.title, category: entry.category, path: paths.get(entry.slug),
         pagePath: path, description,
       })),
     }
   })
-  const sections = Object.entries(sectionCopy).map(([slug, [name, path, heading, description]]) => ({
-    slug, name, path, heading, description, zh: sectionsZh[slug] ?? {name, heading, description}, entries: pages.filter(page => page.category === slug),
+  const sections = Object.entries(sectionCopy).map(([slug, [name, path, heading, description, allLabel]]) => ({
+    slug, name, path, heading, description, allLabel, zh: sectionsZh[slug] ?? {name, heading, description, allLabel}, entries: pages.filter(page => page.category === slug),
   }))
   await writeFile(new URL('.vitepress/catalog-data.json', docs), JSON.stringify({pages, sections}, null, 2) + '\n')
 
-  function propsFor(source) {
-    const script = source.match(/<script setup[^>]*>([\s\S]*?)<\/script>/)?.[1]
-    if (!script) return []
-    const file = ts.createSourceFile('component.ts', script, ts.ScriptTarget.Latest, true)
-    const types = new Map()
-    for (const statement of file.statements) {
-      if (ts.isInterfaceDeclaration(statement)) types.set(statement.name.text, statement)
-      if (ts.isTypeAliasDeclaration(statement)) types.set(statement.name.text, statement.type)
-    }
-    let declaration
-    function visit(node) {
-      if (ts.isCallExpression(node) && node.expression.getText(file) === 'defineProps') declaration = node.typeArguments?.[0]
-      ts.forEachChild(node, visit)
-    }
-    visit(file)
-    if (declaration && ts.isTypeReferenceNode(declaration)) declaration = types.get(declaration.typeName.getText(file))
-    if (!declaration || !('members' in declaration)) return []
-    return declaration.members.filter(ts.isPropertySignature).map(member => ({
-      name: member.name.getText(file), type: member.type?.getText(file) ?? 'unknown', required: !member.questionToken,
-    }))
-  }
+  const apiZh = await readJson('.vitepress/theme/i18n/api.zh.json').catch(() => ({}))
+  const missingZh = new Set()
+  const apiGaps = {}
+  const vueFileOf = name => exports.has(name) ? fileURLToPath(exports.get(name)) : undefined
+  const registryPages = registry.flatMap(category => category.components)
 
+  // Mirrors beui.dev's component page (src/routes/-pages/component-page.tsx):
+  // - no examples: preview, then Install, then API Reference;
+  // - examples: one block per example (title, file, credit, preview tabs, plus the API
+  //   of its file — only the last block when every example shares one file), then Install;
+  // - examples with their own install slug: Install and API inside each block instead.
   async function componentDocument(path, base, group, title, locale) {
     const parent = pages.find(page => page.path === new URL(group[0].page).pathname)
+    const regPage = registryPages.find(page => page.slug === new URL(group[0].page).pathname.split('/').at(-1))
     // `base` is '' for the Chinese root locale and 'en/' for English; the extra
     // folder level moves every relative import one directory further from docs/.
     const prefix = '../'.repeat(path.split('/').length - 2 + base.split('/').filter(Boolean).length)
     const copy = locale === 'zh' ? {
-      install: '安装', api: 'API 参考', credit: '原设计',
-      evidence: (approved, total) => `beUI 源码与效果对照 · ${approved}/${total}`,
-      demo: '上游演示', source: '固定版本源码', frames: '画面对照',
+      install: '安装', installDescription: '通过包管理器安装，或手动复制源码。', api: 'API 参考', preview: '预览', newBadge: '新',
       description: text => `${text} — 为 Vue 3 重制的 beUI 动画组件，附 TypeScript 示例、API 参考与原版源码。`,
     } : {
-      install: 'Install', api: 'API Reference', credit: 'Original design by',
-      evidence: (approved, total) => `beUI source and visual verification · ${approved}/${total}`,
-      demo: 'Original demo', source: 'Pinned upstream source', frames: 'compare frames',
+      install: 'Install', installDescription: 'Add it with your package manager, or copy the source manually.', api: 'API Reference', preview: 'Preview', newBadge: 'New',
       description: text => `${text} — beUI animated components rebuilt for Vue 3. TypeScript examples, API reference and original beUI source.`,
     }
-    const imports = [`import DemoFrame from '${prefix}.vitepress/DemoFrame.vue'`, `import ComponentPreview from '${prefix}.vitepress/theme/ComponentPreview.vue'`, `import ApiTable from '${prefix}.vitepress/theme/ApiTable.vue'`, `import InstallationBlock from '${prefix}.vitepress/theme/InstallationBlock.vue'`]
+    const localizeDocs = docs => locale === 'en' ? docs : docs.map(doc => ({...doc, rows: doc.rows.map(row => {
+      if (row.description && !apiZh[row.description]) missingZh.add(row.description)
+      return {...row, description: apiZh[row.description] ?? row.description}
+    })}))
+    const literal = value => JSON.stringify(value).replaceAll('<', '\\u003c')
+    const imports = [`import DemoFrame from '${prefix}.vitepress/DemoFrame.vue'`, `import ComponentPreview from '${prefix}.vitepress/theme/ComponentPreview.vue'`, `import ApiTable from '${prefix}.vitepress/theme/ApiTable.vue'`, `import InstallationBlock from '${prefix}.vitepress/theme/InstallationBlock.vue'`, `import CreditLink from '${prefix}.vitepress/theme/CreditLink.vue'`]
     const declarations = []
     const blocks = []
+    const showSharedCredit = !parent?.sharedCredit
+    let pageInstall = null
+    let pageApi = null
+    const sectionHead = (id, heading) => `<div id="${id}" class="beui-example-section">\n<h2 class="beui-section-title">${heading}</h2>`
     for (const [index, entry] of group.entries()) {
       const port = ports[entry.slug]
       if (!port) continue
@@ -159,43 +182,60 @@ if (process.argv.includes('--docs')) {
       const demo = await standaloneExample(await readFile(file, 'utf8'), file)
       const component = exports.get(port.name)
       const source = component ? await readFile(component, 'utf8') : demo
-      const literal = value => JSON.stringify(value).replaceAll('<', '\\u003c')
+      const fileLabel = component ? fileURLToPath(component).split(/[\\/]/).pop() : `${port.name}.vue`
       imports.push(`import Demo${index} from '${prefix}examples/${entry.slug}.vue'`)
-      declarations.push(`const usage${index} = ${literal(demo.trim())}`, `const source${index} = ${literal(source.trim())}`, `const props${index} = ${JSON.stringify(propsFor(source))}`)
-      const section = group.length > 1 ? `## ${entry.title}\n\n` : ''
-      const credit = entry.credit ? `\n${copy.credit} [${entry.credit.name}](${entry.credit.url})\n` : ''
-      const approved = approvedExamples(entry, port).length
-      const total = expectedExamples(entry).length
-      const api = locale === 'en' ? apiEn[entry.slug] ?? port.api : port.api
-      // Like beui.dev, a page with several examples shows each one in its own titled block.
-      const examples = expectedExamples(entry)
-      const previews = examples.length > 1
-        ? examples.map(example => `<section id="${example.slug}" class="beui-example">
-<div class="beui-example-head"><h2 class="beui-example-title">${example.title}</h2><code>${entry.slug}.vue</code></div>
-<ComponentPreview slug="${entry.slug}" title="${example.title}" :usage="usage${index}" :source="source${index}"><DemoFrame variant="${example.slug}"><Demo${index} /></DemoFrame></ComponentPreview>
-</section>`).join('\n\n')
-        : `<ComponentPreview slug="${entry.slug}" title="${entry.title}" :usage="usage${index}" :source="source${index}"><DemoFrame><Demo${index} /></DemoFrame></ComponentPreview>`
-      blocks.push(`${section}${credit}
-${previews}
-
-### ${copy.install}
-
-<InstallationBlock import-name="${port.name}" />
-
-### ${copy.api}
-
-${api}
-
-<ApiTable :rows="props${index}" />
-
-<details class="beui-evidence"><summary>${copy.evidence(approved, total)}</summary>
-
-[${copy.demo}](${entry.page}) · [${copy.source}](https://github.com/starc007/ui-components/blob/${baseline}/${entry.source})
-
-${expectedExamples(entry).map(example => `- [${example.title} · ${copy.frames}](/review/index.html#${entry.slug}--${example.slug})`).join('\n')}
-
-</details>`)
+      declarations.push(`const usage${index} = ${literal(demo.trim())}`, `const source${index} = ${literal(source.trim())}`)
+      const fallback = component ? fileURLToPath(component) : undefined
+      const api = upstreamFile => {
+        const {docs: apiDocsList, gaps} = apiDocs(upstreamFile, vueFileOf, fallback)
+        if (gaps.length) apiGaps[`${entry.slug} (${upstreamFile})`] = gaps
+        return localizeDocs(apiDocsList)
+      }
+      const variants = regPage.examples?.filter(example => example.installSlug) ?? []
+      const ownInstall = variants.some(example => example.installSlug === entry.slug)
+      const regExamples = ownInstall ? variants.filter(example => example.installSlug === entry.slug) : regPage.examples ?? []
+      if (!regExamples.length) {
+        declarations.push(`const api${index} = ${literal(api(regPage.file))}`)
+        blocks.push(`<section id="preview" class="beui-preview-section">
+<h2 class="beui-sr-only">${copy.preview}</h2>
+<ComponentPreview slug="${entry.slug}" title="${entry.title}" :usage="usage${index}" :source="source${index}"><DemoFrame><Demo${index} /></DemoFrame></ComponentPreview>
+</section>`)
+        pageInstall = `<InstallationBlock import-name="${port.name}" />`
+        pageApi = `api${index}`
+        continue
+      }
+      const shareSource = regExamples.length > 1 && new Set(regExamples.map(example => example.file)).size === 1
+      const exampleBlocks = regExamples.map((example, exampleIndex) => {
+        const key = `${index}_${exampleIndex}`
+        const showApi = !shareSource || exampleIndex === regExamples.length - 1
+        const parts = [`<section id="${example.slug}" class="beui-example">
+<div class="beui-example-head"><div class="beui-example-name"><h2 class="beui-example-title">${example.name}</h2>${isNewBadge(example) ? `<span class="beui-new-badge">${copy.newBadge}</span>` : ''}</div><code>${fileLabel}</code></div>`]
+        if (example.credit && showSharedCredit) {
+          declarations.push(`const credit${key} = ${literal(creditOf(example.credit))}`)
+          parts.push(`<CreditLink class="beui-example-credit" :credit="credit${key}" />`)
+        }
+        const variantAttr = regExamples.length > 1 || (expectedExamples(entry).length > 1) ? ` variant="${example.slug}"` : ''
+        parts.push(`<div id="${example.slug}-preview" class="beui-example-preview">
+<ComponentPreview slug="${entry.slug}" title="${example.name}" :usage="usage${index}" :source="source${index}"><DemoFrame${variantAttr}><Demo${index} /></DemoFrame></ComponentPreview>
+</div>`)
+        if (ownInstall) parts.push(`${sectionHead(`${example.slug}-install`, copy.install)}\n<InstallationBlock import-name="${port.name}" />\n</div>`)
+        if (showApi) {
+          declarations.push(`const api${key} = ${literal(api(example.file))}`)
+          parts.push(`<ApiTable id="${example.slug}-api-reference" heading="${copy.api}" :docs="api${key}" />`)
+        }
+        parts.push('</section>')
+        return parts.join('\n')
+      })
+      blocks.push(exampleBlocks.join('\n\n'))
+      if (!ownInstall) pageInstall = `<InstallationBlock import-name="${port.name}" />`
     }
+    let body = `<div class="${regPage.examples?.length ? 'beui-examples' : 'beui-default-preview'}">\n\n${blocks.join('\n\n')}\n\n</div>`
+    if (pageInstall) body += `\n\n<section id="install" class="beui-doc-section">
+<h2 class="beui-section-title">${copy.install}</h2>
+<p class="beui-section-description">${copy.installDescription}</p>
+${pageInstall}
+</section>`
+    if (pageApi) body += `\n\n<ApiTable id="api-reference" heading="${copy.api}" :docs="${pageApi}" section />`
     const description = locale === 'en' ? copy.description(title) : copy.description(title)
     const text = `---
 title: ${JSON.stringify(title)}
@@ -210,7 +250,7 @@ ${imports.join('\n')}
 ${declarations.join('\n')}
 </script>
 
-${blocks.join('\n\n')}
+${body}
 `
     const target = new URL(`./${base}${path.slice(1)}.md`, docs)
     await mkdir(new URL('./', target), {recursive: true})
@@ -229,6 +269,11 @@ ${blocks.join('\n\n')}
       if (group.length > 1) for (const entry of group) await componentDocument(paths.get(entry.slug), base, [entry], entry.title, locale)
     }
   }
+  // Review lists: upstream props the Vue port lacks, and API descriptions still untranslated.
+  await mkdir(new URL('.artifacts/', root), {recursive: true})
+  await writeFile(new URL('.artifacts/api-gaps.json', root), JSON.stringify(apiGaps, null, 1) + '\n')
+  await writeFile(new URL('.artifacts/api-zh-missing.json', root), JSON.stringify([...missingZh].sort(), null, 1) + '\n')
+  if (Object.keys(apiGaps).length || missingZh.size) console.log(`API review: ${Object.keys(apiGaps).length} entries with upstream props missing in Vue, ${missingZh.size} untranslated descriptions (.artifacts/api-*.json)`)
   for (const section of sections) {
     for (const locale of ['zh', 'en']) {
       const base = locale === 'en' ? 'en/' : ''

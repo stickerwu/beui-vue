@@ -237,7 +237,7 @@ const digitTransition = computed(() => reduce.value ? { duration: 0 } : { durati
 .be-otp-slots { display: flex; align-items: center; gap: .5rem; }
 .be-otp-slot { position: relative; display: grid; box-sizing: border-box; place-items: center; width: 3rem; height: 3.5rem; overflow: hidden; border: 1px solid var(--beui-border); border-radius: .75rem; font-size: 1.25rem; line-height: 1.75rem; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--beui-muted-foreground); transition: color .2s, border-color .2s, background-color .2s; }
 .be-otp-slot.is-filled { border-color: color-mix(in srgb, var(--beui-foreground) 11%, transparent); color: var(--beui-foreground); }
-.be-otp-slot.is-success { border-color: rgb(16 185 129 / .6); color: var(--beui-foreground); }
+.be-otp-slot.is-success { border-color: oklch(69.6% .17 162.48 / .6); color: var(--beui-foreground); }
 .be-otp-slot.is-error { border-color: color-mix(in srgb, var(--beui-destructive) 60%, transparent); color: var(--beui-foreground); }
 .be-otp-slot.is-active { border-color: var(--beui-foreground); }
 .be-otp-slot.is-disabled { opacity: .5; }
@@ -245,9 +245,9 @@ const digitTransition = computed(() => reduce.value ? { duration: 0 } : { durati
 .be-otp-caret.is-centered { left: 50%; translate: -50% -50%; }
 .be-otp-caret.is-trailing { right: .75rem; translate: 0 -50%; }
 .be-otp-digit { position: absolute; inset: 0; display: grid; place-items: center; line-height: 1; }
-.be-otp-check { position: absolute; top: 50%; right: -1.75rem; display: inline-flex; translate: 0 -50%; color: #10b981; pointer-events: none; }
+.be-otp-check { position: absolute; top: 50%; right: -1.75rem; display: inline-flex; translate: 0 -50%; color: oklch(69.6% .17 162.48); pointer-events: none; }
 .be-otp-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .be-otp-message { margin: 0; font-size: .875rem; line-height: 1.25rem; color: var(--beui-muted-foreground); }
-.be-otp-message.is-success { color: #10b981; }
+.be-otp-message.is-success { color: oklch(69.6% .17 162.48); }
 .be-otp-message.is-error { color: var(--beui-destructive); }
 </style>

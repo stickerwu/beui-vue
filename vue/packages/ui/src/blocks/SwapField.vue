@@ -32,7 +32,7 @@ const usdValue = computed(() => (Number(props.amount) || 0) * (props.token.usd ?
       <div class="be-swap-field-value">
         <input v-if="editable" :id="id" class="be-swap-field-input" inputmode="decimal" :value="amount" placeholder="0"
           @input="emit('amount', sanitizeAmount(($event.target as HTMLInputElement).value))">
-        <div v-else class="be-swap-field-output" aria-live="polite">
+        <div v-else class="be-swap-field-output">
           <motion.span :animate="{ opacity: quoting ? 0.55 : 1, filter: quoting ? 'blur(2px)' : 'blur(0px)' }" :transition="{ duration: 0.18, ease: easeOut }"
             class="be-swap-field-amount">{{ amount || '0' }}</motion.span>
           <AnimatePresence>

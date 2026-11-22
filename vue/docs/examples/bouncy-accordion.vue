@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import { BouncyAccordion } from 'beui-vue'
 import { LucideIcon } from './layout-icons'
 
-const active = ref<string | null>('calendar')
 const items = [
   { id: 'brief', title: 'Release Brief', icon: 'FileText', description: 'Collect launch notes, owners, and risks in one compact handoff before the release window opens.' },
   { id: 'launch', title: 'Launch Checklist', icon: 'ShieldCheck', description: 'Verify copy, links, analytics, rollback steps, and final approvals without leaving the queue.' },
@@ -17,7 +15,7 @@ const items = [
 <template>
   <div class="stage">
     <div class="box">
-      <BouncyAccordion v-model="active" :items="items">
+      <BouncyAccordion :items="items" default-value="calendar">
         <template #icon="{ item }"><LucideIcon :name="item.icon!" :size="16" /></template>
       </BouncyAccordion>
     </div>

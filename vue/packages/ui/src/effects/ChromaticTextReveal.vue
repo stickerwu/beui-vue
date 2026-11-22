@@ -55,7 +55,9 @@ onMounted(() => {
 .chromatic { display: inline-flex; align-items: baseline; white-space: nowrap; } .sizer { display: inline-grid; }
 .measure, .word { grid-area: 1 / 1; } .measure { visibility: hidden; }
 .word { --sweep: 114%; background-clip: text; background-repeat: no-repeat; color: transparent; contain: paint; }
-@media (prefers-reduced-motion: no-preference) { .word { animation: chromatic-in .36s cubic-bezier(.16,1,.3,1); } }
-@keyframes chromatic-in { from { transform: translateY(5px); filter: blur(6px); opacity: .56; } }
+/* Opacity settles in 0.28s, blur and lift in 0.36s, all on the library's ease-out curve (as upstream). */
+@media (prefers-reduced-motion: no-preference) { .word { animation: chromatic-fade .28s cubic-bezier(.16,1,.3,1), chromatic-in .36s cubic-bezier(.16,1,.3,1); } }
+@keyframes chromatic-fade { from { opacity: .56; } }
+@keyframes chromatic-in { from { transform: translateY(5px); filter: blur(6px); } }
 @media (forced-colors: active) { .word { color: CanvasText; } }
 </style>

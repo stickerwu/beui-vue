@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { Treemap, Tabs } from 'beui-vue'
+import { Tabs, Treemap, TreemapLegend, TreemapPlot, TreemapTooltip } from 'beui-vue'
 
 // Illustrative portfolio values only. Real values are supplied by the consumer.
 const groups = [
@@ -24,7 +24,11 @@ const format = (value: number) => value.toLocaleString('en-US', { style: 'curren
 <template><div class="demo">
   <header><div><p class="title">Portfolio allocation</p><p class="note">Demo data</p></div>
     <Tabs v-model="quarter" :items="quarters" :labels="{ list: 'Portfolio quarter' }" /></header>
-  <Treemap label="Portfolio allocation" :data="data" :format-value="format" plot-class="demo-plot" />
+  <Treemap label="Portfolio allocation" :data="data" :format-value="format">
+    <TreemapPlot class="demo-plot" />
+    <TreemapTooltip />
+    <TreemapLegend />
+  </Treemap>
 </div></template>
 
 <style scoped>

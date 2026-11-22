@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { AnimatePresence, motion } from 'motion-v'
+import { AnimatePresence, motion, mountedStates } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
-import { computed, shallowRef, useId, useTemplateRef } from 'vue'
+import { computed, shallowRef, useId, useTemplateRef, watch } from 'vue'
 import { easeOut } from '../core/motion'
 import { useValue } from '../agents/shared'
 import { fileUploadMessages, formatMessage, type FileUploadMessages } from './messages'
@@ -48,7 +48,6 @@ export interface FileUploadProps {
  */
 
 const props = withDefaults(defineProps<FileUploadProps>(), {
-  defaultValue: () => [],
   multiple: true,
   disabled: false,
   variant: 'default',
@@ -83,7 +82,7 @@ const dragging = shallowRef(false)
 
 const { value: items, set: setItems } = useValue<FileUploadItem[]>(
   () => props.modelValue ?? props.value,
-  props.defaultValue,
+  props.defaultValue ?? [],
   next => {
     emit('update:modelValue', next)
     emit('valueChange', next)
@@ -91,6 +90,14 @@ const { value: items, set: setItems } = useValue<FileUploadItem[]>(
 )
 
 const maxReached = computed(() => props.maxFiles !== undefined && items.value.length >= props.maxFiles)
+const queue = useTemplateRef<HTMLUListElement>('queue')
+// The dropzone above the queue changes height with the variant. Vue patches it before the rows
+// (which snapshot their layout in `onBeforeUpdate`) so the rows would only ever see the new
+// position and jump; React measures every row before any DOM commit. Snapshot them first.
+watch(() => [props.variant, maxReached.value], () => {
+  if (reduce.value) return
+  for (const row of Array.from(queue.value?.children ?? [])) mountedStates.get(row as HTMLElement)?.beforeUpdate()
+}, { flush: 'pre' })
 const centered = computed(() => props.variant === 'centered')
 const disabledState = computed(() => props.disabled || maxReached.value)
 
@@ -273,7 +280,7 @@ function onDrop(event: DragEvent) {
       </span>
     </button>
 
-    <ul class="be-file-upload-queue" :class="classNames?.queue">
+    <ul ref="queue" class="be-file-upload-queue" :class="classNames?.queue">
       <AnimatePresence :initial="false">
         <motion.li
           v-for="item in items"
@@ -538,10 +545,10 @@ function onDrop(event: DragEvent) {
 }
 .be-file-upload-status.is-queued { color: var(--beui-muted-foreground); }
 .be-file-upload-status.is-uploading { color: var(--beui-foreground); }
-.be-file-upload-status.is-success { color: #059669; }
+.be-file-upload-status.is-success { color: oklch(59.6% .145 163.225); }
 .be-file-upload-status.is-error { color: var(--beui-destructive); }
 :global(.dark .be-file-upload-status.is-success),
-:global([data-beui-theme="dark"] .be-file-upload-status.is-success) { color: #34d399; }
+:global([data-beui-theme="dark"] .be-file-upload-status.is-success) { color: oklch(76.5% .177 163.223); }
 
 .be-file-upload-spinner { animation: be-file-upload-spin 1s linear infinite; }
 .be-file-upload-spinner.is-still { animation: none; }
@@ -572,7 +579,7 @@ function onDrop(event: DragEvent) {
   background: var(--beui-muted);
 }
 .be-file-upload-fill { width: 100%; height: 100%; border-radius: 999px; background: var(--beui-foreground); }
-.be-file-upload-fill.is-success { background: #10b981; }
+.be-file-upload-fill.is-success { background: oklch(69.6% .17 162.48); }
 
 @media (prefers-reduced-motion: reduce) {
   .be-file-upload-dropzone,

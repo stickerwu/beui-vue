@@ -2,11 +2,11 @@
 import { animate } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
 import { onBeforeUnmount } from 'vue'
-import { useSmoothScroll } from '../layout/scroll-context'
+import { useSmoothScrollProvider } from '../layout/scroll-context'
 
 const { to, offset = 0, duration, container } = defineProps<{ to: number | string | HTMLElement; offset?: number; duration?: number; container?: HTMLElement | null }>()
 const reduce = useReducedMotion()
-const provider = useSmoothScroll()
+const provider = useSmoothScrollProvider()
 let cancel: (() => void) | undefined
 
 function navigate() {

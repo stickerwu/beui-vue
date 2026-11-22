@@ -34,5 +34,5 @@ h3 { margin: 0; padding: 0; border: 0; letter-spacing: normal; font-size: 14px; 
 .next { gap: 8px; }
 fieldset { display: inline-flex; align-self: flex-start; gap: 4px; min-width: 0; margin: 0; padding: 4px; border: 0; border-radius: 9999px; background: color-mix(in srgb, var(--beui-muted) 50%, transparent); }
 fieldset .on { background: var(--beui-background); box-shadow: 0 1px 2px 0 rgb(0 0 0 / .05); }
-.hint { margin: 0; text-align: center; font-size: 11px; line-height: 16px; color: var(--beui-muted-foreground); }
+.hint { margin: 0; text-align: center; font-size: 11px; line-height: 1.5; color: var(--beui-muted-foreground); }
 </style>

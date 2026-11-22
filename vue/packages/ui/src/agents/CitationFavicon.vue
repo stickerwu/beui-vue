@@ -31,5 +31,5 @@ onBeforeUnmount(() => { released = true })
 <style scoped>
 .cf { display: grid; width: 1.25rem; height: 1.25rem; flex: none; place-items: center; color: var(--beui-muted-foreground); }
 .cf :deep(svg) { width: .875rem; height: .875rem; }
-.cf img { width: 1rem; height: 1rem; border-radius: .125rem; object-fit: contain; }
+.cf img { width: 1rem; height: 1rem; border-radius: .25rem; object-fit: contain; }
 </style>

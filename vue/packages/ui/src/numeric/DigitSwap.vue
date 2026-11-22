@@ -23,7 +23,7 @@ const props = defineProps<{
   glyphClassName?: string
   suffixClassName?: string
 }>()
-const { direction = 'up', duration = .18, stagger = .006, suffixLength = 0 } = props
+const { duration = .18, stagger = .006, suffixLength = 0 } = props
 const reduceMotion = useReducedMotion() ?? computed(() => false)
 const reduce = computed(() => Boolean(reduceMotion.value))
 
@@ -39,15 +39,21 @@ const glyphs = computed(() =>
  * the text baseline alone. An invisible in-flow copy of each character gives
  * the slot its natural width (punctuation) or a fixed 1ch cell (digits).
  */
-const enter = computed(() => ({
-  opacity: 0,
-  transform: reduce.value ? 'none' : `translateY(${direction === 'up' ? '45%' : '-45%'})`,
-}))
-const visible = { opacity: 1, transform: 'translateY(0%)' }
-const exit = computed(() => ({
-  opacity: 0,
-  transform: reduce.value ? 'none' : `translateY(${direction === 'up' ? '-45%' : '45%'})`,
-}))
+type GlyphMotionContext = { direction: DigitSwapDirection; reduceMotion: boolean }
+// The leaving glyph is kept from its last render, so its direction travels as `custom`: the exit
+// then follows the direction at the time of the change, not the one it was rendered with.
+const GLYPH_VARIANTS = {
+  enter: ({ direction, reduceMotion }: GlyphMotionContext) => ({
+    opacity: 0,
+    transform: reduceMotion ? 'none' : `translateY(${direction === 'up' ? '45%' : '-45%'})`,
+  }),
+  visible: { opacity: 1, transform: 'translateY(0%)' },
+  exit: ({ direction, reduceMotion }: GlyphMotionContext) => ({
+    opacity: 0,
+    transform: reduceMotion ? 'none' : `translateY(${direction === 'up' ? '-45%' : '45%'})`,
+  }),
+}
+const motionContext = computed<GlyphMotionContext>(() => ({ direction: props.direction ?? 'up', reduceMotion: reduce.value }))
 
 function glyphKey(glyph: { id: string; character: string }) {
   return props.animationKey === undefined ? `${glyph.id}-${glyph.character}` : `${glyph.id}-${glyph.character}-${props.animationKey}`
@@ -62,7 +68,7 @@ function glyphTransition(glyph: { position: number }) {
 </script>
 
 <template>
-  <span class="be-digit-swap" :class="className" :data-direction="direction">
+  <span class="be-digit-swap" :class="className" :data-direction="direction ?? 'up'">
     <span class="be-digit-swap-spoken">{{ text }}</span>
     <span aria-hidden="true" class="be-digit-swap-row">
       <template v-for="glyph in glyphs" :key="glyph.id">
@@ -73,14 +79,16 @@ function glyphTransition(glyph: { position: number }) {
           :class="/\d/.test(glyph.character) && 'be-digit-swap-digit'"
         >
           <span class="be-digit-swap-reserve">{{ glyph.character }}</span>
-          <AnimatePresence :initial="false">
+          <AnimatePresence :initial="false" :custom="motionContext">
             <motion.span
               :key="glyphKey(glyph)"
               class="be-digit-swap-glyph-text"
               :class="[glyphClassName, glyph.position >= suffixStart ? suffixClassName : undefined]"
-              :initial="enter"
-              :animate="visible"
-              :exit="exit"
+              :custom="motionContext"
+              :variants="GLYPH_VARIANTS"
+              initial="enter"
+              animate="visible"
+              exit="exit"
               :transition="glyphTransition(glyph)"
             >
               {{ glyph.character }}

@@ -26,7 +26,7 @@ export interface TreemapItem extends TreemapLeaf {
   share: number;
 }
 
-interface ResolvedNode {
+export interface ResolvedNode {
   id: string;
   label: string;
   value: number;

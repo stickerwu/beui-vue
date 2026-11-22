@@ -315,7 +315,7 @@ function toggle() {
   font: inherit;
   cursor: pointer;
 }
-.be-theme-toggle:focus-visible { outline: 2px solid var(--beui-ring); outline-offset: 2px; }
+/* No custom focus ring: upstream keeps the browser's default one. */
 
 /* Icons are single elements: the swap crossfades them in one grid cell. */
 .be-theme-icon {

@@ -323,7 +323,7 @@ onBeforeUnmount(() => {
                   tool="terminal.run" title="Run focused checkout checks?" description="The agent needs permission to run the validation and accessibility suites."
                   :status="toolStatus" default-open
                   :parameters="[{ id: 'command', label: 'Command', value: 'bun test checkout --coverage' }, { id: 'scope', label: 'Scope', value: 'Current workspace' }]"
-                  :on-always-allow="approveTool" @approve="approveTool" @deny="denyTool"
+                  @always-allow="approveTool" @approve="approveTool" @deny="denyTool"
                 >
                   <template #parameter="{ parameter }"><ToolApprovalCode v-if="parameter.id === 'command'" :code="parameter.value" language="bash" /><template v-else>{{ parameter.value }}</template></template>
                 </ToolApproval>
@@ -460,8 +460,8 @@ onBeforeUnmount(() => {
 .chat-preview .chat-title p { margin: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .chat-preview .chat-name { font-size: .875rem; line-height: 1.25rem; font-weight: 500; color: var(--beui-foreground); }
 .chat-preview .chat-sub { font-size: 11px; line-height: 1.5; color: var(--beui-muted-foreground); }
-.chat-preview .chat-status { border-radius: 9999px; background: rgb(16 185 129 / .1); padding: .25rem .625rem; font-size: 10px; line-height: 1.5; font-weight: 500; color: #059669; }
-.dark .chat-preview .chat-status { color: #34d399; }
+.chat-preview .chat-status { border-radius: 9999px; background: oklch(69.6% .17 162.48 / .1); padding: .25rem .625rem; font-size: 10px; line-height: 1.5; font-weight: 500; color: oklch(59.6% .145 163.225); }
+.dark .chat-preview .chat-status { color: oklch(76.5% .177 163.223); }
 .chat-preview .chat-scroller { min-height: 0; flex: 1 1 0%; }
 .chat-preview .chat-viewport { padding: 1.25rem .75rem; }
 /* `sm:px-5` outranks the rail's `pr-10` upstream, so the rail never widens the right padding from 640px up. */

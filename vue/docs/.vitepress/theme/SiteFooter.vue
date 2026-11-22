@@ -17,7 +17,6 @@ const links = computed(() => [
   { title: t('Browse all'), href: '/components/motion' },
   { title: t('Installation'), href: '/install' },
   { title: t('Component catalog'), href: '/catalog' },
-  { title: t('Verification'), href: '/verification' },
   { title: 'GitHub', href: repository },
   { title: 'llms.txt', href: '/llms.txt' },
 ])

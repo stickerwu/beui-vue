@@ -15,7 +15,7 @@ import {
   AnimatedSidebarMenuSub,
   AnimatedSidebarMenuSubButton,
   AnimatedSidebarMenuSubItem,
-  AnimatedSidebarPanel,
+  AnimatedSidebar,
   AnimatedSidebarProvider,
   AnimatedSidebarRail,
   AnimatedSidebarTrigger,
@@ -58,7 +58,7 @@ function selectDestination(label: string, children?: string[]) {
 <template>
   <div class="sidebar-demo">
     <AnimatedSidebarProvider class="sidebar-shell">
-      <AnimatedSidebarPanel aria-label="Solace workspace" collapsible="icon" class="sidebar-panel" panel-class="sidebar-surface">
+      <AnimatedSidebar aria-label="Solace workspace" collapsible="icon" class="sidebar-panel" panel-class-name="sidebar-surface">
         <AnimatedSidebarHeader class="sidebar-header">
           <div class="brand-row">
             <div class="brand-mark"><LucideIcon name="Command" :size="16" /></div>
@@ -120,7 +120,7 @@ function selectDestination(label: string, children?: string[]) {
         </AnimatedSidebarFooter>
 
         <AnimatedSidebarRail />
-      </AnimatedSidebarPanel>
+      </AnimatedSidebar>
 
       <AnimatedSidebarInset class="sidebar-inset">
         <header class="inset-header">

@@ -3,9 +3,20 @@ import { motion } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
 import { onBeforeUnmount, shallowRef, watch } from 'vue'
 import { pressSpring } from '../core/motion'
-import type { CardSize, CardVariant } from './state'
 
-const props = withDefaults(defineProps<{ variant?: CardVariant, size?: CardSize, interactive?: boolean, selected?: boolean }>(), { variant: 'outlined', size: 'default' })
+const props = withDefaults(defineProps<{
+  variant?: 'outlined' | 'muted'
+  /** Spacing for every part. Default "default". */
+  size?: 'compact' | 'default'
+  /**
+   * Hover and press feedback, for a card that is one target as a whole. Visual
+   * only: the card never takes focus, so put the control that owns it inside
+   * and stretch it with `CARD_TARGET_CLASS`.
+   */
+  interactive?: boolean
+  /** Marks a selectable card as chosen. Visual only; the control inside carries the state. */
+  selected?: boolean
+}>(), { variant: 'outlined', size: 'default', interactive: false, selected: false })
 const reduce = useReducedMotion()
 const pressed = shallowRef(false)
 let listeners: AbortController | undefined
@@ -37,16 +48,16 @@ onBeforeUnmount(release)
 .be-card[data-size=compact] { --be-card-inset: 1rem; }
 .be-card[data-variant=muted] { border-color: transparent; background: var(--beui-muted); }
 .be-card[data-interactive] { cursor: pointer; }
-@media (hover:hover) { .be-card[data-interactive]:hover { border-color: color-mix(in srgb, var(--beui-foreground) 12%, transparent); } }
+@media (hover:hover) { .be-card[data-interactive]:hover { border-color: var(--beui-border-strong); } }
 .be-card[data-selected], .be-card[data-selected]:hover { border-color: var(--beui-primary); box-shadow: 0 0 0 1px var(--beui-primary); }
 .be-card[data-interactive]:has(:focus-visible) { outline: 2px solid var(--beui-foreground); outline-offset: 2px; }
 .be-card-header, .be-card-footer, .be-card-content { padding-inline: var(--be-card-inset, 1.5rem); }
-.be-card-header { display: grid; grid-auto-rows: min-content; align-items: start; gap: .375rem; }
+.be-card-header { display: grid; grid-auto-rows: min-content; grid-template-rows: auto auto; align-items: start; gap: .375rem; }
 .be-card-header:has(.be-card-action) { grid-template-columns: 1fr auto; }
 .be-card .be-card-title { margin: 0; padding: 0; border: 0; letter-spacing: normal; color: var(--beui-foreground); font-size: 15px; line-height: 1.375; font-weight: 600; }
 .be-card .be-card-description { margin: 0; color: var(--beui-muted-foreground); font-size: .875rem; line-height: 1.625; }
-.be-card-action { display: flex; grid-column: 2; grid-row: 1 / span 2; align-items: center; justify-self: end; }
-.be-card-content { font-size: .875rem; }
+.be-card-action { display: flex; grid-column: 2; grid-row: 1 / span 2; align-items: center; align-self: start; justify-self: end; }
+.be-card-content { font-size: .875rem; line-height: 1.25rem; }
 .be-card-footer { display: flex; align-items: center; gap: .5rem; }
 .be-card-target::after { position: absolute; inset: 0; content: ''; }
 </style>

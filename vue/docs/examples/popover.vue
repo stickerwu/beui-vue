@@ -1,22 +1,30 @@
 <script setup lang="ts">
-import { Popover } from 'beui-vue'
+import { ButtonBase, Popover, PopoverContent, PopoverTrigger } from 'beui-vue'
 </script>
 
 <template>
   <div class="actions">
-    <Popover side="bottom" align="start" label="Dimensions" content-style="width: 18rem">
-      <template #trigger>Edit profile</template>
-      <p class="title">Dimensions</p>
-      <p class="hint">Set the width and height for the layer.</p>
-      <div class="fields">
-        <label><span>Width</span><input value="100%" /></label>
-        <label><span>Height</span><input value="auto" /></label>
-      </div>
+    <Popover side="bottom" align="start">
+      <PopoverTrigger>
+        <ButtonBase variant="secondary">Edit profile</ButtonBase>
+      </PopoverTrigger>
+      <PopoverContent class="popover-demo-wide">
+        <p class="title">Dimensions</p>
+        <p class="hint">Set the width and height for the layer.</p>
+        <div class="fields">
+          <label><span>Width</span><input value="100%" /></label>
+          <label><span>Height</span><input value="auto" /></label>
+        </div>
+      </PopoverContent>
     </Popover>
 
-    <Popover trigger="hover" side="top" trigger-variant="outline" content-style="width: 14rem">
-      <template #trigger>Hover me</template>
-      <p class="hover-copy">Opens on hover, with a grace window so you can move into the panel.</p>
+    <Popover trigger="hover" side="top">
+      <PopoverTrigger>
+        <ButtonBase variant="outline">Hover me</ButtonBase>
+      </PopoverTrigger>
+      <PopoverContent class="popover-demo-narrow">
+        <p class="hover-copy">Opens on hover, with a grace window so you can move into the panel.</p>
+      </PopoverContent>
     </Popover>
   </div>
 </template>
@@ -31,4 +39,6 @@ import { Popover } from 'beui-vue'
 .fields span { color: var(--beui-muted-foreground); }
 .fields input { box-sizing: border-box; height: 2rem; width: 8rem; border: 1px solid var(--beui-border); border-radius: .5rem; background: var(--beui-background); padding: 0 .625rem; font: inherit; font-size: .875rem; color: var(--beui-foreground); outline: none; }
 .fields input:focus-visible { box-shadow: 0 0 0 2px color-mix(in srgb, var(--beui-foreground) 20%, transparent); }
+:global(.popover-demo-wide) { width: 18rem; }
+:global(.popover-demo-narrow) { width: 14rem; }
 </style>

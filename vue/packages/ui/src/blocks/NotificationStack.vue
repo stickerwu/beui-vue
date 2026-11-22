@@ -308,6 +308,7 @@ const footerValue = computed(() => (isExpanded.value ? 'expanded' : 'collapsed')
       <motion.span
         aria-hidden="true"
         :layout="true"
+        :layout-dependency="isExpanded"
         :initial="false"
         :transition="backgroundTransition"
         class="be-notify-sheet" />
@@ -390,7 +391,7 @@ const footerValue = computed(() => (isExpanded.value ? 'expanded' : 'collapsed')
   font: inherit; text-align: left; cursor: pointer; outline: none;
   border-radius: 1.5rem;
 }
-.be-notify:focus-visible { outline: 2px solid var(--beui-ring); outline-offset: 2px; }
+.be-notify:focus-visible { box-shadow: 0 0 0 2px var(--beui-background), 0 0 0 4px var(--beui-ring); }
 
 .be-notify-measure { display: block; padding: .75rem; visibility: hidden; }
 .be-notify-measure-row { display: block; }
@@ -426,11 +427,11 @@ const footerValue = computed(() => (isExpanded.value ? 'expanded' : 'collapsed')
   display: grid; place-items: center; flex: none;
   width: 1.75rem; height: 1.75rem; border-radius: 999px;
   background: #ea580c; color: #fff;
-  font-size: .75rem; font-weight: 500;
+  font-size: .75rem; line-height: 1rem; font-weight: 500;
   box-shadow: inset 0 1px 2px rgb(0 0 0 / .2), inset 0 -1px 0 rgb(255 255 255 / .16);
 }
 :global(.dark .be-notify-count) { background: #f97316; }
-.be-notify-label { display: flex; align-items: center; font-size: .875rem; font-weight: 500; }
+.be-notify-label { display: flex; align-items: center; font-size: .875rem; line-height: 1.25rem; font-weight: 500; }
 
 /* The swap keeps a hidden copy at rest so the footer's width never jumps while
    a layer rolls; the visible layer is taken out of flow over it. */

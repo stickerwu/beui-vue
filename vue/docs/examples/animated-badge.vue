@@ -34,6 +34,6 @@ onBeforeUnmount(() => clearInterval(timer))
 <style scoped>
 .badge-demo { display: flex; flex-direction: column; align-items: center; gap: 1.5rem; }
 .badge-live { display: flex; height: 4rem; align-items: center; justify-content: center; }
-.badge-grid { display: grid; grid-template-columns: repeat(3, auto); gap: .5rem; }
-@media (max-width: 639px) { .badge-grid { grid-template-columns: repeat(2, auto); } }
+.badge-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; }
+@media (max-width: 639px) { .badge-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 </style>

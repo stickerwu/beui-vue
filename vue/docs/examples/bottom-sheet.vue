@@ -22,6 +22,6 @@ const items = ['Share', 'Duplicate', 'Move to folder', 'Rename', 'Archive', 'Del
 .trigger:active { transform: scale(.97); }
 ul { margin: 0; padding: 0; list-style: none; }
 li { padding: .75rem 0; font-size: .875rem; line-height: 1.25rem; color: var(--beui-foreground); }
-li + li { border-top: 1px solid var(--beui-border); }
+li:not(:last-child) { border-bottom: 1px solid var(--beui-border); }
 .hint { padding: 3rem 0; text-align: center; font-size: .75rem; line-height: 1rem; color: var(--beui-muted-foreground); }
 </style>

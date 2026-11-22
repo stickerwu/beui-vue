@@ -33,8 +33,8 @@ onBeforeUnmount(() => clearInterval(timer))
     <span class="ap-grid" aria-hidden="true">
       <motion.span
         v-for="(delay, cell) in CELL_DELAYS" :key="cell" class="ap-cell"
-        :animate="reduce ? { opacity: [0.35, 0.8, 0.35] } : { opacity: [0.28, 1, 0.28], scale: [0.72, 1, 0.72] }"
-        :transition="{ duration: 1.55, ease: easeInOut, repeat: Infinity, delay }"
+        :animate="reduce ? { opacity: [0.35, 0.8, 0.35], scale: 1 } : { opacity: [0.28, 1, 0.28], scale: [0.72, 1, 0.72] }"
+        :transition="reduce ? { opacity: { duration: 1.55, ease: easeInOut, repeat: Infinity, delay }, scale: { duration: 0 } } : { duration: 1.55, ease: easeInOut, repeat: Infinity, delay }"
       />
     </span>
     <span class="ap-label">{{ label }}</span>
@@ -43,9 +43,9 @@ onBeforeUnmount(() => clearInterval(timer))
 </template>
 
 <style scoped>
-.ap { display: inline-flex; align-items: center; gap: .75rem; font-family: var(--font-mono, ui-monospace, monospace); font-size: .875rem; line-height: 1.25rem; color: var(--beui-muted-foreground); }
+.ap { display: inline-flex; align-items: center; gap: .75rem; font-size: .875rem; line-height: 1.25rem; color: var(--beui-muted-foreground); }
 .ap-grid { display: grid; width: 1.25rem; height: 1.25rem; flex: none; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2px; }
 .ap-cell { border-radius: 1px; background: currentColor; }
-.ap-label { font-family: var(--font-sans, system-ui, sans-serif); font-weight: 500; }
-.ap-time { font-variant-numeric: tabular-nums; color: color-mix(in oklab, var(--beui-muted-foreground) 70%, transparent); }
+.ap-label { font-weight: 500; }
+.ap-time { font-family: var(--font-mono, ui-monospace, monospace); font-variant-numeric: tabular-nums; color: color-mix(in oklab, var(--beui-muted-foreground) 70%, transparent); }
 </style>

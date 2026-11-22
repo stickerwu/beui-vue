@@ -8,7 +8,7 @@ import { elementOf } from './overlay-kit'
 import PresenceGate from './PresenceGate.vue'
 
 defineOptions({ inheritAttrs: false })
-const { ariaLabel, ariaDescribedBy, dismissible = true, showCloseButton = true, closeButtonLabel, backdropClass } = defineProps<{
+const { ariaLabel, ariaDescribedBy, dismissible = true, showCloseButton = true, closeButtonLabel, backdropClassName, backdropClass } = defineProps<{
   /** Accessible name announced by screen readers. Defaults to the root's `label`. */
   ariaLabel?: string
   /** Optional id of descriptive content inside the modal. */
@@ -18,6 +18,9 @@ const { ariaLabel, ariaDescribedBy, dismissible = true, showCloseButton = true, 
   /** Render the close control inside the panel's top-right corner. Default true. */
   showCloseButton?: boolean
   closeButtonLabel?: string
+  /** Extra classes for the backdrop. */
+  backdropClassName?: string
+  /** Earlier name of `backdropClassName`. */
   backdropClass?: string
 }>()
 
@@ -91,7 +94,7 @@ const closeName = computed(() => closeButtonLabel ?? context.labels.value.close)
   <Teleport v-if="mounted" to="body">
     <AnimatePresence>
       <PresenceGate v-if="context.open.value" key="backdrop" v-slot="{ gate }">
-        <motion.button type="button" class="be-cmm-backdrop" :class="backdropClass" :aria-label="context.labels.value.dismiss" tabindex="-1" :disabled="!dismissible"
+        <motion.button type="button" class="be-cmm-backdrop" :class="backdropClassName ?? backdropClass" :aria-label="context.labels.value.dismiss" tabindex="-1" :disabled="!dismissible"
           :initial="{ opacity: 0 }" :animate="{ opacity: 1 }" :exit="{ opacity: 0 }" :transition="{ duration: reduce ? 0.1 : 0.28, ease: easeOut }"
           :inert="gate.inert" :style="gate.style" @click="context.setOpen(false)" />
       </PresenceGate>

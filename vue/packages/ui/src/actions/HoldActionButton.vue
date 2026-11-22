@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { motion } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
-import { computed, onBeforeUnmount, shallowRef, useSlots, watch } from 'vue'
+import { computed, onBeforeUnmount, shallowRef, watch, type VNode } from 'vue'
 import { easeOut, pressSpring } from '../core/motion'
 import { capturePointer, releasePointer } from '../core/touch'
 import { holdActionButtonMessages, type HoldActionButtonMessages } from './hold-action-messages'
@@ -24,8 +24,15 @@ const props = withDefaults(defineProps<{
 }>(), { type: 'vertical', holdDuration: 1600 })
 
 const emit = defineEmits<{ holdComplete: [] }>()
+const slots = defineSlots<{
+  /** Resting label. A plain string also names the button for assistive technology. */
+  default?: () => VNode[]
+  /** Replaces the \"holding\" text; wins over the `holdingLabel` prop. */
+  holdingLabel?: () => VNode[]
+  /** Replaces the \"complete\" text; wins over the `completeLabel` prop. */
+  completeLabel?: () => VNode[]
+}>()
 const fillType = computed(() => props.direction ?? props.type)
-const slots = useSlots()
 
 const reduce = useReducedMotion()
 const text = computed(() => ({ ...holdActionButtonMessages, ...props.labels }))
@@ -168,25 +175,30 @@ const accessibleName = computed(() => {
          rather than the button so it never cuts the focus ring. -->
     <span aria-hidden="true" class="be-hold-clip">
       <span aria-hidden="true" class="be-hold-fill" :class="fillClassName" :style="fillStyle" @transitionend="fillEnd">
-        <!-- A band of liquid rides the fill's edge while it is held. -->
-        <svg
-          v-if="holding && !reduce && fillType === 'horizontal'"
+        <!-- A band of liquid rides the fill's edge; it keeps sliding while held and
+             eases back to rest when the hold ends, like the original. -->
+        <motion.svg
+          v-if="!reduce && fillType === 'horizontal'"
           viewBox="0 0 24 240"
           preserveAspectRatio="none"
           aria-hidden="true"
           class="be-hold-wave be-hold-wave-horizontal"
+          :animate="{ transform: active ? 'translateY(-50%)' : 'translateY(0%)' }"
+          :transition="{ duration: 1.1, ease: 'linear', repeat: active ? Infinity : 0 }"
         >
           <path d="M0 0h12C2 20 2 40 12 60s10 40 0 60-10 40 0 60 10 40 0 60H0Z" fill="currentColor" />
-        </svg>
-        <svg
-          v-else-if="holding && !reduce"
+        </motion.svg>
+        <motion.svg
+          v-else-if="!reduce"
           viewBox="0 0 240 24"
           preserveAspectRatio="none"
           aria-hidden="true"
           class="be-hold-wave be-hold-wave-vertical"
+          :animate="{ transform: active ? 'translateX(-50%)' : 'translateX(0%)' }"
+          :transition="{ duration: 1.1, ease: 'linear', repeat: active ? Infinity : 0 }"
         >
           <path d="M0 12C20 2 40 2 60 12s40 10 60 0 40-10 60 0 40 10 60 0v12H0Z" fill="currentColor" />
-        </svg>
+        </motion.svg>
       </span>
     </span>
 
@@ -201,13 +213,13 @@ const accessibleName = computed(() => {
         :aria-hidden="!(holding && !completed)"
         :animate="{ opacity: holding && !completed ? 1 : 0 }"
         :transition="{ duration: reduce ? 0 : .12, ease: easeOut }"
-      >{{ holdingLabel ?? text.holding }}</motion.span>
+      ><slot name="holdingLabel">{{ holdingLabel ?? text.holding }}</slot></motion.span>
       <motion.span
         class="be-hold-slot"
         :aria-hidden="!completed"
         :animate="{ opacity: completed ? 1 : 0 }"
         :transition="{ duration: reduce ? 0 : .12, ease: easeOut }"
-      >{{ completeLabel ?? text.complete }}</motion.span>
+      ><slot name="completeLabel">{{ completeLabel ?? text.complete }}</slot></motion.span>
     </span>
   </motion.button>
 </template>
@@ -221,7 +233,7 @@ const accessibleName = computed(() => {
   color: var(--beui-primary-foreground, #fff); font: inherit; cursor: pointer; outline: none;
   touch-action: none; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none;
 }
-.be-hold:focus-visible { box-shadow: 0 0 0 2px var(--beui-primary), 0 0 0 4px var(--beui-background); }
+.be-hold:focus-visible { box-shadow: 0 0 0 2px var(--beui-background), 0 0 0 4px var(--beui-primary); }
 .be-hold:disabled { pointer-events: none; opacity: .5; }
 .be-hold-clip {
   pointer-events: none; position: absolute; inset: 0;
@@ -231,11 +243,8 @@ const accessibleName = computed(() => {
   position: absolute; inset: 0; background: oklch(74.6% .16 232.661); will-change: opacity, transform;
 }
 .be-hold-wave { position: absolute; color: oklch(74.6% .16 232.661); will-change: transform; }
-.be-hold-wave-vertical { left: 0; top: -1.25rem; width: 200%; height: 1.5rem; animation: be-hold-wave-y 1.1s linear infinite; }
-.be-hold-wave-horizontal { top: 0; right: -1.25rem; width: 1.5rem; height: 200%; animation: be-hold-wave-x 1.1s linear infinite; }
-@keyframes be-hold-wave-y { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-@keyframes be-hold-wave-x { from { transform: translateY(0); } to { transform: translateY(-50%); } }
-@media (prefers-reduced-motion: reduce) { .be-hold-wave { display: none; } }
+.be-hold-wave-vertical { left: 0; top: -1.25rem; width: 200%; height: 1.5rem; }
+.be-hold-wave-horizontal { top: 0; right: -1.25rem; width: 1.5rem; height: 200%; }
 .be-hold-label {
   position: relative; z-index: 10; display: grid; place-items: center;
   font-size: 1rem; font-weight: 500; letter-spacing: -.01em;

@@ -19,12 +19,13 @@ const groups = computed(() => {
   let index = 0
   return lines.value.map(line => (line.match(/\S+\s*|\s+/g) ?? []).map(word => (split === 'char' ? Array.from(word) : [word]).map(value => ({ value, index: index++ }))))
 })
-// Reduced motion keeps the opacity fade and drops the movement and blur.
-const shown = computed(() => reduce.value ? { opacity: 1 } : { opacity: 1, y: 0, filter: 'blur(0px)' })
+// Reduced motion keeps the opacity fade and drops the movement and blur. The server (and the first
+// client render) always paints full motion, so the reduced branch also resets y and blur instantly.
+const shown = computed(() => ({ opacity: 1, y: 0, filter: 'blur(0px)' }))
 const hidden = computed(() => reduce.value ? { opacity: 0 } : { opacity: 0, y: yOffset, filter: `blur(${blur}px)` })
 function transition(index: number) {
   const wait = delay + index * stagger
-  if (reduce.value) return { opacity: { duration: .25, ease: easeOut, delay: wait * .3 } }
+  if (reduce.value) return { opacity: { duration: .25, ease: easeOut, delay: wait * .3 }, y: { duration: 0 }, filter: { duration: 0 } }
   return { y: { type: 'spring' as const, stiffness: 140, damping: 26, mass: 1.2, ...spring, delay: wait }, opacity: { duration: .7, ease: easeOut, delay: wait }, filter: { duration: .9, ease: easeOut, delay: wait } }
 }
 </script>

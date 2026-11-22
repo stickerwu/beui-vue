@@ -4,7 +4,7 @@ import { useReducedMotion } from '../core/reduced-motion'
 import { computed, onBeforeUnmount, onMounted, shallowRef, useTemplateRef, watch, type FunctionalComponent, type VNodeChild } from 'vue'
 import { pressSpring } from '../core/motion'
 import { field, orderColumns, sortedEntries, tableMessages, type SortState, type TableColumn, type TableProps } from './model'
-import TableCheckbox from './TableCheckbox.vue'
+import Checkbox from '../controls/Checkbox.vue'
 import TableIcon from './TableIcon.vue'
 import TableMenu, { type TableMenuItem } from './TableMenu.vue'
 
@@ -32,7 +32,7 @@ const localSort = shallowRef<SortState | null>(props.defaultSort ?? null)
 const sort = computed(() => props.sort === undefined ? localSort.value : props.sort)
 const entries = computed(() => props.data.map((row, index) => ({ row, id: props.getRowId?.(row, index) ?? String(index) })))
 const rows = computed(() => sortedEntries(entries.value, columns.value, sort.value))
-const first = computed(() => Math.max(0, Math.min(rows.value.length - 1, Math.floor(top.value / rowHeight.value) - overscan.value - 1)))
+const first = computed(() => Math.max(0, Math.min(rows.value.length - 1, Math.floor(top.value / rowHeight.value) - overscan.value)))
 const last = computed(() => Math.min(rows.value.length, Math.ceil((top.value + height.value) / rowHeight.value) + overscan.value))
 const visible = computed(() => rows.value.slice(first.value, last.value))
 const selectedLocal = shallowRef(new Set(props.defaultSelectedRowIds ?? []))
@@ -233,7 +233,7 @@ function handleStyle(active: boolean, anchor: { top: number; left: number }) {
         <thead>
           <tr aria-rowindex="1" :style="{ height: `${rowHeight}px` }">
             <th v-if="selectable" scope="col" class="lead">
-              <div class="lead-cell"><TableCheckbox :checked="all" :indeterminate="!all && some" :label="translate('selectAll')" @change="toggleAll" /></div>
+              <div class="lead-cell"><Checkbox class="table-checkbox" :model-value="all" :indeterminate="!all && some" :aria-label="translate('selectAll')" @update:model-value="toggleAll()" /></div>
             </th>
             <th
               v-for="(column, columnIndex) in columns" :key="column.key" scope="col" class="head" :data-key="column.key" :data-active="activeColumn === column.key || undefined"
@@ -280,7 +280,7 @@ function handleStyle(active: boolean, anchor: { top: number; left: number }) {
               @focusin="hasRowMenu && activateRow(entry.id, $event.currentTarget as HTMLElement)" @focusout="hasRowMenu && deactivateRow()"
             >
               <td v-if="selectable" class="lead">
-                <div class="lead-cell"><TableCheckbox :checked="selected.has(entry.id)" :label="translate('selectRow', '', first + index + 1)" @change="toggleRow(entry.id)" /></div>
+                <div class="lead-cell"><Checkbox :model-value="selected.has(entry.id)" :aria-label="translate('selectRow', '', first + index + 1)" @update:model-value="toggleRow(entry.id)" /></div>
                 <TableMenu v-if="hasRowMenu" :label="translate('rowOptions', '', first + index + 1)" :items="menuItems('row', entry.id, first + index)" class="handle row-handle" :data-active="activeRow === entry.id || undefined" :style="handleStyle(activeRow === entry.id, rowAnchor)" @open-change="menuToggled">
                   <TableIcon name="more-vertical" />
                 </TableMenu>
@@ -317,17 +317,18 @@ function handleStyle(active: boolean, anchor: { top: number; left: number }) {
 /* The docs theme styles bare <table>, <tr>, <th> and <td>; reset what it adds so the table is drawn by this file alone. */
 .beui-table table { display: table; box-sizing: border-box; width: auto; max-width: none; margin: 0; table-layout: fixed; border-collapse: collapse; border: 0; overflow: visible; font-size: inherit; line-height: inherit; }
 .beui-table table[data-sized] { width: max-content; }
-.beui-table tr, .beui-table th, .beui-table td { margin: 0; border: 0; background: transparent; text-align: left; vertical-align: middle; }
-.beui-table tbody tr { border-bottom: 1px solid color-mix(in srgb, var(--beui-border) 60%, transparent); transition: background-color .15s; }
-.beui-table td { padding: 1px; }
-.beui-table th { position: sticky; top: 0; z-index: 10; padding: 1px; border-bottom: 1px solid var(--beui-border); background: var(--beui-muted); font-weight: 500; color: var(--beui-muted-foreground); }
-.beui-table th.head, .beui-table th.filler { padding: 0; }
+.beui-table tr, .beui-table th, .beui-table td { margin: 0; padding: 0; border: 0 solid; background: transparent; text-align: left; vertical-align: middle; }
+.beui-table th { text-align: center; }
+.beui-table tbody tr { border-color: color-mix(in srgb, var(--beui-border) 60%, transparent); border-bottom-width: 1px; transition: background-color .15s; }
+.beui-table th { position: sticky; top: 0; z-index: 10; border-color: var(--beui-border); border-bottom-width: 1px; background: var(--beui-muted); font-weight: 700; color: inherit; }
+.beui-table th.head { font-weight: 500; color: var(--beui-muted-foreground); }
 .beui-table th.head[data-active] { box-shadow: inset 0 1px 0 var(--beui-primary); }
 .beui-table th.head[data-drop='true']::before, .beui-table th.head[data-dropend='true']::after { content: ''; position: absolute; top: 0; bottom: 0; width: 2px; background: var(--beui-primary); }
 .beui-table th.head[data-drop='true']::before { left: 0; }
 .beui-table th.head[data-dropend='true']::after { right: 0; }
 .beui-table .lead { text-align: center; }
 .beui-table .lead-cell { display: flex; align-items: center; justify-content: center; }
+.beui-table .table-checkbox { width: 1.5rem; height: 1.5rem; }
 .beui-table .header { display: flex; height: 100%; align-items: center; justify-content: flex-start; }
 .beui-table .header[data-align='right'] { justify-content: flex-end; }
 .beui-table .header[data-align='center'] { justify-content: center; }
@@ -338,7 +339,7 @@ function handleStyle(active: boolean, anchor: { top: number; left: number }) {
 .beui-table .grip:active { cursor: grabbing; }
 .beui-table .grip .be-table-icon { width: .875rem; height: .875rem; }
 @media (hover: hover) { .beui-table .grip:hover { color: var(--beui-foreground); } }
-.beui-table .sort { display: flex; flex: 1; align-items: center; justify-content: flex-start; gap: .25rem; min-width: 0; height: 100%; padding: 0 1rem; text-align: left; user-select: none; transition: color .15s; }
+.beui-table .sort { display: flex; flex: 1; align-items: center; justify-content: flex-start; gap: .25rem; min-width: 0; height: 100%; padding: 0 1rem; user-select: none; transition: color .15s; }
 .beui-table .sort[data-align='right'] { justify-content: flex-end; }
 .beui-table .sort[data-align='center'] { justify-content: center; }
 .beui-table .sort[data-active] { color: var(--beui-foreground); }
@@ -361,7 +362,7 @@ function handleStyle(active: boolean, anchor: { top: number; left: number }) {
 .beui-table .cell[data-align='center'] { text-align: center; }
 .beui-table tbody tr.row[data-selected='true'] { background: color-mix(in srgb, var(--beui-muted) 60%, transparent); }
 @media (hover: hover) { .beui-table tbody tr.row:hover { background: color-mix(in srgb, var(--beui-muted) 50%, transparent); } }
-.beui-table .editable { box-sizing: border-box; width: calc(100% + 1rem); min-width: 0; margin: 0 -.5rem; padding: .25rem .5rem; appearance: none; border: 0; border-radius: .375rem; background: transparent; color: var(--beui-foreground); font: inherit; outline: none; text-overflow: ellipsis; transition: background-color .15s, box-shadow .15s; }
+.beui-table .editable { box-sizing: border-box; width: 100%; min-width: 0; margin: 0 -.5rem; padding: .25rem .5rem; appearance: none; border: 0; border-radius: .375rem; background: transparent; color: var(--beui-foreground); font: inherit; outline: none; text-overflow: ellipsis; transition: background-color .15s, box-shadow .15s; }
 .beui-table .editable::placeholder { color: color-mix(in srgb, var(--beui-muted-foreground) 40%, transparent); }
 .beui-table .editable:focus { background: var(--beui-muted); box-shadow: 0 0 0 1px var(--beui-ring); }
 .beui-table .empty { padding: 2.5rem; text-align: center; color: var(--beui-muted-foreground); }

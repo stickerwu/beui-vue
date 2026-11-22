@@ -6,7 +6,7 @@ const page = ref(6)
 </script>
 <template>
   <div class="paging">
-    <Pagination v-model="page" :total-pages="20" />
+    <Pagination v-model:page="page" :total-pages="20" />
     <p>Page {{ page }} of 20</p>
   </div>
 </template>

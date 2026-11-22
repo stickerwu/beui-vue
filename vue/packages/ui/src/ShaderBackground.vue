@@ -85,14 +85,11 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div data-slot="shader-background" :data-variant="variant" :data-renderer="renderer"
+  <div ref="host" data-slot="shader-background" :data-variant="variant" :data-renderer="renderer"
     :data-motion="speed ? 'playing' : 'paused'" aria-hidden="true" class="shader-background"
-    :style="{ width: dimension(width), height: dimension(height), backgroundImage: renderer === 'webgl' ? undefined : fallback }">
-    <div ref="host" class="shader-host" />
-  </div>
+    :style="{ width: dimension(width), height: dimension(height), backgroundImage: renderer === 'webgl' ? undefined : fallback }" />
 </template>
 
 <style scoped>
 .shader-background { width: 100%; height: 100%; overflow: hidden; }
-.shader-host { width: 100%; height: 100%; }
 </style>

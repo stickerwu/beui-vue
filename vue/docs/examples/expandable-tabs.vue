@@ -48,7 +48,7 @@ const byId = new Map(tabs.map(tab => [tab.id, tab]))
 .tabs-stage { display: flex; min-height: 22rem; width: 100%; align-items: flex-end; justify-content: center; }
 .tabs-icon { width: 1rem; height: 1rem; }
 .menu { display: flex; width: 17.125rem; flex-direction: column; gap: .125rem; }
-.menu-row { display: flex; width: 100%; align-items: center; gap: .75rem; box-sizing: border-box; padding: .625rem .75rem; border: 0; border-radius: .75rem; background: transparent; color: var(--beui-foreground); font: inherit; font-size: .875rem; line-height: 1.25rem; font-weight: 500; text-align: left; cursor: pointer; transition: background-color .15s; }
+.menu-row { display: flex; width: 100%; align-items: center; gap: .75rem; box-sizing: border-box; padding: .625rem .75rem; border: 0; border-radius: .75rem; background: transparent; color: var(--beui-foreground); font: inherit; font-size: .875rem; line-height: 1.25rem; font-weight: 500; text-align: left; cursor: pointer; transition: background-color .15s cubic-bezier(.4, 0, .2, 1); }
 .menu-row:hover { background: var(--beui-muted); }
 .menu-icon { width: 1rem; height: 1rem; flex: none; color: var(--beui-muted-foreground); }
 .menu-label { flex: 1 1 0%; }

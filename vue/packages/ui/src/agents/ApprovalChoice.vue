@@ -12,7 +12,7 @@ const reduce = useReducedMotion()
     <input class="be-choice-input" :type="type" :name="name" :value="value" :checked="checked" :disabled="disabled" @change="emit('change', ($event.target as HTMLInputElement).checked)" />
     <motion.span class="be-choice-box" :data-type="type" :data-checked="checked || undefined" aria-hidden="true" :while-press="reduce || disabled ? undefined : { scale: 0.92 }" :transition="pressSpring">
       <svg v-if="type === 'checkbox'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-        <motion.path d="M5 13l4 4L19 7" :initial="false" :animate="{ pathLength: checked ? 1 : 0, opacity: checked ? 1 : 0 }" :transition="reduce ? { duration: 0 } : { duration: 0.3, ease: easeOut }" />
+        <motion.path tabindex="-1" d="M5 13l4 4L19 7" :initial="false" :animate="{ pathLength: checked ? 1 : 0, opacity: checked ? 1 : 0 }" :transition="reduce ? { duration: 0 } : { duration: 0.3, ease: easeOut }" />
       </svg>
       <motion.span v-else-if="checked" class="be-choice-dot" :layout-id="reduce ? undefined : `${group}-dot`" :transition="reduce ? { duration: 0 } : layoutSpring" />
     </motion.span>
@@ -26,7 +26,7 @@ const reduce = useReducedMotion()
 .be-choice { position: relative; display: flex; box-sizing: border-box; min-height: 2.25rem; align-items: center; gap: 0.75rem; padding: 0.25rem 0.375rem; border-radius: 0.5rem; cursor: pointer; }
 .be-choice[data-description] { align-items: flex-start; }
 .be-choice[data-disabled] { cursor: not-allowed; }
-.be-choice-input { position: absolute; width: 1px; height: 1px; margin: 0; opacity: 0; pointer-events: none; }
+.be-choice-input { position: absolute; width: 1px; height: 1px; margin: 0; opacity: 0; pointer-events: none; outline: none; }
 .be-choice-box { position: relative; display: inline-flex; box-sizing: border-box; flex: none; width: 1.25rem; height: 1.25rem; align-items: center; justify-content: center; border: 2px solid color-mix(in srgb, var(--beui-muted-foreground) 50%, transparent); border-radius: 9999px; color: var(--beui-primary-foreground); transition: color 0.2s, background-color 0.2s, border-color 0.2s; }
 .be-choice-box[data-type=checkbox] { border-radius: 0.375rem; background: var(--beui-background); }
 .be-choice:hover .be-choice-box { border-color: var(--beui-muted-foreground); }

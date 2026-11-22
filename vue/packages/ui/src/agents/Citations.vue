@@ -51,7 +51,7 @@ onBeforeUnmount(() => document.removeEventListener('beui:citation', jump))
 .cs-trigger:hover { color: var(--beui-foreground); }
 .cs-trigger:focus-visible { box-shadow: 0 0 0 2px var(--beui-ring); }
 .cs-title { font-weight: 500; }
-.cs-count { border-radius: 9999px; background: var(--beui-muted); padding: .125rem .375rem; font-size: 10px; line-height: 1rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.cs-count { border-radius: 9999px; background: var(--beui-muted); padding: .125rem .375rem; font-size: 10px; line-height: calc(1.25 / .875); font-weight: 600; font-variant-numeric: tabular-nums; }
 .cs-chevron { display: inline-flex; color: color-mix(in oklab, var(--beui-muted-foreground) 60%, transparent); }
 .cs-list { margin-top: .25rem; }
 </style>

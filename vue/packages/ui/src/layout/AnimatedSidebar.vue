@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, shallowRef } from 'vue'
-import { type SidebarCollapsible, type SidebarDestination } from './animated-sidebar/context'
+import { type SidebarCollapsible, type SidebarDestination, type SidebarSide, type SidebarVariant } from './animated-sidebar/context'
 import AnimatedSidebarClose from './animated-sidebar/AnimatedSidebarClose.vue'
 import AnimatedSidebarContent from './animated-sidebar/AnimatedSidebarContent.vue'
 import AnimatedSidebarFooter from './animated-sidebar/AnimatedSidebarFooter.vue'
@@ -20,15 +20,27 @@ import AnimatedSidebarRail from './animated-sidebar/AnimatedSidebarRail.vue'
 import AnimatedSidebarTrigger from './animated-sidebar/AnimatedSidebarTrigger.vue'
 
 /**
- * Zero-config shell: a sidebar built from `items`, with the page content in the
- * default slot. For full control compose `AnimatedSidebarProvider`,
- * `AnimatedSidebarPanel` and the other parts directly.
+ * With `items`: a zero-config shell, a sidebar built from the items with the page
+ * content in the default slot. Without `items`: the sidebar panel of the compound
+ * API (the upstream `AnimatedSidebar`), to be used inside `AnimatedSidebarProvider`
+ * next to `AnimatedSidebarInset`.
  */
-const { items, label = 'Workspace', shortcut = true, collapsible = 'icon' } = defineProps<{
-  items: readonly SidebarDestination[]
+defineOptions({ inheritAttrs: false })
+const { items, label = 'Workspace', shortcut = true, collapsible = 'icon', side = 'left', variant = 'sidebar', ariaLabel, panelClassName } = defineProps<{
+  /** Builds the whole shell from data. Leave it out to compose the parts yourself. */
+  items?: readonly SidebarDestination[]
+  /** Accessible name of the shell in `items` mode. */
   label?: string
   shortcut?: boolean
   collapsible?: SidebarCollapsible
+  /** Panel mode: which edge the sidebar sits on. */
+  side?: SidebarSide
+  /** Panel mode: surface style. */
+  variant?: SidebarVariant
+  /** Panel mode: accessible name of the sidebar. */
+  ariaLabel?: string
+  /** Panel mode: class of the sticky surface inside the width-animated wrapper. */
+  panelClassName?: string
 }>()
 const active = defineModel<string>()
 const open = defineModel<boolean>('open', { default: true })
@@ -42,7 +54,10 @@ function select(item: SidebarDestination) {
 </script>
 
 <template>
-  <AnimatedSidebarProvider v-model:open="open" class="be-asb-shell" :shortcut="shortcut">
+  <AnimatedSidebarPanel v-if="!items" v-bind="$attrs" :side="side" :variant="variant" :collapsible="collapsible" :aria-label="ariaLabel" :panel-class-name="panelClassName">
+    <slot />
+  </AnimatedSidebarPanel>
+  <AnimatedSidebarProvider v-else v-bind="$attrs" v-model:open="open" class="be-asb-shell" :shortcut="shortcut">
     <AnimatedSidebarPanel :aria-label="label" :collapsible="collapsible" class="be-asb-shell-panel" panel-class="be-asb-shell-surface">
       <AnimatedSidebarHeader>
         <div class="be-asb-shell-head">

@@ -7,22 +7,26 @@ export type DrawerMessages = typeof drawerMessages
 <script setup lang="ts">
 import { AnimatePresence, motion } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
-import { computed, onMounted, shallowRef, useTemplateRef } from 'vue'
+import { computed, onMounted, shallowRef, useAttrs, useTemplateRef } from 'vue'
 import { easeOut, panelSpring } from '../core/motion'
 import PresenceGate from './PresenceGate.vue'
 import { elementOf, useBodyLock, useFocusTrap } from './overlay-kit'
 
 defineOptions({ inheritAttrs: false })
-const { side = 'right', label, dismissable = true, backdropClass, labels } = defineProps<{
+const { side = 'right', ariaLabel, dismissable = true, backdropClassName, labels } = defineProps<{
   side?: 'left' | 'right'
-  /** Accessible name of the dialog. */
-  label?: string
+  ariaLabel?: string
   /** Close when the backdrop is clicked or Escape is pressed. Default true. */
   dismissable?: boolean
   /** Class for the backdrop. */
-  backdropClass?: string
+  backdropClassName?: string
   labels?: Partial<DrawerMessages>
 }>()
+// `label` and `backdrop-class` were this port's earlier names for `ariaLabel` and `backdropClassName`;
+// they still work as plain attributes.
+const attrs = useAttrs()
+const dialogLabel = computed(() => ariaLabel ?? (attrs.label as string | undefined))
+const backdropClasses = computed(() => backdropClassName ?? (attrs['backdrop-class'] as string | undefined) ?? (attrs.backdropClass as string | undefined))
 const open = defineModel<boolean>('open', { default: false })
 const t = computed(() => ({ ...drawerMessages, ...labels }))
 const reduce = useReducedMotion()
@@ -49,12 +53,12 @@ const fade = { duration: 0.2, ease: easeOut } as const
          commit that starts the exit. -->
     <AnimatePresence>
       <PresenceGate v-if="open" key="backdrop" v-slot="{ gate }">
-        <motion.button type="button" class="be-drawer-backdrop" :class="backdropClass" :aria-label="t.close" tabindex="-1"
+        <motion.button type="button" class="be-drawer-backdrop" :class="backdropClasses" :aria-label="t.close" tabindex="-1"
           :initial="{ opacity: 0 }" :animate="{ opacity: 1 }" :exit="{ opacity: 0 }" :transition="{ duration: 0.25, ease: easeOut }"
           :inert="gate.inert" :style="gate.style" @click="dismissable && close()" />
       </PresenceGate>
       <PresenceGate v-if="open" key="panel" v-slot="{ gate }">
-        <motion.div ref="panel" class="be-drawer" :class="[side === 'right' ? 'be-drawer-right' : 'be-drawer-left', $attrs.class]" tabindex="-1" role="dialog" aria-modal="true" :aria-label="label"
+        <motion.div ref="panel" class="be-drawer" :class="[side === 'right' ? 'be-drawer-right' : 'be-drawer-left', $attrs.class]" tabindex="-1" role="dialog" aria-modal="true" :aria-label="dialogLabel"
           :initial="reduce ? { opacity: 0 } : { x: offscreen }" :animate="reduce ? { opacity: 1 } : { x: 0 }" :exit="reduce ? { opacity: 0 } : { x: offscreen }"
           :transition="reduce ? fade : panelSpring" :inert="gate.inert" :style="gate.style">
           <slot :close="close" />

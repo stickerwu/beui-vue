@@ -10,7 +10,7 @@ export type WheelPickerMessages = typeof wheelPickerMessages
 
 <script setup lang="ts">
 import { useReducedMotion } from '../core/reduced-motion'
-import { computed, nextTick, onBeforeUnmount, onMounted, shallowRef, useId, useTemplateRef, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, shallowRef, useAttrs, useId, useTemplateRef, watch } from 'vue'
 import { TOUCH_GESTURE_STYLE, capturePointer, releasePointer } from '../core/touch'
 import { createTickPlayer } from '../core/tick-sound'
 
@@ -24,13 +24,17 @@ const props = withDefaults(defineProps<{
   disabled?: boolean
   /** Play a short tick each time the selected value changes. */
   sound?: boolean
-  className?: string
-  label?: string
   labels?: Partial<WheelPickerMessages>
 }>(), { visibleCount: 5, itemHeight: 36, disabled: false, sound: false })
+// `aria-label` (and the earlier `label` / `class-name` names) arrive as attributes: the
+// root element is the listbox itself, so they are applied by hand rather than inherited.
+defineOptions({ inheritAttrs: false })
+const attrs = useAttrs()
 const model = defineModel<string>()
 const emit = defineEmits<{ valueChange: [value: string] }>()
-const reduce = Boolean(useReducedMotion()?.value)
+const reduceMotion = useReducedMotion()
+// Reactive: the preference is only known once the app has hydrated, and it can change at any time.
+const reduce = computed(() => reduceMotion.value)
 
 const DEG = Math.PI / 180
 // Physics constants, tuned for an iOS-like flick rather than reused from the
@@ -114,7 +118,7 @@ function emitValue(index: number) {
   emitted = value
   // Reduced motion has no drum/glide path to tick from — it is a click straight
   // into the emit, so the tick lives here instead.
-  if (props.sound && reduce) getPlayer().play()
+  if (props.sound && reduce.value) getPlayer().play()
   model.value = value
   emit('valueChange', value)
 }
@@ -124,7 +128,7 @@ function emitValue(index: number) {
 // crossed). Gated on `!reduce` since the reduced render never calls this.
 function maybeTick(position: number) {
   const row = clamp(Math.round(position), 0, last.value)
-  if (!props.sound || reduce) {
+  if (!props.sound || reduce.value) {
     lastTick = row
     return
   }
@@ -252,7 +256,7 @@ function endDrag() {
 
 // Mouse / pen only — touch runs through the native listeners below.
 function pointerDown(event: PointerEvent) {
-  if (props.disabled || reduce || event.pointerType === 'touch') return
+  if (props.disabled || reduce.value || event.pointerType === 'touch') return
   beginDrag(event.clientY)
   capturePointer(event.currentTarget as Element, event.pointerId)
 }
@@ -274,7 +278,7 @@ function pointerUp(event: PointerEvent) {
 function wheel(event: WheelEvent) {
   // Native (non-passive) so preventDefault actually stops the page scrolling
   // behind the wheel.
-  if (props.disabled || reduce) return
+  if (props.disabled || reduce.value) return
   event.preventDefault()
   if (props.sound) getPlayer().prepare()
   stop()
@@ -319,12 +323,11 @@ watch(
 
 watch(geometry, () => nextTick(() => paint(scroll)))
 
-let teardown: (() => void) | undefined
-onMounted(() => {
-  paint(scroll)
-  if (reduce || props.disabled) return
-  const element = container.value
-  if (!element) return
+onMounted(() => paint(scroll))
+// Touch and wheel listeners are native and non-passive, so the page cannot scroll under the
+// gesture. They follow the container, which exists only while motion is allowed.
+watch([container, reduce, () => props.disabled], ([element, reduced, disabled], _, onCleanup) => {
+  if (!element || reduced || disabled) return
   const start = (event: TouchEvent) => {
     const touch = event.touches[0]
     if (touch) beginDrag(touch.clientY)
@@ -332,7 +335,6 @@ onMounted(() => {
   const move = (event: TouchEvent) => {
     const touch = event.touches[0]
     if (!touch || !drag) return
-    // Non-passive so the page cannot scroll under the finger.
     event.preventDefault()
     moveDrag(touch.clientY)
   }
@@ -341,17 +343,16 @@ onMounted(() => {
   element.addEventListener('touchend', endDrag)
   element.addEventListener('touchcancel', endDrag)
   element.addEventListener('wheel', wheel, { passive: false })
-  teardown = () => {
+  onCleanup(() => {
     element.removeEventListener('touchstart', start)
     element.removeEventListener('touchmove', move)
     element.removeEventListener('touchend', endDrag)
     element.removeEventListener('touchcancel', endDrag)
     element.removeEventListener('wheel', wheel)
-  }
-})
+  })
+}, { flush: 'post' })
 
 onBeforeUnmount(() => {
-  teardown?.()
   cancelAnimationFrame(raf)
   cancelAnimationFrame(dragFrame)
   if (wheelSnap) clearTimeout(wheelSnap)
@@ -359,9 +360,9 @@ onBeforeUnmount(() => {
 })
 
 const maskImage = 'linear-gradient(to bottom, transparent, #000 22%, #000 78%, transparent)'
-const listLabel = computed(() => props.label ?? props.labels?.label ?? wheelPickerMessages.label)
+const listLabel = computed(() => (attrs['aria-label'] as string | undefined) ?? (attrs.label as string | undefined) ?? props.labels?.label ?? wheelPickerMessages.label)
+const extraClass = computed(() => (attrs['class-name'] ?? attrs.className) as string | undefined)
 const padding = computed(() => (geometry.value.height - props.itemHeight) / 2)
-const widest = computed(() => props.options.reduce<string>((longest, option) => (labelOf(option).length > longest.length ? labelOf(option) : longest), ''))
 </script>
 
 <template>
@@ -369,7 +370,7 @@ const widest = computed(() => props.options.reduce<string>((longest, option) => 
   <div
     v-if="reduce"
     class="be-wheel be-wheel-flat"
-    :class="[className, disabled && 'be-wheel-disabled']"
+    :class="[attrs.class, extraClass, disabled && 'be-wheel-disabled']"
     :style="{ height: `${geometry.height}px` }"
   >
     <div class="be-wheel-band" aria-hidden="true" :style="{ height: `${itemHeight}px` }" />
@@ -383,6 +384,7 @@ const widest = computed(() => props.options.reduce<string>((longest, option) => 
           type="button"
           :disabled="disabled"
           class="be-wheel-flat-button"
+          :aria-current="valueOf(option) === currentValue ? 'true' : undefined"
           :data-current="valueOf(option) === currentValue"
           :style="{ height: `${itemHeight}px` }"
           @click="emitValue(options.indexOf(option))"
@@ -395,7 +397,7 @@ const widest = computed(() => props.options.reduce<string>((longest, option) => 
     v-else
     ref="container"
     class="be-wheel"
-    :class="[className, grabbing && 'be-wheel-grabbing']"
+    :class="[attrs.class, extraClass, grabbing && 'be-wheel-grabbing']"
     role="listbox"
     :aria-label="listLabel"
     :aria-activedescendant="selectedLabel ? selectedId : undefined"
@@ -407,12 +409,6 @@ const widest = computed(() => props.options.reduce<string>((longest, option) => 
     @pointerup="pointerUp"
     @pointercancel="pointerUp"
   >
-    <!-- In-flow sizer: the drum and band are absolutely positioned, so without
-         this the box would collapse to its border. Hidden from layout cost by
-         `visibility`, not removed, so the wheel keeps an intrinsic width that
-         the widest option sets. -->
-    <span class="be-wheel-sizer" aria-hidden="true">{{ widest }}</span>
-    <span v-if="selectedLabel" :id="selectedId" role="option" aria-selected="true" class="be-wheel-selected">{{ selectedLabel }}</span>
     <!-- Curved drum of dimmed rows. -->
     <ul ref="drum" class="be-wheel-drum" aria-hidden="true">
       <li
@@ -437,20 +433,20 @@ const widest = computed(() => props.options.reduce<string>((longest, option) => 
         >{{ labelOf(option) }}</li>
       </ul>
     </div>
+    <span v-if="selectedLabel" :id="selectedId" role="option" aria-selected="true" class="be-wheel-selected">{{ selectedLabel }}</span>
   </div>
 </template>
 
 <style scoped>
 .be-wheel {
-  position: relative; width: max-content; min-width: 9rem; overflow: hidden; border-radius: 1rem; border: 1px solid var(--beui-border);
+  position: relative; overflow: hidden; border-radius: 1rem; border: 1px solid var(--beui-border);
   background: var(--beui-card); color: var(--beui-foreground); outline: none; touch-action: none;
   cursor: grab; box-sizing: border-box;
 }
 .be-wheel-grabbing { cursor: grabbing; }
-.be-wheel-sizer { visibility: hidden; display: block; padding-inline: .75rem; font-weight: 500; white-space: nowrap; }
 .be-wheel-selected { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .be-wheel-disabled { pointer-events: none; opacity: .5; }
-.be-wheel:focus-visible { outline: 2px solid color-mix(in srgb, var(--beui-foreground) 20%, transparent); outline-offset: 2px; }
+.be-wheel:focus-visible { box-shadow: 0 0 0 2px color-mix(in srgb, var(--beui-foreground) 20%, transparent); }
 .be-wheel-drum {
   position: absolute; inset-inline: 0; top: 50%; margin: 0; height: 0; padding: 0; list-style: none;
   backface-visibility: hidden; transform-style: preserve-3d; will-change: transform;
@@ -482,6 +478,5 @@ const widest = computed(() => props.options.reduce<string>((longest, option) => 
   font: inherit; font-weight: 500; color: var(--beui-muted-foreground); cursor: pointer;
 }
 .be-wheel-flat-button[data-current="true"] { color: var(--beui-foreground); }
-.be-wheel-flat-button:focus-visible { outline: 2px solid var(--beui-ring); outline-offset: -2px; }
 @media (prefers-reduced-motion: reduce) { .be-wheel-flat-list { scroll-behavior: auto; } }
 </style>

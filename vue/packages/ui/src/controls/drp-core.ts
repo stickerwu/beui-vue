@@ -76,3 +76,36 @@ export function fill(template: string, values?: Record<string, string | number>)
 
 export type DrpController = ReturnType<typeof import('./drp-controller').useDrpController>
 export const DRP_KEY: InjectionKey<DrpController> = Symbol('beui-date-range-picker')
+
+/** Props shared by `DateRangePicker` and `DateRangePickerDropdown`. */
+export interface DateRangePickerRootProps {
+  /** The range, `{ from, to? }` as YYYY-MM-DD, or `null`. Use with `v-model`. */
+  modelValue?: DateRange | null
+  /** Uncontrolled initial range. */
+  defaultValue?: DateRange | null
+  /** Month shown first, any date in it (YYYY-MM-DD). */
+  defaultMonth?: string
+  min?: string
+  max?: string
+  isDateDisabled?: (date: string) => boolean
+  presets?: readonly DateRangePreset[]
+  locale?: string
+  label?: string
+  disabled?: boolean
+  /** Move focus to the active date on mount (an inline calendar) or on open (the popover). */
+  autoFocus?: boolean
+  /** Show the start/end summary above the calendar. Defaults to true inline, false in the popover. */
+  showSummary?: boolean
+  /** Controlled open state, `v-model:open`. */
+  open?: boolean
+  /** Starts open when `v-model:open` is not bound. */
+  defaultOpen?: boolean
+  /** Close an open popover after a complete range or preset. Default false. */
+  closeOnSelect?: boolean
+  /** Render the calendar inline instead of behind a trigger. */
+  inline?: boolean
+  /** Trigger text when no range is chosen. */
+  placeholder?: string
+  /** Override any built-in string. */
+  labels?: Partial<DateRangePickerMessages>
+}

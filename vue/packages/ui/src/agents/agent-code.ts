@@ -60,7 +60,9 @@ function typescriptLine(line: string, out: AgentCodeToken[]) {
     if (!word) {
       if (text === '{' && /^(const|let|var)$/.test(previous)) destructuring = true
       if (text === '}') destructuring = false
-      push(out, text, PLAIN)
+      // A type-annotation colon is a keyword in Shiki's themes; an object-literal colon stays plain.
+      const annotation = text === ':' && /^[\w$]+$/.test(previous) && /^\s*(string|number|boolean|any|unknown|void|never|object|null|undefined|[A-Z]\w*|\w+\[\])/.test(after)
+      push(out, text, annotation ? KEYWORD : PLAIN)
       if (text.trim()) previous = text
       continue
     }

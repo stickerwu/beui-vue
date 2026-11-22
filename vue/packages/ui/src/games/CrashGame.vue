@@ -17,7 +17,7 @@ const emit = defineEmits<{
 }>()
 const game = useCrashGame(props, emit as CrashEmit)
 const slot = computed(() => (props.design === 'flight' ? 'crash' : `crash-${props.design}`))
-const label = computed(() => game.text('region'))
+const label = computed(() => props['aria-label'] ?? game.text('region'))
 const Stage = computed(() => ({ flight: CrashFlightStage, balloon: CrashBalloonStage, tower: CrashTowerStage })[props.design])
 const Mini = computed(() => ({ flight: CrashFlightMini, balloon: CrashBalloonMini, tower: CrashTowerMini })[props.design])
 </script>

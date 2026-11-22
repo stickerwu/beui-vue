@@ -2,19 +2,17 @@ import type { ChoiceOption } from '../types'
 import type { comboboxMessages, multiSelectMessages } from './messages'
 
 export type ComboFilter = (value: string, query: string, keywords: string[]) => boolean
+export type ComboLabels = Partial<typeof multiSelectMessages & typeof comboboxMessages>
+export type ComboStyle = Record<string, string | number>
 
-export interface ComboFieldProps {
-  options: readonly ChoiceOption[]
-  multiple?: boolean
-  modelValue?: string | string[]
-  defaultValue?: string | string[]
-  open?: boolean
-  defaultOpen?: boolean
-  query?: string
-  defaultQuery?: string
-  filter?: ComboFilter
-  disabled?: boolean
-  name?: string
+/**
+ * Options-driven shorthand shared by `Combobox` and `MultiSelect`. Everything below `options` only
+ * applies when `options` is given; compose the parts (`ComboboxTrigger`, `ComboboxContent`, …) to
+ * lay the field out yourself.
+ */
+export interface ComboOptionsProps {
+  /** Render the field from a list of options instead of composing parts. */
+  options?: readonly ChoiceOption[]
   /** Accessible name of the search input. */
   label?: string
   placeholder?: string
@@ -22,7 +20,6 @@ export interface ComboFieldProps {
   empty?: string
   /** Accessible name of the list. */
   listLabel?: string
-  labels?: Partial<typeof multiSelectMessages & typeof comboboxMessages>
   side?: 'top' | 'bottom'
   align?: 'start' | 'center' | 'end'
   sideOffset?: number
@@ -31,9 +28,9 @@ export interface ComboFieldProps {
   groupSeparator?: boolean
   /** Show the search glyph in the input (always on for the single combobox). */
   showIcon?: boolean
-  triggerStyle?: Record<string, string | number>
-  contentStyle?: Record<string, string | number>
-  listStyle?: Record<string, string | number>
+  triggerStyle?: ComboStyle
+  contentStyle?: ComboStyle
+  listStyle?: ComboStyle
 }
 
 export const defaultFilter: ComboFilter = (value, query, keywords) => {

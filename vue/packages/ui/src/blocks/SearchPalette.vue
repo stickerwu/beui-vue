@@ -289,10 +289,10 @@ function onKeyDown(event: KeyboardEvent) {
 <style scoped>
 .be-cp-backdrop { pointer-events: auto; position: fixed; inset: 0; z-index: 100; display: block; margin: 0; padding: 0; border: 0; cursor: default; background: color-mix(in srgb, var(--beui-background) 5%, transparent); -webkit-backdrop-filter: blur(12px) saturate(140%); backdrop-filter: blur(12px) saturate(140%); }
 .be-cp-layer { pointer-events: none; position: fixed; inset: 18vh 1rem 1rem; z-index: 100; display: flex; align-items: flex-start; justify-content: center; }
-.be-cp-panel { pointer-events: auto; box-sizing: border-box; width: 100%; max-width: 36rem; overflow: hidden; border: 1px solid var(--beui-border); border-radius: 1rem; background: var(--beui-background); color: var(--beui-foreground); box-shadow: 0 25px 50px -12px rgb(0 0 0 / .25); font-size: .875rem; line-height: 1.42857; will-change: transform; }
+.be-cp-panel { pointer-events: auto; box-sizing: border-box; width: 100%; max-width: 36rem; overflow: hidden; border: 1px solid var(--beui-border); border-radius: 1rem; background: var(--beui-background); color: var(--beui-foreground); box-shadow: 0 25px 50px -12px rgb(0 0 0 / .25); font-size: 1rem; line-height: 1.5; will-change: transform; }
 .be-cp-header { display: flex; align-items: center; gap: .75rem; padding-inline: 1rem; border-bottom: 1px solid var(--beui-border); }
-.be-cp-search { width: 1rem; height: 1rem; flex: none; fill: none; stroke: var(--beui-muted-foreground); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.be-cp-input { box-sizing: border-box; height: 3rem; min-width: 0; flex: 1; margin: 0; padding: 0; border: 0; background: transparent; color: var(--beui-foreground); font: inherit; font-size: .875rem; outline: none; }
+.be-cp-search { color: var(--beui-muted-foreground); width: 1rem; height: 1rem; flex: none; fill: none; stroke: var(--beui-muted-foreground); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.be-cp-input { box-sizing: border-box; height: 3rem; min-width: 0; flex: 1; margin: 0; padding: 0; border: 0; background: transparent; color: var(--beui-foreground); font: inherit; font-size: .875rem; line-height: calc(1.25 / .875); outline: none; }
 .be-cp-input::placeholder { color: var(--beui-muted-foreground); opacity: 1; }
 /* iOS zooms the page in on a focused field under 16px, and the zoom outlives the palette. */
 .be-cp-input.is-touch { font-size: 1rem; line-height: 1.5rem; }
@@ -301,11 +301,11 @@ function onKeyDown(event: KeyboardEvent) {
 @media (min-width: 640px) { .be-cp-esc { display: inline-block; } }
 .be-cp-list { max-height: 60vh; overflow-y: auto; overscroll-behavior: contain; padding: .5rem; scrollbar-width: none; -ms-overflow-style: none; }
 .be-cp-list::-webkit-scrollbar { display: none; }
-.be-cp-empty { padding: 2rem; text-align: center; color: var(--beui-muted-foreground); }
+.be-cp-empty { padding: 2rem; text-align: center; font-size: .875rem; line-height: calc(1.25 / .875); color: var(--beui-muted-foreground); }
 .be-cp-group { margin-bottom: .25rem; }
 .be-cp-group:last-child { margin-bottom: 0; }
 .be-cp-group-label { padding: .375rem .5rem; font-size: 10px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--beui-muted-foreground); }
-.be-cp-row { position: relative; isolation: isolate; display: flex; width: 100%; align-items: center; gap: .75rem; box-sizing: border-box; margin: 0; padding: .5rem; border: 0; border-radius: .375rem; background: transparent; color: var(--beui-muted-foreground); font: inherit; font-size: .875rem; line-height: 1.42857; text-align: left; cursor: pointer; transition: color .15s; }
+.be-cp-row { position: relative; isolation: isolate; display: flex; width: 100%; align-items: center; gap: .75rem; box-sizing: border-box; margin: 0; padding: .5rem; border: 0; border-radius: .375rem; background: transparent; color: var(--beui-muted-foreground); font: inherit; font-size: .875rem; line-height: calc(1.25 / .875); text-align: left; cursor: pointer; transition: color .15s cubic-bezier(.4, 0, .2, 1); }
 .be-cp-row.is-active { color: var(--beui-foreground); }
 .be-cp-row[aria-disabled='true'] { opacity: .45; cursor: default; }
 .be-cp-active { position: absolute; inset: 0; z-index: 0; border-radius: .375rem; background: var(--beui-muted); }

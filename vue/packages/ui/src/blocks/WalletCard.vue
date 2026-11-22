@@ -27,7 +27,7 @@ const props = withDefaults(defineProps<{
   hasNotifications?: boolean
   labels?: Partial<typeof walletCardMessages>
   className?: string
-}>(), { balancePrefix: '$', searchRecent: () => [], hasNotifications: false, defaultBalanceHidden: false })
+}>(), { balancePrefix: '$', hasNotifications: false, defaultBalanceHidden: false })
 const emit = defineEmits<{
   'update:accountId': [id: string]
   accountChange: [id: string]
@@ -158,7 +158,8 @@ watch(searchOpen, open => {
 useDismiss(() => searchOpen.value, () => { searchOpen.value = false }, () => searchRoot.value)
 const filtered = computed(() => {
   const needle = query.value.trim().toLowerCase()
-  return needle ? props.searchRecent.filter(term => term.toLowerCase().includes(needle)) : props.searchRecent
+  const recent = props.searchRecent ?? []
+  return needle ? recent.filter(term => term.toLowerCase().includes(needle)) : recent
 })
 function submitSearch(value: string) { emit('searchSubmit', value); searchOpen.value = false }
 function onSearchInput(event: Event) {
@@ -361,7 +362,7 @@ const actions = computed(() => [
 @media (hover: hover) { .be-wallet-copy:hover { background: var(--beui-muted); color: var(--beui-foreground); } }
 .be-wallet-copy-icon { position: relative; display: inline-grid; flex: none; place-items: center; width: .875rem; height: .875rem; overflow: hidden; }
 .be-wallet-copy-glyph { display: inline-flex; }
-.is-copied { color: #10b981; }
+.is-copied { color: oklch(69.6% .17 162.48); }
 
 .be-wallet-tools { display: flex; flex: none; align-items: center; gap: .25rem; }
 .be-wallet-search { flex: none; }
@@ -395,10 +396,10 @@ const actions = computed(() => [
 .be-wallet-delta-slot { display: flex; align-items: center; justify-content: center; height: 1.75rem; margin-top: .5rem; }
 .be-wallet-mask { transform: translateY(3px); font-size: .875rem; font-weight: 600; line-height: 1; letter-spacing: .3em; color: var(--beui-muted-foreground); }
 .be-wallet-delta { display: inline-flex; align-items: center; gap: .25rem; padding: .25rem .625rem; border-radius: 9999px; font-size: .75rem; line-height: 1rem; font-weight: 600; font-variant-numeric: tabular-nums; }
-.be-wallet-delta.is-up { background: rgb(16 185 129 / .15); color: #059669; }
-.be-wallet-delta.is-down { background: rgb(239 68 68 / .15); color: #dc2626; }
-:global(:is(.dark, [data-beui-theme='dark']) .be-wallet-delta.is-up) { color: #34d399; }
-:global(:is(.dark, [data-beui-theme='dark']) .be-wallet-delta.is-down) { color: #f87171; }
+.be-wallet-delta.is-up { background: oklch(69.6% .17 162.48 / .15); color: oklch(59.6% .145 163.225); }
+.be-wallet-delta.is-down { background: oklch(63.7% .237 25.331 / .15); color: oklch(57.7% .245 27.325); }
+:global(:is(.dark, [data-beui-theme='dark']) .be-wallet-delta.is-up) { color: oklch(76.5% .177 163.223); }
+:global(:is(.dark, [data-beui-theme='dark']) .be-wallet-delta.is-down) { color: oklch(70.4% .191 22.216); }
 
 .be-wallet-actions-wrap { margin-top: 2rem; }
 .be-wallet-actions { display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem; }

@@ -15,7 +15,6 @@
     "test:parity": "node scripts/parity.mjs",
     "test:gallery": "node scripts/gallery.mjs",
     "test:motion": "node scripts/gallery-motion.mjs",
-    "docs:evidence": "node scripts/publish-evidence.mjs",
     "changeset": "changeset",
     "version-packages": "changeset version"
   },

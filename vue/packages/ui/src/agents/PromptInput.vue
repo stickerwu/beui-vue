@@ -217,12 +217,12 @@ const isIconName = (icon?: string): icon is AgentIconName => Boolean(icon && ico
       <div v-if="models.length" class="be-pi-select">
         <button
           ref="modelButton"
+          :id="`${uid}-model-trigger`"
           type="button"
           class="be-pi-select-trigger"
           aria-haspopup="listbox"
           :aria-expanded="modelOpen"
           :aria-controls="modelOpen ? `${uid}-models` : undefined"
-          :aria-label="t.chooseModel"
           :disabled="disabled || loading"
           @click="modelOpen ? closeModels() : openModels()"
           @keydown="modelKey"
@@ -238,7 +238,7 @@ const isIconName = (icon?: string): icon is AgentIconName => Boolean(icon && ico
         <FloatingPanel
           :id="`${uid}-models`"
           role="listbox"
-          :aria-label="t.chooseModel"
+          :aria-labelledby="`${uid}-model-trigger`"
           :open="modelOpen"
           :anchor="modelButton"
           :gap="8"
@@ -339,7 +339,7 @@ const isIconName = (icon?: string): icon is AgentIconName => Boolean(icon && ico
 .be-pi-select-trigger:disabled { pointer-events: none; opacity: .5; }
 .be-pi-select-value { display: flex; min-width: 0; align-items: center; gap: .375rem; }
 .be-pi-model-icon { display: grid; flex: none; place-items: center; width: 1rem; height: 1rem; color: var(--beui-muted-foreground); }
-.be-pi-model-icon img { width: 1rem; height: 1rem; border-radius: .125rem; object-fit: contain; }
+.be-pi-model-icon img { width: 1rem; height: 1rem; border-radius: .25rem; object-fit: contain; }
 .be-pi-select-label { overflow: hidden; color: var(--beui-muted-foreground); text-overflow: ellipsis; white-space: nowrap; }
 .be-pi-chevron { display: grid; flex: none; place-items: center; color: var(--beui-muted-foreground); }
 
@@ -369,6 +369,6 @@ div.be-pi-listbox.floating { width: 13rem; padding: .25rem; box-shadow: none; }
 .be-pi-option[aria-disabled=true] { pointer-events: none; opacity: .5; }
 .be-pi-option-main { display: flex; min-width: 0; align-items: center; gap: .5rem; }
 .be-pi-option-icon { display: grid; flex: none; place-items: center; width: 1.25rem; height: 1.25rem; color: var(--beui-muted-foreground); }
-.be-pi-option-icon img { width: 1rem; height: 1rem; border-radius: .125rem; object-fit: contain; }
+.be-pi-option-icon img { width: 1rem; height: 1rem; border-radius: .25rem; object-fit: contain; }
 .be-pi-option-label { min-width: 0; overflow: hidden; color: var(--beui-foreground); text-overflow: ellipsis; white-space: nowrap; }
 </style>
