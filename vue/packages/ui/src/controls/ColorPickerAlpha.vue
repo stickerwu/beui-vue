@@ -14,7 +14,8 @@ const channels = context.channels
 const now = computed(() => Math.round(channels.value.alpha * 100))
 const rgb = computed(() => context.rgb.value.join(' '))
 const track = computed(() => `linear-gradient(to right, rgb(${rgb.value} / 0), rgb(${rgb.value})), repeating-conic-gradient(#d4d4d8 0% 25%, #fafafa 0% 50%) 0 0 / 8px 8px`)
-function point(fraction: number) { context.update({ ...channels.value, alpha: fraction }) }
+// Whole percents, as the slider reports them, so the hex suffix does not flicker between neighbours.
+function point(fraction: number) { context.update({ ...channels.value, alpha: Math.round(fraction * 100) / 100 }) }
 function keys(event: KeyboardEvent) {
   if (context.disabled.value) return
   const step = keyStep(event, 10)

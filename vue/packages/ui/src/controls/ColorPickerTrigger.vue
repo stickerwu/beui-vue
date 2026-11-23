@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { motion } from 'motion-v'
+import { AnimatePresence, motion } from 'motion-v'
 import { computed, onBeforeUnmount, onMounted, shallowRef, useTemplateRef } from 'vue'
 import { layoutSpring } from '../core/motion'
 import { useReducedMotion } from '../core/reduced-motion'
@@ -32,6 +32,8 @@ onMounted(() => {
 onBeforeUnmount(() => observer?.disconnect())
 const alphaSuffix = computed(() => context.hex.value.slice(7))
 const labelTransition = computed(() => (reduce.value ? { duration: 0 } : layoutSpring))
+const alphaEnter = computed(() => ({ opacity: 0, x: reduce.value ? 0 : -4, filter: reduce.value ? 'blur(0px)' : 'blur(3px)' }))
+const alphaExit = computed(() => ({ opacity: 0, filter: reduce.value ? 'blur(0px)' : 'blur(3px)', transition: { duration: 0.12 } }))
 function bindTrigger(node: unknown) { context.triggerEl.value = node instanceof HTMLButtonElement ? node : null }
 </script>
 
@@ -49,9 +51,14 @@ function bindTrigger(node: unknown) { context.triggerEl.value = node instanceof 
       <motion.span class="be-picker-label" :initial="false" :animate="{ width: labelWidth === null ? 'auto' : labelWidth }" :transition="labelTransition">
         <span ref="labelBox" class="be-picker-label-text">
           {{ context.hex.value.slice(0, 7).toUpperCase() }}
-          <Transition name="be-picker-alpha">
-            <span v-if="alphaSuffix" :key="alphaSuffix" class="be-picker-alpha">{{ alphaSuffix.toUpperCase() }}</span>
-          </Transition>
+          <!-- One constant key: only gaining or dropping the pair animates, not each new value. -->
+          <AnimatePresence mode="popLayout" :initial="false">
+            <motion.span
+              v-if="alphaSuffix" key="alpha" class="be-picker-alpha"
+              :initial="alphaEnter" :animate="{ opacity: 1, x: 0, filter: 'blur(0px)' }" :exit="alphaExit" :transition="layoutSpring">
+              {{ alphaSuffix.toUpperCase() }}
+            </motion.span>
+          </AnimatePresence>
         </span>
       </motion.span>
     </slot>
@@ -70,10 +77,4 @@ function bindTrigger(node: unknown) { context.triggerEl.value = node instanceof 
 .be-picker-label { position: relative; display: inline-flex; overflow: hidden; line-height: 1.25rem; font-family: var(--font-mono, ui-monospace, monospace); font-variant-numeric: tabular-nums; }
 .be-picker-label-text { position: relative; display: inline-flex; flex: none; white-space: nowrap; }
 .be-picker-alpha { color: var(--beui-muted-foreground); }
-.be-picker-alpha-enter-active, .be-picker-alpha-leave-active { transition: opacity .2s, transform .2s, filter .2s; }
-.be-picker-alpha-enter-from, .be-picker-alpha-leave-to { opacity: 0; transform: translateX(-4px); filter: blur(3px); }
-@media (prefers-reduced-motion: reduce) {
-  .be-picker-alpha-enter-active, .be-picker-alpha-leave-active { transition: opacity .15s; }
-  .be-picker-alpha-enter-from, .be-picker-alpha-leave-to { transform: none; filter: none; }
-}
 </style>
