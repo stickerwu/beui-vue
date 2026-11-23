@@ -12,10 +12,11 @@ const vertical = computed(() => direction === 'up' || direction === 'down')
   </div>
 </template>
 <style scoped>
-.marquee, .track { display: flex; gap: var(--gap); } .marquee { overflow: hidden; } .track { align-items: center; flex: none; justify-content: space-around; min-width: 100%; }
+.marquee, .track { display: flex; gap: var(--gap); } .marquee { overflow: hidden; }
+/* Tracks keep their content size, as upstream: spacing is always `gap`, whatever the width. */
+.track { align-items: center; flex: none; }
 .track :slotted(*) { flex-shrink: 0; }
 .marquee[data-vertical=true], .marquee[data-vertical=true] .track { flex-direction: column; }
-.marquee[data-vertical=true] .track { min-width: auto; min-height: 100%; }
 .marquee[data-fade=true] { mask-image: linear-gradient(to right, transparent, black 12%, black 88%, transparent); }
 .marquee[data-vertical=true][data-fade=true] { mask-image: linear-gradient(to bottom, transparent, black 12%, black 88%, transparent); }
 @media (prefers-reduced-motion: no-preference) {
