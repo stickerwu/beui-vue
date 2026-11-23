@@ -88,12 +88,6 @@
   white-space: nowrap;
 }
 
-.beui-header-brand img {
-  height: 24px;
-  width: 24px;
-  border-radius: 8px;
-}
-
 .beui-header-nav {
   display: flex;
   align-items: center;
@@ -748,10 +742,6 @@
   letter-spacing: -.01em;
 }
 
-.beui-footer-brand img {
-  border-radius: 999px;
-}
-
 .beui-footer-brand-column > p {
   margin: 16px 0 0;
   color: var(--muted-foreground);
@@ -853,10 +843,6 @@
   gap: 8px;
   color: var(--foreground);
   font-weight: 500;
-}
-
-.beui-docs-footer-brand img {
-  border-radius: 6px;
 }
 
 .beui-docs-footer-tagline {

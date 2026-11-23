@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useData } from 'vitepress'
+import BrandMark from './BrandMark.vue'
 import { useLocale } from './i18n'
 
 const { page } = useData()
@@ -33,7 +34,7 @@ const upstreamUrl = computed(() => {
       </nav>
       <section class="beui-source-card" aria-labelledby="beui-vue-source-title">
         <div class="beui-source-brand">
-          <img :src="href('/brand/beui-vue.png')" alt="" width="48" height="48">
+          <BrandMark :size="40" />
           <span>beUI<span class="beui-source-brand-suffix">Vue</span></span>
         </div>
         <div class="beui-source-card-copy">

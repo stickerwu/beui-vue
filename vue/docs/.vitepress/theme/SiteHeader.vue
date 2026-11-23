@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, shallowRef, useId, useTemplateRef, watch } from 'vue'
-import { useData, useRoute, useRouter, withBase } from 'vitepress'
+import { useData, useRoute, useRouter } from 'vitepress'
 import { localizePage, localizeSection, pages, sections } from './catalog'
+import BrandMark from './BrandMark.vue'
 import Icon from './Icon.vue'
 import SiteSidebar from './SiteSidebar.vue'
 import { useLocale } from './i18n'
@@ -263,7 +264,7 @@ onBeforeUnmount(() => {
           <Icon name="menu" :size="20" />
         </button>
         <a :href="href('/')" class="beui-header-brand">
-          <img :src="withBase('/brand/favicon.png')" alt="" width="24" height="24" />
+          <BrandMark :size="24" />
           <span>beui-vue</span>
         </a>
         <nav class="beui-header-nav" :aria-label="t('Main navigation')">

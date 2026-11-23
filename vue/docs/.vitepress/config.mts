@@ -13,6 +13,7 @@ const shared = {
   appearance: 'dark' as const,
   sitemap: { hostname: site },
   head: [
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}brand/favicon.svg` }],
     ['link', { rel: 'icon', type: 'image/png', sizes: '48x48', href: `${base}brand/favicon.png` }],
     ['link', { rel: 'apple-touch-icon', sizes: '180x180', href: `${base}brand/apple-touch-icon.png` }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
@@ -29,7 +30,7 @@ const shared = {
 }
 
 const zhThemeConfig = {
-  logo: { src: '/brand/favicon.png', alt: '' },
+  logo: { src: '/brand/logo.svg', alt: '' },
   nav: [
     { text: '安装', link: '/install' },
     { text: '组件目录', link: '/catalog' },
@@ -48,7 +49,7 @@ const zhThemeConfig = {
 }
 
 const enThemeConfig = {
-  logo: { src: '/brand/favicon.png', alt: '' },
+  logo: { src: '/brand/logo.svg', alt: '' },
   nav: [
     { text: 'Installation', link: '/en/install' },
     { text: 'Components', link: '/en/catalog' },
