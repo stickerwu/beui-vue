@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { AnimatePresence, motion } from 'motion-v'
-import { Comment, computed, Text, useSlots, type VNode } from 'vue'
+import { computed, Text, useSlots } from 'vue'
+import { flattenSlot } from '../core/flatten-slot'
 import { useReducedMotion } from '../core/reduced-motion'
 import { easeOut, swapSpring } from '../core/motion'
 
@@ -21,10 +22,10 @@ defineSlots<{
 const slots = useSlots()
 const reduce = useReducedMotion()
 
-// A cascade needs a plain string to split into letters.
+// A cascade needs a plain string to split into letters. Fragments are unwrapped, so text a
+// wrapper forwards through its own <slot /> (ActionSwapCascadeText) still counts as plain.
 function plainLabel(): string | null {
-  const nodes = (slots.default?.() ?? []) as VNode[]
-  const texts = nodes.filter(node => node.type !== Comment)
+  const texts = flattenSlot(slots.default?.())
   return texts.length > 0 && texts.every(node => node.type === Text) ? texts.map(node => String(node.children ?? '')).join('') : null
 }
 const label = computed(() => (slots.default ? plainLabel() : null))
