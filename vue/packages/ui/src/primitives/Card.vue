@@ -24,6 +24,13 @@ function release() {
   listeners?.abort()
   pressed.value = false
 }
+// A capture listener on window also hears every element's blur (blur does not bubble, but it
+// passes through window on the way down). Pressing the card moves focus away from whatever had
+// it, often the checkbox inside from the last click, and that blur must not end the press.
+// Only the window itself losing focus (switching apps mid-press) releases the card.
+function releaseOnWindowBlur(event: FocusEvent) {
+  if (event.target === window) release()
+}
 function press(event: PointerEvent) {
   if (!props.interactive || reduce.value || !event.isPrimary || event.button !== 0) return
   release()
@@ -31,7 +38,7 @@ function press(event: PointerEvent) {
   const options = { capture: true, signal: listeners.signal }
   window.addEventListener('pointerup', release, options)
   window.addEventListener('pointercancel', release, options)
-  window.addEventListener('blur', release, options)
+  window.addEventListener('blur', releaseOnWindowBlur, options)
   pressed.value = true
 }
 watch(() => props.interactive, release)
