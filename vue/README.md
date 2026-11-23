@@ -11,6 +11,18 @@ pnpm docs:preview
 
 访问 `http://127.0.0.1:4173/`。开发文档时用 `pnpm docs:dev`，组件修改后重新构建包。网页展示的是工作区构建出的 npm 产物。
 
+## 用 shadcn-vue CLI 安装源码
+
+除了 npm 包，每个安装条目也能用 shadcn-vue CLI 把 Vue 源码复制进用户项目：
+
+```sh
+npx shadcn-vue@latest add https://beui.stickerwu.net/r/button-base.json
+```
+
+`scripts/registry.mjs` 为 `catalog.json` 的 160 个安装条目各生成一个 registry 条目，写入 `docs/public/r/`，并生成列出全部条目的 `r/index.json`。该目录是生成物，已被 Git 忽略，由 `pnpm docs:prepare` 产生、随 `pnpm docs:build` 发布。条目从组件文件出发，沿相对导入收集 `.vue`、`.ts` 和 `.css`，并把上游文档列出的同族组件（如 `Alert` 与 `AlertTitle`）一并带上。依赖版本取自 `packages/ui/package.json`，每个条目都带同一份 `styles.css`、`theme.css`、`agents/agents.css` 和 `blocks/blocks.css`，因此重复添加不会产生冲突。组件文件增删或导入关系变化后重新运行 `pnpm docs:prepare` 即可。
+
+本地验证：用任意静态服务器托管 `docs/public`，在已用 `shadcn-vue init` 初始化的 Vite 项目里运行 `npx shadcn-vue@latest add http://127.0.0.1:<端口>/r/button-base.json`。用户侧的说明见 `docs/install.md`。
+
 ## 迁移目录与验收
 
 `catalog.json` 记录基准提交的 160 个安装条目、源文件、上游文档、变体和贡献者。`pnpm catalog` 从 Git 基准对象重新计算并对照快照。浅克隆环境需先获取上游提交历史。`ports*.json` 登记 Vue 导出、API 和逐变体验收。目录页展示每项已通过还原验收的比例。

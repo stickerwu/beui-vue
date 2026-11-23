@@ -4,13 +4,17 @@ import { computed, onBeforeUnmount, onMounted, shallowRef, useTemplateRef } from
 import { useData } from 'vitepress'
 import { entries, pages, sections } from './catalog'
 import Icon from './Icon.vue'
+import InstallCommand from './InstallCommand.vue'
 import PreviewTile from './PreviewTile.vue'
+import PhoneShowcase from './phones/PhoneShowcase.vue'
 import { useLocale } from './i18n'
 import './home.css'
 import './hero-beam.css'
 
 const { isZh, t, href } = useLocale()
 
+// Every install slug, in catalog order, for the hero command.
+const installSlugs = entries.map(entry => entry.slug)
 const packageUrl = 'https://github.com/stickerwu/beui-vue/releases/download/v0.1.0-alpha.0/beui-vue-0.1.0-alpha.0.tgz'
 const packageManager = shallowRef('bun')
 const packageManagers = [
@@ -67,7 +71,7 @@ const comparisonRows = computed(() => [
   { label: t('Customizable styles and motion'), values: [true, true] },
   { label: t('Light and dark themes'), values: [true, true] },
   { label: t('MIT licensed components'), values: [true, true] },
-  { label: t('Install from'), values: ['GitHub Release', 'shadcn CLI'] },
+  { label: t('Install from'), values: ['shadcn-vue CLI · GitHub Release', 'shadcn CLI'] },
 ])
 const faqItems = computed(() => [
   {
@@ -78,7 +82,7 @@ const faqItems = computed(() => [
   {
     id: 'install',
     question: t('How do I install a component?'),
-    answer: t('Install the preview package from the GitHub Release, then import the components you need from beui-vue. Every component page also includes a Vue example and the source files.'),
+    answer: t('Add one component with the shadcn-vue CLI, which copies its source into your project, or install the preview package from the GitHub Release and import from beui-vue. Every component page shows both, with a Vue example and the source files.'),
   },
   {
     id: 'stack',
@@ -164,16 +168,7 @@ onBeforeUnmount(() => {
 
     <div class="home-install">
       <p class="home-install-hint">{{ t('One command. The source is yours.') }}</p>
-      <div class="home-command">
-        <div class="home-command-toolbar">
-          <Tabs v-model="packageManager" :items="packageManagers" variant="segment" :labels="{ list: t('Package manager') }" class="home-package-tabs" />
-          <button type="button" class="home-copy" :aria-label="copied ? t('Install command copied') : t('Copy install command')" @click="copyInstallCommand">
-            <Icon :name="copied ? 'check' : 'copy'" />
-          </button>
-        </div>
-        <pre class="home-command-code" tabindex="0" role="region" :aria-label="t('Install beui-vue')"><code><span class="home-command-prompt" aria-hidden="true">$ </span><span class="home-command-runner">{{ packageManager }}</span> <span class="home-command-action">{{ installAction }}</span> <span class="home-command-package">{{ packageUrl }}</span></code></pre>
-      </div>
-      <span class="home-sr-only" role="status">{{ copyMessage }}</span>
+      <InstallCommand :slugs="installSlugs" />
     </div>
 
     <div class="home-container home-stats-container">
@@ -256,20 +251,11 @@ onBeforeUnmount(() => {
               <pre class="home-command-code" tabindex="0" role="region" :aria-label="t('Install for Vue and Nuxt')"><code><span class="home-command-prompt" aria-hidden="true">$ </span><span class="home-command-runner">{{ packageManager }}</span> <span class="home-command-action">{{ installAction }}</span> <span class="home-command-package">{{ packageUrl }}</span></code></pre>
             </div>
             <a class="home-button home-button-outline" :href="href('/install')">{{ t('Use with Nuxt') }} <Icon name="arrow-right" /></a>
+            <span class="home-sr-only" role="status">{{ copyMessage }}</span>
           </div>
         </div>
         <div class="home-platform-previews">
-          <div class="home-platform-devices">
-            <span class="home-platform-live"><Icon name="code" /> {{ t('Live Vue previews') }}</span>
-            <ul class="home-platform-phones">
-              <li v-for="page in platformPages" :key="page.path" class="home-platform-phone">
-                <a class="home-platform-name" :href="href(page.path)">{{ page.title }} <Icon name="arrow-right" /></a>
-                <div class="home-platform-device">
-                  <PreviewTile :page="page" mode="phone" />
-                </div>
-              </li>
-            </ul>
-          </div>
+          <PhoneShowcase :pages="platformPages" />
         </div>
       </div>
     </section>

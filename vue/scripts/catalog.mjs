@@ -140,9 +140,11 @@ if (process.argv.includes('--docs')) {
       updatedAt: componentDates(group[0].category, page.slug).updatedAt,
       native: native ? {description: native.description} : null,
       tile: tileOf(registryCategory, page, group),
+      // Upstream seeds a page-level install with `file` plus `extraFiles`; a variant install only with its own file.
       entries: group.map(entry => ({
         slug: entry.slug, title: entry.title, category: entry.category, path: paths.get(entry.slug),
         pagePath: path, description,
+        ...(page.extraFiles?.length && !page.examples?.some(example => example.installSlug) ? {extraFiles: page.extraFiles} : {}),
       })),
     }
   })
@@ -193,6 +195,9 @@ if (process.argv.includes('--docs')) {
       const file = new URL(`examples/${entry.slug}.vue`, docs)
       const demo = await standaloneExample(await readFile(file, 'utf8'), file)
       const component = exports.get(port.name)
+      // The CLI tab shows the command for this install slug and the import path of the copied file.
+      const sourcePath = component ? component.href.slice(packageSource.href.length) : ''
+      const installBlock = `<InstallationBlock import-name="${port.name}" install-slug="${entry.slug}"${sourcePath ? ` source-path="${sourcePath}"` : ''} />`
       const source = component ? await readFile(component, 'utf8') : demo
       const fileLabel = component ? fileURLToPath(component).split(/[\\/]/).pop() : `${port.name}.vue`
       imports.push(`import Demo${index} from '${prefix}examples/${entry.slug}.vue'`)
@@ -212,7 +217,7 @@ if (process.argv.includes('--docs')) {
 <h2 class="beui-sr-only">${copy.preview}</h2>
 <ComponentPreview slug="${entry.slug}" title="${entry.title}" :usage="usage${index}" :source="source${index}"><DemoFrame><Demo${index} /></DemoFrame></ComponentPreview>
 </section>`)
-        pageInstall = `<InstallationBlock import-name="${port.name}" />`
+        pageInstall = installBlock
         pageApi = `api${index}`
         continue
       }
@@ -230,7 +235,7 @@ if (process.argv.includes('--docs')) {
         parts.push(`<div id="${example.slug}-preview" class="beui-example-preview">
 <ComponentPreview slug="${entry.slug}" title="${example.name}" :usage="usage${index}" :source="source${index}"><DemoFrame${variantAttr}><Demo${index} /></DemoFrame></ComponentPreview>
 </div>`)
-        if (ownInstall) parts.push(`${sectionHead(`${example.slug}-install`, copy.install)}\n<InstallationBlock import-name="${port.name}" />\n</div>`)
+        if (ownInstall) parts.push(`${sectionHead(`${example.slug}-install`, copy.install)}\n${installBlock}\n</div>`)
         if (showApi) {
           declarations.push(`const api${key} = ${literal(api(example.file))}`)
           parts.push(`<ApiTable id="${example.slug}-api-reference" heading="${copy.api}" :docs="api${key}" />`)
@@ -239,7 +244,7 @@ if (process.argv.includes('--docs')) {
         return parts.join('\n')
       })
       blocks.push(exampleBlocks.join('\n\n'))
-      if (!ownInstall) pageInstall = `<InstallationBlock import-name="${port.name}" />`
+      if (!ownInstall) pageInstall = installBlock
     }
     let body = `<div class="${regPage.examples?.length ? 'beui-examples' : 'beui-default-preview'}">\n\n${blocks.join('\n\n')}\n\n</div>`
     if (pageInstall) body += `\n\n<section id="install" class="beui-doc-section">

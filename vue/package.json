@@ -6,8 +6,9 @@
   "scripts": {
     "build": "pnpm --filter beui-vue build",
     "catalog": "node scripts/catalog.mjs",
+    "registry": "node scripts/registry.mjs",
     "docs:dev": "pnpm docs:prepare && vitepress dev docs",
-    "docs:prepare": "node scripts/catalog.mjs --docs",
+    "docs:prepare": "node scripts/catalog.mjs --docs && node scripts/registry.mjs",
     "docs:build": "pnpm docs:prepare && vitepress build docs",
     "docs:preview": "vitepress preview docs --host 127.0.0.1 --port 4173",
     "test:e2e": "playwright test",

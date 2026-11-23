@@ -1,0 +1,19 @@
+/* The clips are iOS screens set in SF Pro. Apple devices use it directly;
+   elsewhere Segoe UI stands in, scaled to SF's advance widths so lines wrap
+   where the clip's do. */
+@font-face { font-family: "Phone UI"; src: local("Segoe UI"), local("SegoeUI"); font-weight: 400 500; size-adjust: 95%; }
+@font-face { font-family: "Phone UI"; src: local("Segoe UI Semibold"), local("SegoeUI-Semibold"); font-weight: 600; size-adjust: 95%; }
+@font-face { font-family: "Phone UI"; src: local("Segoe UI Bold"), local("SegoeUI-Bold"); font-weight: 700; size-adjust: 95%; }
+
+/* Type and rhythm of the beUI Native example screens, measured from the
+   upstream clip posters (402 × 874 pt). */
+.ph-lead { margin: 0; color: var(--muted-foreground); font-size: 17px; line-height: 23px; }
+.ph-section { margin-top: 34px; }
+.ph-h { margin: 0; color: var(--foreground); font-size: 17px; line-height: 22px; font-weight: 600; }
+.ph-note { margin: 4px 0 0; color: var(--muted-foreground); font-size: 15px; line-height: 20px; }
+.ph-demo { margin-top: 14px; }
+.ph-after { margin: 14px 0 0; color: var(--muted-foreground); font-size: 15px; line-height: 20px; }
+
+/* Touch-sized triggers, like the native tabs. */
+.ph-demo .be-trigger { font-size: 16px; line-height: 20px; }
+.ph-demo .be-tabs-list, .ph-demo [role="tablist"] { font-size: 16px; }

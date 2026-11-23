@@ -80,7 +80,6 @@
   background: var(--border);
 }
 
-
 .home-title {
   margin: 27px 0 0;
   font-size: 48px;
@@ -635,31 +634,6 @@
   margin-top: 20px;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .home-platform-panel {
   overflow: hidden;
   border: 1px solid var(--border);
@@ -701,126 +675,6 @@
   margin-top: -24px;
   border-top: 1px solid var(--border);
   background: var(--card);
-}
-
-.home-platform-devices {
-  position: relative;
-  margin-top: 56px;
-}
-
-.home-platform-live {
-  position: absolute;
-  z-index: 1;
-  top: 0;
-  right: 16px;
-  display: inline-flex;
-  height: 32px;
-  align-items: center;
-  gap: 6px;
-  padding: 0 12px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  color: var(--muted-foreground);
-  background: color-mix(in srgb, var(--background) 80%, transparent);
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 16px;
-  backdrop-filter: blur(8px);
-}
-
-.home-platform-live svg {
-  width: 14px;
-  height: 14px;
-}
-
-.home-platform-phones {
-  display: flex;
-  height: 416px;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 32px;
-  margin: 0;
-  overflow: hidden;
-  padding: 48px 16px 0;
-  list-style: none;
-  mask-image: linear-gradient(to bottom, black 85%, transparent);
-}
-
-.home-platform-phone {
-  display: flex;
-  flex: none;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-
-.home-platform-phone:nth-child(4n+1) {
-  margin-top: 40px;
-}
-
-.home-platform-phone:nth-child(4n+3) {
-  margin-top: 16px;
-}
-
-.home-platform-phone:nth-child(4n+4) {
-  margin-top: 48px;
-}
-
-.home-platform-name {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 12px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--background);
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 16px;
-}
-
-.home-platform-name svg {
-  width: 12px;
-  height: 12px;
-  color: var(--muted-foreground);
-}
-
-.home-platform-device {
-  padding: 6px;
-  border-radius: 38.4px;
-  background: #171717;
-  box-shadow: 0 30px 60px -24px rgb(0 0 0 / 45%), 0 0 0 1px rgb(0 0 0 / 5%);
-  transition: transform 300ms var(--ease-out, ease-out);
-}
-
-.dark .home-platform-device {
-  background: #262626;
-  box-shadow: 0 30px 60px -24px rgb(0 0 0 / 45%), 0 0 0 1px rgb(255 255 255 / 20%);
-}
-
-.home-platform-device .home-preview-tile {
-  width: auto;
-  height: 480px;
-  aspect-ratio: 1206 / 2622;
-}
-
-.home-platform-device .home-preview-link,
-.home-platform-device .home-preview-card {
-  border-radius: 32.8px;
-}
-
-.home-platform-device .home-preview-card {
-  border: 0;
-  background: var(--background);
-}
-
-.home-platform-device .home-preview-frame {
-  margin: 0;
-  border-radius: 32.8px;
-}
-
-.home-platform-device .home-preview-caption {
-  display: none;
 }
 
 .home-comparison {
@@ -1129,13 +983,7 @@
   .home-credit-link:hover {
     opacity: 1;
   }
-
-
-  .home-platform-phone:hover .home-platform-device {
-    transform: translateY(-6px);
-  }
 }
-
 
 @media (max-width: 1023px) {
   .home-stats {
@@ -1158,24 +1006,9 @@
     min-height: 0;
   }
 
-
-
   .home-platform-heading {
     grid-template-columns: minmax(0, 1fr);
     align-items: start;
-  }
-
-  .home-platform-phones {
-    height: 352px;
-    gap: 20px;
-  }
-
-  .home-platform-phone:nth-child(n+4) {
-    display: none;
-  }
-
-  .home-platform-device .home-preview-tile {
-    height: 416px;
   }
 }
 
@@ -1193,11 +1026,6 @@
   .home-faq-heading {
     position: static;
   }
-
-  .home-platform-phone:nth-child(n+3) {
-    display: none;
-  }
-
 
   .home-closing-title {
     font-size: 24px;
@@ -1237,25 +1065,8 @@
     grid-template-columns: minmax(0, 1fr);
   }
 
-
-
-
-
   .home-platform-heading {
     padding: 24px;
-  }
-
-  .home-platform-devices {
-    margin-top: 48px;
-  }
-
-  .home-platform-phones {
-    height: 272px;
-    gap: 12px;
-  }
-
-  .home-platform-device .home-preview-tile {
-    height: 288px;
   }
 
   .home-comparison-table thead th:not(:first-child) {
@@ -1291,16 +1102,11 @@
     animation: none;
   }
 
-
   .home-button:active {
     transform: none;
   }
 
   .home-preview-tile:hover .home-preview-stage {
     transform: translate(-50%, -50%) scale(var(--home-preview-scale, 0.22));
-  }
-
-  .home-platform-phone:hover .home-platform-device {
-    transform: none;
   }
 }
