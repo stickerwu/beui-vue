@@ -13,11 +13,13 @@ pnpm docs:preview
 
 ## 用 shadcn-vue CLI 安装源码
 
-除了 npm 包，每个安装条目也能用 shadcn-vue CLI 把 Vue 源码复制进用户项目：
+除了 npm 包，每个安装条目也能用 shadcn-vue CLI 把 Vue 源码复制进用户项目。`@beui-vue` 已收录进 shadcn-vue 官方目录，按名称安装即可：
 
 ```sh
-npx shadcn-vue@latest add https://beui.stickerwu.net/r/button-base.json
+npx shadcn-vue@latest add @beui-vue/button-base
 ```
+
+完整地址 `https://beui.stickerwu.net/r/button-base.json` 同样可用。
 
 `scripts/registry.mjs` 为 `catalog.json` 的 160 个安装条目各生成一个 registry 条目，写入 `docs/public/r/`，并生成列出全部条目的 `r/index.json`。该目录是生成物，已被 Git 忽略，由 `pnpm docs:prepare` 产生、随 `pnpm docs:build` 发布。条目从组件文件出发，沿相对导入收集 `.vue`、`.ts` 和 `.css`，并把上游文档列出的同族组件（如 `Alert` 与 `AlertTitle`）一并带上。依赖版本取自 `packages/ui/package.json`，每个条目都带同一份 `styles.css`、`theme.css`、`agents/agents.css` 和 `blocks/blocks.css`，因此重复添加不会产生冲突。组件文件增删或导入关系变化后重新运行 `pnpm docs:prepare` 即可。
 

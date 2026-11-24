@@ -43,20 +43,22 @@ npx shadcn-vue@latest init
 
 ### 添加组件
 
-把组件的 registry 地址传给 CLI。每个组件页面的“安装”部分都给出了对应命令，[`/r/index.json`](https://beui.stickerwu.net/r/index.json) 列出了全部条目。
+`@beui-vue` 已收录进 [shadcn-vue 官方目录](https://shadcn-vue.com/docs/directory)，把组件的安装名加上这个前缀传给 CLI 即可，不用改 `components.json`。每个组件页面的“安装”部分都给出了对应命令，[`/r/index.json`](https://beui.stickerwu.net/r/index.json) 列出了全部条目。
 
 ```sh
 # npm
-npx shadcn-vue@latest add https://beui.stickerwu.net/r/button-base.json
+npx shadcn-vue@latest add @beui-vue/button-base
 # pnpm
-pnpm dlx shadcn-vue@latest add https://beui.stickerwu.net/r/button-base.json
+pnpm dlx shadcn-vue@latest add @beui-vue/button-base
 # bun
-bunx --bun shadcn-vue@latest add https://beui.stickerwu.net/r/button-base.json
+bunx --bun shadcn-vue@latest add @beui-vue/button-base
 # yarn
-yarn dlx shadcn-vue@latest add https://beui.stickerwu.net/r/button-base.json
+yarn dlx shadcn-vue@latest add @beui-vue/button-base
 ```
 
-一条命令可以列出多个地址，一次添加多个组件。组件共用的文件（动效参数、`theme.css`）只写一份；再次添加时，内容没有变化的文件会被跳过。
+也可以传完整的 registry 地址，比如 `https://beui.stickerwu.net/r/button-base.json`，效果相同。
+
+一条命令可以列出多个组件，一次全部添加。组件共用的文件（动效参数、`theme.css`）只写一份；再次添加时，内容没有变化的文件会被跳过。
 
 ### 文件位置
 

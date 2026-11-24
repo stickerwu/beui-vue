@@ -40,20 +40,22 @@ Without a `components.json` the CLI cannot work out where to put the files and s
 
 ### Add a component
 
-Pass the registry URL of a component. Its install slug is in the command on every component page's Install section, and [`/r/index.json`](https://beui.stickerwu.net/r/index.json) lists all of them.
+`@beui-vue` is listed in the [official shadcn-vue directory](https://shadcn-vue.com/docs/directory), so pass a component's install slug with that prefix and leave `components.json` as it is. Every component page's Install section shows its command, and [`/r/index.json`](https://beui.stickerwu.net/r/index.json) lists all of them.
 
 ```sh
 # npm
-npx shadcn-vue@latest add https://beui.stickerwu.net/r/button-base.json
+npx shadcn-vue@latest add @beui-vue/button-base
 # pnpm
-pnpm dlx shadcn-vue@latest add https://beui.stickerwu.net/r/button-base.json
+pnpm dlx shadcn-vue@latest add @beui-vue/button-base
 # bun
-bunx --bun shadcn-vue@latest add https://beui.stickerwu.net/r/button-base.json
+bunx --bun shadcn-vue@latest add @beui-vue/button-base
 # yarn
-yarn dlx shadcn-vue@latest add https://beui.stickerwu.net/r/button-base.json
+yarn dlx shadcn-vue@latest add @beui-vue/button-base
 ```
 
-Several components can be added in one command by listing their URLs. Files that components share (the motion tokens, `theme.css`) are written once, and a second add skips any file whose content is unchanged.
+The full registry URL, such as `https://beui.stickerwu.net/r/button-base.json`, works the same way.
+
+Several components can be added in one command by listing them. Files that components share (the motion tokens, `theme.css`) are written once, and a second add skips any file whose content is unchanged.
 
 ### Where the files go
 

@@ -17,7 +17,8 @@ const props = defineProps<{
 
 const archiveName = 'beui-vue-0.1.0-alpha.0.tgz'
 const packageUrl = `https://github.com/stickerwu/beui-vue/releases/download/v0.1.0-alpha.0/${archiveName}`
-const registryUrl = 'https://beui.stickerwu.net/r'
+/** `@beui-vue` is in the shadcn-vue registry directory, so the CLI resolves it with no setup. */
+const registryNamespace = '@beui-vue'
 /** Where the CLI puts the library, as an import path (the `@` alias points at `src`). */
 const copiedRoot = '@/components/beui'
 const methods = computed(() => [
@@ -41,7 +42,7 @@ function commandFor(value: string) {
     return {
       runner: cliRunners[packageManager.value],
       action: 'shadcn-vue@latest add',
-      target: `${registryUrl}/${props.installSlug}.json`,
+      target: `${registryNamespace}/${props.installSlug}`,
     }
   }
   return {

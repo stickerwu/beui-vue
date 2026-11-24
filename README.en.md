@@ -35,29 +35,23 @@ Copy-paste components built with Vue 3 and motion-v. 160 components, TypeScript 
 
 <img src="./.github/readme/install.gif" alt="The install command cycling through components" width="560">
 
-Every component is published as a shadcn-vue registry item. The CLI copies the TypeScript source into `components/beui` and adds the dependencies to your `package.json`:
+Every component is published as a shadcn-vue registry item, and `@beui-vue` is listed in the [official shadcn-vue directory](https://shadcn-vue.com/docs/directory), so you install by name with no setup. The CLI copies the TypeScript source into `components/beui` and adds the dependencies to your `package.json`:
 
 ```sh
-npx shadcn-vue@latest add https://beui.stickerwu.net/r/tabs.json
+npx shadcn-vue@latest add @beui-vue/tabs
 ```
 
-You can add several components in one command. Files they share are written once, so adding more never conflicts. Then import the shared styles once in your app entry:
+Initialise the project with `npx shadcn-vue@latest init` first. You can add several components in one command. Files they share are written once, so adding more never conflicts. Then import the shared styles once in your app entry:
 
 ```ts
 import '@/components/beui/styles.css'
 ```
 
-> Register the namespace in `components.json` to install by short name:
->
-> ```json
-> { "registries": { "@beui-vue": "https://beui.stickerwu.net/r/{name}.json" } }
-> ```
+> The full URL works the same way:
 >
 > ```sh
-> npx shadcn-vue@latest add @beui-vue/tabs
+> npx shadcn-vue@latest add https://beui.stickerwu.net/r/tabs.json
 > ```
->
-> A request to add `@beui-vue` to the official shadcn-vue directory is in review ([unovue/shadcn-vue#2025](https://github.com/unovue/shadcn-vue/pull/2025)). Once it is merged, the short name works with no setup.
 
 ### Option 2: npm package
 

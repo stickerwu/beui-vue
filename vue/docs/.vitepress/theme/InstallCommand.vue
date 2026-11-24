@@ -4,11 +4,9 @@ import { computed, onBeforeUnmount, onMounted, shallowRef } from 'vue'
 import { useLocale } from './i18n'
 import Icon from './Icon.vue'
 
-// The shadcn-vue CLI installs any item of the beui-vue registry by URL, the
-// way beui.dev's hero runs `shadcn add @beui/<slug>`. A URL is the only form
-// that needs no components.json setup; it is too long for one line, so the
-// display breaks it with a shell continuation and the cycling name stays in
-// view. The copied command is one line.
+// `@beui-vue` is in the shadcn-vue registry directory, so the CLI installs an
+// item by name with no components.json setup, the way beui.dev's hero runs
+// `shadcn add @beui/<slug>`. The command fits on one line.
 const { slugs } = defineProps<{
   /** Install slugs to cycle through. */
   slugs: readonly string[]
@@ -19,7 +17,7 @@ const RUNNERS = { bun: 'bunx --bun', npm: 'npx', pnpm: 'pnpm dlx', yarn: 'yarn d
 type Runner = keyof typeof RUNNERS
 const packageManagers = (Object.keys(RUNNERS) as Runner[]).map(value => ({ value, label: value }))
 const CLI = 'shadcn-vue@latest'
-const REGISTRY = 'https://beui.stickerwu.net/r/'
+const NAMESPACE = '@beui-vue/'
 // Upstream InstallCommand cadence.
 const CYCLE_MS = 1800
 
@@ -29,7 +27,7 @@ const index = shallowRef(0)
 const held = shallowRef(false)
 const slug = computed(() => slugs[index.value % slugs.length] ?? '')
 const runner = computed(() => RUNNERS[packageManager.value].split(' '))
-const command = computed(() => `${RUNNERS[packageManager.value]} ${CLI} add ${REGISTRY}${slug.value}.json`)
+const command = computed(() => `${RUNNERS[packageManager.value]} ${CLI} add ${NAMESPACE}${slug.value}`)
 
 let cycle: ReturnType<typeof setInterval> | undefined
 onMounted(() => {
@@ -65,8 +63,7 @@ async function copy() {
         <Icon :name="copied ? 'check' : 'copy'" />
       </button>
     </div>
-    <pre class="home-command-code" tabindex="0" role="region" :aria-label="t('Install a component with the shadcn-vue CLI')"><code><span class="home-command-prompt" aria-hidden="true">$ </span><span class="home-command-runner">{{ runner[0] }}</span><span v-if="runner[1]" class="home-command-flag"> {{ runner[1] }}</span><span class="home-command-cli"> {{ CLI }} </span><span class="home-command-action">add</span><span class="home-command-prefix" aria-hidden="true"> \</span>
-  <span class="home-command-prefix">{{ REGISTRY }}</span><ActionSwapCascadeText :value="slug" class="home-command-slug">{{ slug }}</ActionSwapCascadeText><span class="home-command-prefix">.json</span></code></pre>
+    <pre class="home-command-code" tabindex="0" role="region" :aria-label="t('Install a component with the shadcn-vue CLI')"><code><span class="home-command-prompt" aria-hidden="true">$ </span><span class="home-command-runner">{{ runner[0] }}</span><span v-if="runner[1]" class="home-command-flag"> {{ runner[1] }}</span><span class="home-command-cli"> {{ CLI }} </span><span class="home-command-action">add</span> <span class="home-command-prefix">{{ NAMESPACE }}</span><ActionSwapCascadeText :value="slug" class="home-command-slug">{{ slug }}</ActionSwapCascadeText></code></pre>
     <span class="home-sr-only" role="status">{{ status }}</span>
   </div>
 </template>

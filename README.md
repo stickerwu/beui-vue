@@ -35,29 +35,23 @@
 
 <img src="./.github/readme/install.gif" alt="安装命令轮播展示各个组件" width="560">
 
-每个组件都发布成 shadcn-vue 的 registry 条目。CLI 会把 TypeScript 源码复制到 `components/beui`，并把依赖写入 `package.json`：
+每个组件都发布成 shadcn-vue 的 registry 条目，`@beui-vue` 已收录进 [shadcn-vue 官方目录](https://shadcn-vue.com/docs/directory)，不用任何配置就能按名称安装。CLI 会把 TypeScript 源码复制到 `components/beui`，并把依赖写入 `package.json`：
 
 ```sh
-npx shadcn-vue@latest add https://beui.stickerwu.net/r/tabs.json
+npx shadcn-vue@latest add @beui-vue/tabs
 ```
 
-一次可以添加多个组件。各条目共用的文件只写入一次，重复添加也不会冲突。之后在应用入口引入一次共享样式：
+项目需要先用 `npx shadcn-vue@latest init` 初始化。一次可以添加多个组件，各条目共用的文件只写入一次，重复添加也不会冲突。之后在应用入口引入一次共享样式：
 
 ```ts
 import '@/components/beui/styles.css'
 ```
 
-> 在 `components.json` 里登记命名空间，就能用短名称安装：
->
-> ```json
-> { "registries": { "@beui-vue": "https://beui.stickerwu.net/r/{name}.json" } }
-> ```
+> 也可以直接传完整地址，效果相同：
 >
 > ```sh
-> npx shadcn-vue@latest add @beui-vue/tabs
+> npx shadcn-vue@latest add https://beui.stickerwu.net/r/tabs.json
 > ```
->
-> `@beui-vue` 加入 shadcn-vue 官方目录的申请正在审核（[unovue/shadcn-vue#2025](https://github.com/unovue/shadcn-vue/pull/2025)）。合并后无需任何配置即可使用。
 
 ### 方式二：npm 包
 
