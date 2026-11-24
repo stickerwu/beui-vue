@@ -40,4 +40,4 @@ Internal imports are safe: the registry build follows `@/lib` and relative impor
 3. Keep changes focused and include the component source, preview and registry entry together.
 4. Open a pull request against `main`.
 
-Agents working in this repository should follow [`skills/beui/SKILL.md`](./skills/beui/SKILL.md) and `AGENTS.md`.
+Agents working in this repository should follow [`skills/beui/SKILL.md`](https://github.com/starc007/ui-components/blob/main/skills/beui/SKILL.md) (upstream beUI) and `AGENTS.md`.
