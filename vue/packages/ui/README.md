@@ -1,6 +1,18 @@
 # beui-vue
 
-**beUI 动效组件与界面区块的 Vue 3 实现，由 stickerwu 独立维护。** 在 Vue 3.5 的 Vite 或 Nuxt SSR 项目中按名称导入组件，并在应用入口引入一次编译好的 CSS。[安装指南](https://beui.stickerwu.net/install) · [在线示例](https://beui.stickerwu.net/catalog) · [beUI 上游](https://github.com/starc007/ui-components)
+**Animated Vue 3 components and UI blocks, the Vue port of [beUI](https://beui.dev).** 160 components for Vite and Nuxt SSR, built with motion-v and TypeScript.
+
+beUI 动效组件与界面区块的 Vue 3 实现，由 stickerwu 独立维护。
+
+[Docs](https://beui.stickerwu.net/en/) · [中文文档](https://beui.stickerwu.net/) · [All components](https://beui.stickerwu.net/en/catalog) · [GitHub](https://github.com/stickerwu/beui-vue)
+
+## Install
+
+```sh
+npm install beui-vue@next
+```
+
+Requires Vue 3.5 or a newer 3.x. Load the compiled styles once in your app entry (in Nuxt, add `beui-vue/style.css` to `css` in `nuxt.config.ts`):
 
 ```vue
 <script setup lang="ts">
@@ -8,7 +20,19 @@ import { ButtonBase } from 'beui-vue'
 import 'beui-vue/style.css'
 </script>
 
-<template><ButtonBase>保存</ButtonBase></template>
+<template><ButtonBase>Save</ButtonBase></template>
 ```
 
-[组件文档与迁移进度](https://beui.stickerwu.net/)。衍生代码保留 Saurabh Chauhan 的 MIT 版权和许可证。
+Prefer to own the source? Copy single components with the shadcn-vue CLI:
+
+```sh
+npx shadcn-vue@latest add @beui-vue/button-base
+```
+
+## For AI coding agents
+
+MCP server at `https://beui.stickerwu.net/mcp`, the agent skill (`npx skills add stickerwu/beui-vue --skill beui-vue`) and [llms-full.txt](https://beui.stickerwu.net/llms-full.txt). See the [agent guide](https://beui.stickerwu.net/en/docs/ai-agents).
+
+## License
+
+MIT. Derived code keeps Saurabh Chauhan's MIT copyright and license.

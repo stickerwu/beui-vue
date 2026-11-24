@@ -1,7 +1,24 @@
 {
   "name": "beui-vue",
-  "version": "0.1.0-alpha.0",
-  "description": "Vue 3 motion components ported from beUI",
+  "version": "0.1.0-alpha.1",
+  "description": "Animated Vue 3 components and UI blocks, the Vue port of beUI. motion-v, TypeScript, Nuxt SSR, shadcn-vue registry.",
+  "keywords": [
+    "vue",
+    "vue3",
+    "nuxt",
+    "vue-components",
+    "animation",
+    "motion",
+    "motion-v",
+    "ui",
+    "ui-components",
+    "component-library",
+    "shadcn-vue",
+    "typescript",
+    "ai-chat",
+    "charts",
+    "beui"
+  ],
   "type": "module",
   "license": "MIT",
   "repository": {
@@ -10,10 +27,14 @@
     "directory": "vue/packages/ui"
   },
   "homepage": "https://beui.stickerwu.net/",
+  "bugs": {
+    "url": "https://github.com/stickerwu/beui-vue/issues"
+  },
   "files": [
     "dist",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "CHANGELOG.md"
   ],
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

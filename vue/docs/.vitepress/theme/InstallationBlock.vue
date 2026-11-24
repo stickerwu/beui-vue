@@ -16,8 +16,10 @@ const props = defineProps<{
   sourcePath?: string
 }>()
 
-const archiveName = 'beui-vue-0.1.0-alpha.0.tgz'
-const packageUrl = `https://github.com/stickerwu/beui-vue/releases/download/v0.1.0-alpha.0/${archiveName}`
+/** The npm preview line (`next` until the first stable release) and its tarball for manual installs. */
+const packageSpec = 'beui-vue@next'
+const archiveName = 'beui-vue-0.1.0-alpha.1.tgz'
+const packageUrl = `https://registry.npmjs.org/beui-vue/-/${archiveName}`
 /** `@beui-vue` is in the shadcn-vue registry directory, so the CLI resolves it with no setup. */
 const registryNamespace = '@beui-vue'
 /** Where the CLI puts the library, as an import path (the `@` alias points at `src`). */
@@ -49,7 +51,7 @@ function commandFor(value: string) {
   return {
     runner: packageManager.value,
     action: packageManager.value === 'npm' ? 'install' : 'add',
-    target: value === 'manual' ? `./${archiveName}` : packageUrl,
+    target: value === 'manual' ? `./${archiveName}` : packageSpec,
   }
 }
 const installCommand = computed(() => {

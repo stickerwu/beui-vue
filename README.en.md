@@ -12,6 +12,7 @@ Copy-paste components built with Vue 3 and motion-v. 160 components, TypeScript 
 [![Vue 3.5+](https://img.shields.io/badge/Vue-3.5%2B-41b883?style=flat-square&logo=vuedotjs&logoColor=white)](https://vuejs.org/)
 [![Nuxt SSR](https://img.shields.io/badge/Nuxt-SSR-00dc82?style=flat-square&logo=nuxt&logoColor=white)](https://beui.stickerwu.net/en/install)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![npm](https://img.shields.io/npm/v/beui-vue/next?style=flat-square&label=npm&color=cb3837)](https://www.npmjs.com/package/beui-vue)
 [![shadcn-vue registry](https://img.shields.io/badge/shadcn--vue-registry-0a0a0a?style=flat-square)](https://beui.stickerwu.net/en/install#shadcn-vue)
 
 [Docs](https://beui.stickerwu.net/en/) · [All components](https://beui.stickerwu.net/en/catalog) · [Installation](https://beui.stickerwu.net/en/install) · [GitHub](https://github.com/stickerwu/beui-vue) · [Gitee](https://gitee.com/stickerwu/beui-vue) · [中文](./README.md)
@@ -55,10 +56,10 @@ import '@/components/beui/styles.css'
 
 ### Option 2: npm package
 
-In a **Vue 3.5 or newer 3.x** project, install the preview release from GitHub:
+In a **Vue 3.5 or newer 3.x** project, install the preview from npm:
 
 ```sh
-npm install https://github.com/stickerwu/beui-vue/releases/download/v0.1.0-alpha.0/beui-vue-0.1.0-alpha.0.tgz
+npm install beui-vue@next
 ```
 
 For Nuxt, add `beui-vue/style.css` to the `css` array in `nuxt.config.ts`. See the [installation guide](https://beui.stickerwu.net/en/install).
@@ -143,7 +144,7 @@ See the [AI agent guide](https://beui.stickerwu.net/en/docs/ai-agents).
 
 ## 🛠️ Releases and development
 
-`0.1.0-alpha.0` includes Vue implementations of all 160 public web items. The motion of the 172 demos is reviewed per variant, and the catalog tracks each one. [Release and checksums](https://github.com/stickerwu/beui-vue/releases/tag/v0.1.0-alpha.0) · [Comparisons and sign-off](https://beui.stickerwu.net/en/verification)
+[`beui-vue@0.1.0-alpha.1`](https://www.npmjs.com/package/beui-vue) includes Vue implementations of all 160 public web items. The motion of the 172 demos is reviewed per variant, and the catalog tracks each one. [npm package](https://www.npmjs.com/package/beui-vue) · [Changelog](./vue/packages/ui/CHANGELOG.md)
 
 The Vue components, demos and docs live in [`vue/`](./vue). The [development guide](./vue/README.md) covers local builds, Vite and Nuxt install tests, and screenshot comparisons.
 

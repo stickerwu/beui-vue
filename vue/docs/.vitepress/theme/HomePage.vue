@@ -15,7 +15,8 @@ const { isZh, t, href } = useLocale()
 
 // Every install slug, in catalog order, for the hero command.
 const installSlugs = entries.map(entry => entry.slug)
-const packageUrl = 'https://github.com/stickerwu/beui-vue/releases/download/v0.1.0-alpha.0/beui-vue-0.1.0-alpha.0.tgz'
+/** The preview line on npm; `@next` until the first stable release. */
+const packageUrl = 'beui-vue@next'
 const packageManager = shallowRef('bun')
 const packageManagers = [
   { value: 'bun', label: 'bun' },
@@ -71,7 +72,7 @@ const comparisonRows = computed(() => [
   { label: t('Customizable styles and motion'), values: [true, true] },
   { label: t('Light and dark themes'), values: [true, true] },
   { label: t('MIT licensed components'), values: [true, true] },
-  { label: t('Install from'), values: ['shadcn-vue CLI · GitHub Release', 'shadcn CLI'] },
+  { label: t('Install from'), values: ['shadcn-vue CLI · npm', 'shadcn CLI'] },
 ])
 const faqItems = computed(() => [
   {
@@ -82,7 +83,7 @@ const faqItems = computed(() => [
   {
     id: 'install',
     question: t('How do I install a component?'),
-    answer: t('Add one component with the shadcn-vue CLI, which copies its source into your project, or install the preview package from the GitHub Release and import from beui-vue. Every component page shows both, with a Vue example and the source files.'),
+    answer: t('Add one component with the shadcn-vue CLI, which copies its source into your project, or install the preview package from npm (beui-vue@next) and import from beui-vue. Every component page shows both, with a Vue example and the source files.'),
   },
   {
     id: 'stack',

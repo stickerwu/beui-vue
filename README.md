@@ -12,6 +12,7 @@
 [![Vue 3.5+](https://img.shields.io/badge/Vue-3.5%2B-41b883?style=flat-square&logo=vuedotjs&logoColor=white)](https://vuejs.org/)
 [![Nuxt SSR](https://img.shields.io/badge/Nuxt-SSR-00dc82?style=flat-square&logo=nuxt&logoColor=white)](https://beui.stickerwu.net/install)
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![npm](https://img.shields.io/npm/v/beui-vue/next?style=flat-square&label=npm&color=cb3837)](https://www.npmjs.com/package/beui-vue)
 [![shadcn-vue registry](https://img.shields.io/badge/shadcn--vue-registry-0a0a0a?style=flat-square)](https://beui.stickerwu.net/install#shadcn-vue)
 
 [官网文档](https://beui.stickerwu.net/) · [全部组件](https://beui.stickerwu.net/catalog) · [安装指南](https://beui.stickerwu.net/install) · [GitHub](https://github.com/stickerwu/beui-vue) · [Gitee](https://gitee.com/stickerwu/beui-vue) · [English](./README.en.md)
@@ -55,10 +56,10 @@ import '@/components/beui/styles.css'
 
 ### 方式二：npm 包
 
-在 **Vue 3.5 或更新的 3.x** 项目里，从 GitHub Release 安装预览版：
+在 **Vue 3.5 或更新的 3.x** 项目里，从 npm 安装预览版：
 
 ```sh
-npm install https://github.com/stickerwu/beui-vue/releases/download/v0.1.0-alpha.0/beui-vue-0.1.0-alpha.0.tgz
+npm install beui-vue@next
 ```
 
 Nuxt 项目把 `beui-vue/style.css` 加进 `nuxt.config.ts` 的 `css` 数组即可。详见[安装指南](https://beui.stickerwu.net/install)。
@@ -143,7 +144,7 @@ const items = [
 
 ## 🛠️ 版本与开发
 
-`0.1.0-alpha.0` 包含全部 160 个公开 Web 条目的 Vue 实现。172 组演示的动效按变体审看，目录逐项记录还原进度。[预览版与校验和](https://github.com/stickerwu/beui-vue/releases/tag/v0.1.0-alpha.0) · [效果对照与验收](https://beui.stickerwu.net/verification)
+[`beui-vue@0.1.0-alpha.1`](https://www.npmjs.com/package/beui-vue) 包含全部 160 个公开 Web 条目的 Vue 实现。172 组演示的动效按变体审看，目录逐项记录还原进度。[npm 包](https://www.npmjs.com/package/beui-vue) · [更新记录](./vue/packages/ui/CHANGELOG.md)
 
 Vue 组件、示例和文档都在 [`vue/`](./vue) 目录。本地构建、Vite 与 Nuxt 安装测试和截图对照的方法见[开发指南](./vue/README.md)。
 
