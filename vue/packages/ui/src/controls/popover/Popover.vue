@@ -86,6 +86,7 @@ const button = useTemplateRef<unknown>('button')
 const contentEl = useTemplateRef<HTMLElement>('contentEl')
 const blob = useTemplateRef<HTMLElement>('blob')
 const clipEl = useTemplateRef<HTMLElement>('clipEl')
+const portalEl = useTemplateRef<HTMLElement>('portalEl')
 const triggerEl = shallowRef<HTMLElement | null>(null)
 const portalReady = shallowRef(false)
 
@@ -118,8 +119,20 @@ function openHover() { cancelClose(); setOpen(true) }
 function scheduleClose() { cancelClose(); closeTimer = window.setTimeout(() => setOpen(false), HOVER_CLOSE_DELAY) }
 const rootHover = createHoverGesture()
 const panelHover = createHoverGesture()
-function rootEnter(event: PointerEvent) { if (props.trigger === 'hover' && rootHover.enter(event)) openHover() }
-function rootLeave(event: PointerEvent) { if (props.trigger === 'hover' && rootHover.leave(event)) scheduleClose() }
+// Upstream's root hover listens through React's tree, where the portalled panel is
+// still inside the root. Teleport breaks that in the DOM: while the panel morphs open,
+// its clip passes over the trigger, the root saw a leave, and the panel closed and
+// reopened under a resting pointer. So the root and the portal count as one surface,
+// and moving between them is neither an enter nor a leave.
+function inHoverRoot(node: EventTarget | null) {
+  return node instanceof Node && Boolean(root.value?.contains(node) || portalEl.value?.contains(node))
+}
+function rootEnter(event: PointerEvent) {
+  if (props.trigger === 'hover' && !inHoverRoot(event.relatedTarget) && rootHover.enter(event)) openHover()
+}
+function rootLeave(event: PointerEvent) {
+  if (props.trigger === 'hover' && !inHoverRoot(event.relatedTarget) && rootHover.leave(event)) scheduleClose()
+}
 function panelEnter(event: PointerEvent) { if (props.trigger === 'hover' && panelHover.enter(event)) openHover() }
 function panelLeave(event: PointerEvent) { if (props.trigger === 'hover' && panelHover.leave(event)) scheduleClose() }
 
@@ -202,7 +215,7 @@ defineExpose({ close, open: () => setOpen(true) })
     <span v-if="asChild || composed" ref="host" class="be-pop-host"><slot name="trigger" /><slot v-if="composed" :close="close" /></span>
     <ButtonBase v-else ref="button" :variant="triggerVariant"><slot name="trigger">{{ label }}</slot></ButtonBase>
     <Teleport v-if="portalReady" to="body">
-      <div data-popover-portal="" class="be-pop-portal" :style="portalStyle">
+      <div ref="portalEl" data-popover-portal="" class="be-pop-portal" :style="portalStyle" @pointerenter="rootEnter" @pointerleave="rootLeave">
         <!-- Goo filter: blur, sharpen the alpha back into solid shapes, then lay the crisp original on top so blobs merge with liquid edges. -->
         <svg aria-hidden="true" width="0" height="0" class="be-pop-svg">
           <defs>
