@@ -353,7 +353,9 @@ onBeforeUnmount(() => {
   cursor: grab;
 }
 @media (pointer: coarse) { .pull-refresh { user-select: none; } }
-.pull-refresh.is-dragging { cursor: grabbing; }
+/* Whatever is inside stays selectable with a mouse; only a running pull suppresses
+   selection, so dragging down cannot highlight the content and drag-scroll the feed. */
+.pull-refresh.is-dragging { cursor: grabbing; -webkit-user-select: none; user-select: none; }
 .pull-refresh.is-off { cursor: default; }
 
 .pull-indicator {
