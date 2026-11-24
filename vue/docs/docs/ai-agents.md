@@ -1,5 +1,5 @@
 ---
-title: AI Agent
+title: AI Agent 接入 beui-vue：MCP 服务、Skill 与 llms.txt
 description: 安装 beui-vue agent skill、连接 MCP 服务，或使用对 agent 友好的端点（llms.txt、shadcn-vue 注册表 JSON）以编程方式获取 Vue 组件。
 guidePage: agents
 ---

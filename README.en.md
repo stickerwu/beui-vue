@@ -87,6 +87,26 @@ const items = [
 
 Every component page has a live demo, usage code, an API table and a link to the original beUI component.
 
+## 🤖 For AI coding agents
+
+Let Claude Code, Codex, Cursor and other agents pick beui-vue components instead of writing their own motion code:
+
+- **Agent skill**: tells the agent to look for an existing beui-vue component first and install it by slug.
+
+  ```sh
+  npx skills add stickerwu/beui-vue --skill beui-vue
+  ```
+
+- **MCP server**: `https://beui.stickerwu.net/mcp` (Streamable HTTP, no key), with `list_components`, `search_components`, `get_component` and `get_install_command`.
+
+  ```sh
+  claude mcp add --transport http beui-vue https://beui.stickerwu.net/mcp
+  ```
+
+- **Machine-readable indexes**: [llms.txt](https://beui.stickerwu.net/en/llms.txt), [llms-full.txt](https://beui.stickerwu.net/llms-full.txt) and the shadcn-vue registry [r/index.json](https://beui.stickerwu.net/r/index.json).
+
+See the [AI agent guide](https://beui.stickerwu.net/en/docs/ai-agents).
+
 ## 🎨 Components
 
 ### [Components](https://beui.stickerwu.net/en/components/motion) · 59

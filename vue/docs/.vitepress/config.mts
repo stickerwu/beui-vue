@@ -3,6 +3,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { siteURL as site, componentRoutes } from '../../scripts/routes.mjs'
+import { lastModified, llmsFull, socialImage, structuredData } from './seo'
 
 const base = '/'
 const repository = 'https://github.com/stickerwu/beui-vue'
@@ -11,12 +12,25 @@ const shared = {
   base,
   cleanUrls: true,
   appearance: 'dark' as const,
-  sitemap: { hostname: site },
+  sitemap: {
+    hostname: site,
+    transformItems: (items: { url: string; lastmod?: string }[]) => items.map(item => {
+      const path = item.url.replace(/^https?:\/\/[^/]+\//, '').replace(/^en(\/|$)/, '').replace(/\/$/, '')
+      const lastmod = lastModified(path)
+      return lastmod ? { ...item, lastmod } : item
+    }),
+  },
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}brand/favicon.svg` }],
     ['link', { rel: 'icon', type: 'image/png', sizes: '48x48', href: `${base}brand/favicon.png` }],
     ['link', { rel: 'apple-touch-icon', sizes: '180x180', href: `${base}brand/apple-touch-icon.png` }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:image', content: socialImage }],
+    ['meta', { property: 'og:site_name', content: 'beui-vue' }],
+    ['meta', { property: 'og:image', content: socialImage }],
+    ['meta', { property: 'og:image:width', content: '1200' }],
+    ['meta', { property: 'og:image:height', content: '630' }],
+    ['meta', { property: 'og:image:alt', content: 'beui-vue: animated Vue 3 components' }],
   ] as HeadConfig[],
   // BEUI_SRC=1 serves the components from source so edits hot-reload during parity work.
   vite: process.env.BEUI_SRC ? {
@@ -89,22 +103,9 @@ async function localizeHead(page: { relativePath: string; title: string; descrip
     ['meta', { property: 'og:title', content: home ? page.title : `${page.title} | beui-vue` }],
     ['meta', { property: 'og:description', content: page.description || description(lang) }],
   ]
-  if (home) {
-    head.push(['script', { type: 'application/ld+json' }, JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'SoftwareSourceCode',
-      name: 'beui-vue',
-      description: page.description,
-      url: site,
-      image: `${site}brand/beui-vue.png`,
-      codeRepository: repository,
-      programmingLanguage: 'TypeScript',
-      runtimePlatform: 'Vue 3.5',
-      license: `${repository}/blob/main/LICENSE`,
-      isBasedOn: 'https://github.com/starc007/ui-components',
-      maintainer: { '@type': 'Person', name: 'stickerwu', url: 'https://github.com/stickerwu' },
-    })])
-  }
+  head.push(['meta', { name: 'twitter:title', content: home ? page.title : `${page.title} · beui-vue` }])
+  if (page.description) head.push(['meta', { name: 'twitter:description', content: page.description }])
+  for (const data of structuredData(path, url, lang, page)) head.push(['script', { type: 'application/ld+json' }, JSON.stringify(data)])
   page.frontmatter.head = [...(page.frontmatter.head as HeadConfig[] || []), ...head]
 }
 
@@ -157,6 +158,7 @@ export default defineConfig({
       `- [动效指南](${site}docs/motion-patterns)：何时加动效、动效 token、时长范围与减少动效`,
       `- [AI Agent 指南](${site}docs/ai-agents)：agent skill、MCP 服务（${site}mcp）与注册表端点`,
       `- [注册表索引](${site}r/index.json)：shadcn-vue 注册表，条目位于 ${site}r/{slug}.json`,
+      `- [完整索引](${site}llms-full.txt)：每个组件的说明、安装名与注册表条目`,
       `- [English documentation](${site}en/)`,
       `- [Vue 源码](${repository})`,
       '- [上游 beUI](https://github.com/starc007/ui-components)', '',
@@ -171,6 +173,7 @@ export default defineConfig({
       `- [Motion guide](${site}en/docs/motion-patterns): when to animate, motion tokens, timing ranges and reduced motion`,
       `- [AI agent guide](${site}en/docs/ai-agents): agent skill, MCP server (${site}mcp) and registry endpoints`,
       `- [Registry index](${site}r/index.json): shadcn-vue registry, items at ${site}r/{slug}.json`,
+      `- [Full index](${site}llms-full.txt): every component with its description, install slugs and registry item`,
       `- [中文文档](${site})`,
       `- [Vue source](${repository})`,
       '- [Upstream beUI](https://github.com/starc007/ui-components)', '',
@@ -180,6 +183,7 @@ export default defineConfig({
     await writeFile(join(outDir, 'llms.txt'), zh.join('\n') + '\n')
     await mkdir(join(outDir, 'en'), { recursive: true })
     await writeFile(join(outDir, 'en', 'llms.txt'), en.join('\n') + '\n')
+    await writeFile(join(outDir, 'llms-full.txt'), llmsFull())
   },
   transformPageData(page) {
     return localizeHead(page as never, lang => lang === 'en'

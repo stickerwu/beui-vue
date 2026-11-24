@@ -17,6 +17,21 @@ function pinnedModule(path) {
   return ts.transpileModule(file, {compilerOptions: {module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022}}).outputText
 }
 
+/**
+ * Chinese meta description: the page's own description, cut at a sentence or clause end
+ * near 110 characters (Baidu shows about 78, Google about 120), then the Vue install note.
+ */
+function zhDescriptionFor(text) {
+  const suffix = 'Vue 3 源码，支持 Nuxt，可用 shadcn-vue 一键安装。'
+  let body = text.trim()
+  if (body.length > 110) {
+    const cut = Math.max(...['。', '；', '，'].map(mark => body.lastIndexOf(mark, 110)))
+    body = cut > 40 ? body.slice(0, cut) + '。' : body.slice(0, 110) + '…'
+  }
+  if (!/[。！？…]$/.test(body)) body += '。'
+  return body + suffix
+}
+
 const moduleURL = source => `data:text/javascript;base64,${Buffer.from(source).toString('base64')}`
 const guides = moduleURL(pinnedModule('lib/agent-guides.ts'))
 const registryModule = moduleURL(pinnedModule('lib/registry.ts').replace('@/lib/agent-guides', guides))
@@ -71,6 +86,10 @@ if (process.argv.includes('--docs')) {
   const docs = new URL('docs/', root)
   const readJson = async path => JSON.parse(await readFile(new URL(path, docs), 'utf8'))
   const pagesZh = await readJson('.vitepress/theme/i18n/pages.zh.json')
+  // Search titles and descriptions per page slug: English from beui.dev's lib/component-seo.ts
+  // (React wording turned into Vue), Chinese written for Baidu and Google queries.
+  const seoEn = await readJson('.vitepress/theme/i18n/seo.en.json')
+  const seoZh = await readJson('.vitepress/theme/i18n/seo.zh.json')
   const sectionsZh = await readJson('.vitepress/theme/i18n/sections.zh.json')
   const {paths, groups: routeGroups} = componentRoutes(entries)
   const packageSource = new URL('packages/ui/src/', root)
@@ -92,6 +111,14 @@ if (process.argv.includes('--docs')) {
     charts: ['Charts', '/charts', 'Animated Vue charts', 'Explore interactive activity heatmaps, monthly returns, and price target charts. Copy the Vue source and customize it for your data.', 'All charts'],
     casino: ['Casino', '/casino', 'Animated Vue casino games', 'Explore animated crash, mines, plinko and slide games with fair built-in outcomes or server-decided results. Copy the Vue source and wire it to your own game logic.', 'All casino games'],
   }
+  // Section <title>s, after beui.dev's ("Animated React Components: Free Framer Motion UI").
+  const sectionSeo = {
+    motion: {en: 'Animated Vue Components: Free motion-v UI for Vue 3', zh: 'Vue 动画组件库：免费开源的 Vue 3 动效组件'},
+    blocks: {en: 'Animated Vue UI Blocks: Product-Ready Motion', zh: 'Vue 动画界面区块：开箱即用的交互模块'},
+    agents: {en: 'AI Agent Components: Animated Vue AI Interfaces', zh: 'Vue AI Agent 组件：聊天与智能体界面'},
+    charts: {en: 'Animated Vue Charts: Heatmaps, Candlesticks and More', zh: 'Vue 动画图表组件：热力图、K 线图等'},
+    casino: {en: 'Animated Vue Casino Games: Crash, Mines, Plinko and Slide', zh: 'Vue 游戏组件：Crash、Mines、Plinko 与 Slide'},
+  }
   const guidesZh = await readJson('.vitepress/theme/i18n/guides.zh.json').catch(() => ({}))
   const {componentDates} = await import(moduleURL(pinnedModule('lib/component-dates.ts')))
   const nativeCatalog = JSON.parse(execFileSync('git', ['show', `${baseline}:lib/native/catalog.json`], {cwd: repo, encoding: 'utf8', maxBuffer: 1 << 28}))
@@ -106,6 +133,11 @@ if (process.argv.includes('--docs')) {
     const target = (previewKeys.has(pageKey) && examples.find(example => example.key === pageKey))
       || examples.find(example => example.key === page.examples?.[0]?.previewKey)
     return target ? {slug: target.slug, variant: target.variant} : {slug: group[0].slug, variant: null}
+  }
+  const sourceDate = group => {
+    const files = group.map(entry => exports.get(ports[entry.slug]?.name)).filter(Boolean).map(file => fileURLToPath(file))
+    if (!files.length) return null
+    return execFileSync('git', ['log', '-1', '--format=%cs', '--', ...files], {cwd: repo, encoding: 'utf8'}).trim() || null
   }
   const pages = [...routeGroups].map(([path, group]) => {
     const page = registry.flatMap(category => category.components).find(page => page.slug === path.split('/').at(-1))
@@ -138,6 +170,8 @@ if (process.argv.includes('--docs')) {
       credit: creditOf(pageCredit), sharedCredit: Boolean(sharedCredit), creditGroups,
       guide,
       updatedAt: componentDates(group[0].category, page.slug).updatedAt,
+      // Last commit that touched this page's Vue sources; the sitemap's <lastmod>.
+      sourceUpdatedAt: sourceDate(group),
       native: native ? {description: native.description} : null,
       tile: tileOf(registryCategory, page, group),
       // Upstream seeds a page-level install with `file` plus `extraFiles`; a variant install only with its own file.
@@ -164,6 +198,20 @@ if (process.argv.includes('--docs')) {
   // - examples: one block per example (title, file, credit, preview tabs, plus the API
   //   of its file — only the last block when every example shares one file), then Install;
   // - examples with their own install slug: Install and API inside each block instead.
+  // A page's <title> and meta description. A variant page (one install slug of a
+  // multi-variant page) leads with the variant name and shares the page's description.
+  function searchCopy(slug, locale, variantTitle) {
+    if (locale === 'en') {
+      const seo = seoEn[slug]
+      if (!seo) return null
+      return { title: variantTitle ? `${variantTitle} · ${seo.title.split(':')[0]}` : seo.title, description: seo.description }
+    }
+    const seoTitle = seoZh[slug]
+    const zhDescription = pagesZh[slug]?.description
+    if (!seoTitle || !zhDescription) return null
+    return { title: variantTitle ? `${variantTitle} · ${seoTitle.split('：')[0]}` : seoTitle, description: zhDescriptionFor(zhDescription) }
+  }
+
   async function componentDocument(path, base, group, title, locale) {
     const parent = pages.find(page => page.path === new URL(group[0].page).pathname)
     const regPage = registryPages.find(page => page.slug === new URL(group[0].page).pathname.split('/').at(-1))
@@ -253,10 +301,12 @@ if (process.argv.includes('--docs')) {
 ${pageInstall}
 </section>`
     if (pageApi) body += `\n\n<ApiTable id="api-reference" heading="${copy.api}" :docs="${pageApi}" section />`
-    const description = locale === 'en' ? copy.description(title) : copy.description(title)
+    const pageSlug = regPage.slug
+    const isVariant = group.length === 1 && path !== (parent?.path || new URL(group[0].page).pathname)
+    const seo = searchCopy(pageSlug, locale, isVariant ? title : null) ?? { title, description: copy.description(title) }
     const text = `---
-title: ${JSON.stringify(title)}
-description: ${JSON.stringify(description)}
+title: ${JSON.stringify(seo.title)}
+description: ${JSON.stringify(seo.description)}
 componentPage: true
 category: ${group[0].category}
 pagePath: ${JSON.stringify(parent?.path || new URL(group[0].page).pathname)}
@@ -297,7 +347,8 @@ ${body}
       const copy = locale === 'en' ? section : section.zh
       const target = new URL(`./${base}${section.path.slice(1)}.md`, docs)
       await mkdir(new URL('./', target), { recursive: true })
-      await writeFile(target, `---\ntitle: ${JSON.stringify(copy.name)}\ndescription: ${JSON.stringify(copy.description)}\ncategoryPage: ${section.slug}\n---\n`)
+      const seoTitle = sectionSeo[section.slug]?.[locale] ?? copy.name
+      await writeFile(target, `---\ntitle: ${JSON.stringify(seoTitle)}\ndescription: ${JSON.stringify(copy.description)}\ncategoryPage: ${section.slug}\n---\n`)
     }
   }
   await writeFile(new URL('catalog.md', docs), '---\ntitle: 组件目录\ndescription: 浏览完整的 beui-vue 组件库，含在线 Vue 预览、TypeScript 示例与 API 参考。\ncategoryPage: all\n---\n')

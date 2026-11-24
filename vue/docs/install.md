@@ -1,4 +1,5 @@
 ---
+title: 安装 beui-vue：Vue 3 与 Nuxt 动画组件库
 description: 在 Vue 3.5 的 Vite 或 Nuxt SSR 项目中安装 beui-vue 预览版，或用 shadcn-vue CLI 把组件源码复制进项目；导入 ButtonBase 和样式，并配置深色主题。
 ---
 # 安装与使用

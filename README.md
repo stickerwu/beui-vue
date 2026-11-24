@@ -87,6 +87,26 @@ const items = [
 
 每个组件页都有可运行的示例、用法代码、API 表格和对应的 beUI 原版链接。
 
+## 🤖 给 AI 编程 Agent 用
+
+让 Claude Code、Codex、Cursor 等 Agent 直接选用 beui-vue 组件，而不是自己手写动效：
+
+- **Agent skill**：告诉 Agent 先查 beui-vue 有没有现成组件，再按安装名安装。
+
+  ```sh
+  npx skills add stickerwu/beui-vue --skill beui-vue
+  ```
+
+- **MCP 服务**：`https://beui.stickerwu.net/mcp`（Streamable HTTP，无需密钥），提供 `list_components`、`search_components`、`get_component`、`get_install_command` 四个工具。
+
+  ```sh
+  claude mcp add --transport http beui-vue https://beui.stickerwu.net/mcp
+  ```
+
+- **机器可读索引**：[llms.txt](https://beui.stickerwu.net/llms.txt)、[llms-full.txt](https://beui.stickerwu.net/llms-full.txt) 和 shadcn-vue 注册表 [r/index.json](https://beui.stickerwu.net/r/index.json)。
+
+详见 [AI Agent 指南](https://beui.stickerwu.net/docs/ai-agents)。
+
 ## 🎨 组件一览
 
 ### [组件](https://beui.stickerwu.net/components/motion) · 59

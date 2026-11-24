@@ -1,4 +1,10 @@
+# beui-vue: animated Vue 3 components. Every page, the registry and the agent indexes are public.
 User-agent: *
 Allow: /
+
+# Machine-readable indexes for AI agents and answer engines.
+# https://beui.stickerwu.net/llms.txt
+# https://beui.stickerwu.net/llms-full.txt
+# https://beui.stickerwu.net/r/index.json
 
 Sitemap: https://beui.stickerwu.net/sitemap.xml

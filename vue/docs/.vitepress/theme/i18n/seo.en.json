@@ -1,0 +1,490 @@
+{
+ "bookshelf": {
+  "title": "Vue Bookshelf: 3D Book Spines That Turn to Cover",
+  "description": "Free Vue bookshelf component: click a spine and the book slides out and turns in 3D to show its cover. Keyboard support, reduced motion. motion-v, shadcn-vue."
+ },
+ "dropdown-menu": {
+  "title": "Animated Dropdown Menu for Vue with Submenus",
+  "description": "Free Vue dropdown menu with a gliding highlight, submenus, checkbox and radio items, shortcuts, typeahead and full keyboard support. motion-v, shadcn-vue install."
+ },
+ "before-after-slider": {
+  "title": "Vue Before After Slider for Image Comparison",
+  "description": "Free Vue before and after image slider with a draggable divider, click to glide, keyboard control and touch scroll. motion-v, shadcn-vue install."
+ },
+ "timeline": {
+  "title": "Vue Timeline Component: Animated and Draggable",
+  "description": "Free Vue timeline component: the centered event grows while neighbours dim, with drag momentum, tick dividers and keyboard control. shadcn-vue install."
+ },
+ "alert": {
+  "title": "Vue Alert Component: Animated and Dismissible",
+  "description": "Free Vue alert component with five variants, icon, title, action and close parts, screen reader announcements and a spring exit. shadcn-vue install."
+ },
+ "collapsible": {
+  "title": "Vue Collapsible Component with Smooth Animation",
+  "description": "Free Vue collapsible with a smooth spring expand and collapse, custom triggers, controlled or uncontrolled state and focus handoff. motion-v, shadcn-vue install."
+ },
+ "aspect-ratio": {
+  "title": "Vue Aspect Ratio Component with Smooth Resizing",
+  "description": "Responsive Vue aspect ratio frame and image that morph between ratios on a spring with cover cropping. Free, open source, copy-paste or install with shadcn-vue."
+ },
+ "arc-picker": {
+  "title": "Arc Picker: Radial Scroll Picker for Vue",
+  "description": "Curved Vue picker that selects labels as they cross center, with wheel, drag momentum and keyboard input and a bracket frame that morphs to each choice."
+ },
+ "sortable-stack": {
+  "title": "Animated Sortable List for Vue (Drag and Drop)",
+  "description": "Vue sortable list with drag handles, spring layout, keyboard reordering, screen reader position announcements and undo. Copy the source or install with shadcn-vue."
+ },
+ "image-viewer": {
+  "title": "Vue Image Viewer and Lightbox with Zoom",
+  "description": "Animated Vue image viewer and lightbox with morphing thumbnails, swipe and keyboard navigation, zoom and pan, and focus management. Free, open source."
+ },
+ "date-range-picker": {
+  "title": "Vue Date Range Picker Component",
+  "description": "Composable Vue date range picker with inline and dropdown layouts, presets, month and year selection and full keyboard navigation. Free source, shadcn-vue install."
+ },
+ "card": {
+  "title": "Vue Card Component for Vue and shadcn-vue",
+  "description": "Composable Vue card with header, title, action, content and footer parts, compact spacing and an opt-in selectable state with press feedback. Free source."
+ },
+ "color-picker": {
+  "title": "Vue Color Picker Component with Hex, RGB, HSL",
+  "description": "Animated Vue color picker with saturation area, hue and alpha sliders, hex, RGB and HSL fields, eye dropper, presets and keyboard control. Free and open source."
+ },
+ "color-selector": {
+  "title": "Animated Color Swatch Selector for Vue",
+  "description": "Vue color swatch picker built on native radio inputs, with a gliding selection ring, press feedback and keyboard navigation. Copy the source or use shadcn-vue."
+ },
+ "pagination": {
+  "title": "Animated Pagination Component for Vue",
+  "description": "Vue pagination with a gliding current-page pill, sliding page numbers, ellipsis jumps, router link support and keyboard access. Copy the source or use shadcn-vue."
+ },
+ "avatar-group": {
+  "title": "Animated Avatar Group Component for Vue",
+  "description": "Vue avatar stack that fans out on hover, shows names in tooltips, falls back to initials and expands from a +N count. Copy the source or use shadcn-vue."
+ },
+ "breadcrumb": {
+  "title": "Animated Breadcrumb Component for Vue",
+  "description": "Vue breadcrumb navigation that collapses long paths into an overflow dropdown, with slide-and-fade transitions, custom separators and router link support."
+ },
+ "tilt-card": {
+  "title": "3D Tilt Card for Vue with Hover Glare",
+  "description": "Vue 3D tilt card with perspective rotation and a cursor-tracked glare on hover, disabled on touch and for reduced motion. Free, open source, copy-paste."
+ },
+ "button": {
+  "title": "Animated Button Vue Components: Ripple, Loading",
+  "description": "Free animated Vue buttons with spring press, ripple, loading and success states, magnetic pull and a metallic finish. motion-v, shadcn-vue install."
+ },
+ "expanding-arrow-button": {
+  "title": "Animated Call to Action Buttons for Vue",
+  "description": "Three animated CTA buttons for Vue: an arrow that expands on hover, hold to confirm with a liquid fill, and slide to confirm. Free source, shadcn-vue install."
+ },
+ "expandable-control": {
+  "title": "Expandable Button and Chip Controls for Vue",
+  "description": "Vue button and chip that expand on click to reveal a label or trailing action with spring layout motion. Controlled or uncontrolled, free and open source."
+ },
+ "adaptive-stepper": {
+  "title": "Animated Number Stepper Input for Vue",
+  "description": "Vue number stepper whose value rolls between steps and whose controls adapt at the min and max without shifting layout. Keyboard safe, free source."
+ },
+ "marquee": {
+  "title": "Vue Marquee Component: Infinite Scroll Loop",
+  "description": "Infinite horizontal or vertical Vue marquee for logos and testimonials, with pause on hover and adjustable speed. styled, free source, shadcn-vue install."
+ },
+ "tabs": {
+  "title": "Animated Tabs Vue Component with Sliding Indicator",
+  "description": "Free animated tabs for Vue with a sliding indicator in pill, segment and underline styles, icons and scroll overflow. Accessible, motion-v, shadcn-vue install."
+ },
+ "switch": {
+  "title": "Animated Toggle Switch for Vue",
+  "description": "Vue toggle switch with a spring-driven thumb and press feedback, accessible switch semantics and reduced-motion support. Copy the source or install with shadcn-vue."
+ },
+ "input": {
+  "title": "Animated Input Field for Vue with Validation",
+  "description": "Vue text input with label, icons, a stable error row, error shake and a success check draw. styled, accessible, free source and shadcn-vue install."
+ },
+ "select": {
+  "title": "Animated Select Dropdown for Vue (shadcn-vue)",
+  "description": "Composable Vue select whose panel unfolds from the trigger on one spring, plus a morph variant where the trigger grows into the list. Free and open source."
+ },
+ "combobox": {
+  "title": "Animated Combobox for Vue: Searchable Select",
+  "description": "Vue combobox with search, grouped filtering, keyboard navigation and a spring-animated list that opens from the input. Controlled or uncontrolled, free source."
+ },
+ "multi-select": {
+  "title": "Vue Multi Select with Search and Tags",
+  "description": "Searchable Vue multi select with removable animated tags and a collision-aware panel that morphs open. Keyboard accessible, free source, shadcn-vue install."
+ },
+ "checkbox": {
+  "title": "Animated Checkbox for Vue",
+  "description": "Vue checkbox with a draw-on checkmark, spring press feedback, indeterminate state and optional description. Accessible, free source, install with shadcn-vue."
+ },
+ "radio": {
+  "title": "Animated Radio Group for Vue",
+  "description": "Vue radio group with a gliding indicator dot, press feedback, descriptions and native keyboard navigation. Free, open source, copy-paste or shadcn-vue install."
+ },
+ "bottom-sheet": {
+  "title": "Vue Bottom Sheet with Snap Points (Vaul Style)",
+  "description": "Draggable Vue bottom sheet with snap points, inertia, a blurred backdrop and Escape to close, in the style of Vaul. Free source, install with the shadcn-vue CLI."
+ },
+ "pull-to-refresh": {
+  "title": "Pull to Refresh Component for Vue",
+  "description": "Native-feeling Vue pull to refresh with touch and mouse drag resistance, threshold feedback and async refresh handling. Free source, shadcn-vue install."
+ },
+ "shared-layout-bg": {
+  "title": "Animated Hover Background for Vue Nav Items",
+  "description": "A highlight pill that glides between hovered Vue menu items using motion-v shared layout, with blur enter and exit. Free, open source, copy-paste."
+ },
+ "bounce-sidebar": {
+  "title": "Animated Sidebar Navigation with Bouncing Indicator",
+  "description": "Vertical Vue navigation whose active dot jumps between items on a curved spring path. Works with links or buttons, controlled or uncontrolled, free source."
+ },
+ "animated-sidebar": {
+  "title": "Animated Sidebar for Vue and Nuxt (shadcn-vue)",
+  "description": "Collapsible Vue sidebar with an animated icon rail, morphing nested menus, a keyboard shortcut and a focus-managed mobile sheet. Free source, shadcn-vue install."
+ },
+ "file-tree": {
+  "title": "Animated File Tree Component for Vue",
+  "description": "Vue file and folder tree with springing branches, a gliding selection and full keyboard navigation. Composable parts, free source and shadcn-vue install."
+ },
+ "preview-rail": {
+  "title": "Navigation Rail with Hover Preview for Vue",
+  "description": "Compact Vue navigation rail whose ticks form a pyramid around the hovered item and reveal a floating preview card. Vertical or horizontal, free source."
+ },
+ "dock": {
+  "title": "macOS Dock Component for Vue",
+  "description": "macOS-style Vue dock with grouped actions and a gliding active pill, built with motion-v CSS. Free, open source, copy-paste or shadcn-vue."
+ },
+ "tooltip": {
+  "title": "Animated Tooltip for Vue with Floating UI",
+  "description": "Composable Vue tooltip with collision-aware placement, optional arrow, hoverable content, keyboard focus reveal, touch support and cursor follow. Free source."
+ },
+ "context-menu": {
+  "title": "Animated Context Menu for Vue (Right Click)",
+  "description": "Vue right-click and long-press menu that morphs open from the pointer, with checkbox and radio items, keyboard navigation and typeahead. Free source."
+ },
+ "popover": {
+  "title": "Animated Popover for Vue: Gooey and Morph",
+  "description": "Two Vue popovers: a gooey panel that oozes out of the trigger, and a morph panel that unfolds from its corner on a spring. Portalled, free source."
+ },
+ "morphing-modal": {
+  "title": "Morphing Modal for Vue with Animated Height",
+  "description": "Vue modal that morphs its height between inner views with a blur cross-fade, in the style of the Family wallet. Free source, install with the shadcn-vue CLI."
+ },
+ "center-morph-modal": {
+  "title": "Animated Modal Dialog for Vue (Center Unfold)",
+  "description": "Composable Vue modal dialog that unfolds from its center toward every edge and folds back on close, with focus management. Free source, shadcn-vue install."
+ },
+ "text-animation": {
+  "title": "Vue Text Animations: Reveal, Shimmer, Scramble",
+  "description": "Five Vue text animations: spring word reveal, shimmer loading text, letter cascade, character scramble and a cycling color sweep. Free, open source."
+ },
+ "number": {
+  "title": "Animated Number Counter and Ticker for Vue",
+  "description": "Vue number animations: count-up on scroll, rolling slot-machine ticker and fixed-slot digit swaps. motion-v, free source, shadcn-vue install."
+ },
+ "animated-badge": {
+  "title": "Animated Status Badge Component for Vue",
+  "description": "Vue status badge with animated state icons, pulse feedback and compact sizes for live, success, warning and error states. Free source, shadcn-vue install."
+ },
+ "action-swap": {
+  "title": "Animated Button Text and Icon Swap for Vue",
+  "description": "Vue primitives that swap button labels and icons with blur, roll or letter cascade motion, for copy, save and send states. Free source, shadcn-vue install."
+ },
+ "animated-toast-stack": {
+  "title": "Animated Toast Notifications for Vue",
+  "description": "Stacked Vue toast notifications with status morphs, swipe to dismiss, actions and layout-aware motion. styled, free source, shadcn-vue install."
+ },
+ "theme-toggle": {
+  "title": "Animated Theme Toggle for Vue (View Transitions)",
+  "description": "Dark mode toggle for Vue and Nuxt that repaints the page with a circle, rectangle or blinds reveal through the View Transition API. Free source."
+ },
+ "bouncy-accordion": {
+  "title": "Animated Accordion Component for Vue",
+  "description": "Single-open Vue accordion with a weighted spring layout, icon rows and reduced-motion-safe reveals. styled, free source, install with shadcn-vue."
+ },
+ "drawer": {
+  "title": "Animated Side Drawer for Vue",
+  "description": "Vue side drawer that springs in from the left or right with backdrop blur, scroll lock and Escape to close. Free, open source, copy-paste or shadcn-vue install."
+ },
+ "scroll-animation": {
+  "title": "Vue Scroll Animations: Smooth Scroll, Parallax",
+  "description": "Vue scroll animation kit: Lenis smooth scroll, reading progress bar, parallax, scroll to and reveal on scroll. motion-v, free source, shadcn-vue install."
+ },
+ "range-slider": {
+  "title": "Vue Range Slider: 6 Animated Slider Designs",
+  "description": "Six animated Vue range sliders: stepped ticks, inline label, fluid fill, wave bars, value bubble and ruler. Keyboard accessible, free source, shadcn-vue install."
+ },
+ "wheel-picker": {
+  "title": "Vue Wheel Picker: iOS Style Scroll Picker",
+  "description": "iOS-style Vue wheel picker with a 3D drum, momentum flicks, snapping, keyboard control and optional tick sound. Combine wheels for date and time pickers."
+ },
+ "table": {
+  "title": "Vue Data Table: Virtualized, Sortable, Editable",
+  "description": "Virtualized Vue data table that stays smooth at 10k+ rows, with sorting, selection, column resize and reorder, inline editing and async loading. Free source."
+ },
+ "shader-background": {
+  "title": "Vue Shader Background: WebGL Mesh Gradients",
+  "description": "Animated WebGL shader backgrounds for Vue: mesh gradient, grain, warp, waves, voronoi, dithering and 15 more from one variant prop. Free, open source."
+ },
+ "cylinder-carousel": {
+  "title": "3D Cylinder Carousel Component for Vue",
+  "description": "Vue 3D carousel whose items line the inside of a cylinder, with drag, scroll and arrow key control and a springy snap. Free source, install with shadcn-vue."
+ },
+ "loader": {
+  "title": "Vue Loader: 17 Animated Loading Spinners",
+  "description": "Seventeen Vue loading spinners: dots, bars, dot matrix, dither, metaballs, helix, percent and terminal ASCII styles. One size prop, currentColor, free source."
+ },
+ "line-chart": {
+  "title": "Animated Vue Line Chart and Area Chart",
+  "description": "Vue line and area chart with lines that morph on new data, a snapping crosshair, animated value tooltips, series toggles and keyboard access. Free source."
+ },
+ "bar-chart": {
+  "title": "Animated Vue Bar Chart Component",
+  "description": "Vue bar chart with grouped, stacked and horizontal layouts, bars that grow in and reorder with springs, tooltips and keyboard access. Free source, shadcn-vue."
+ },
+ "sparkline": {
+  "title": "Vue Sparkline Chart Component",
+  "description": "Vue sparkline for stat cards and tables: a compact trend line or area with a change badge, live morphing and an optional hover readout. Free source."
+ },
+ "sankey-chart": {
+  "title": "Animated Vue Sankey Chart Component",
+  "description": "Vue Sankey diagram with flows that draw in and morph on new data, linked node and flow highlights, tooltips and keyboard access. Free source, shadcn-vue install."
+ },
+ "treemap": {
+  "title": "Animated Vue Treemap Chart Component",
+  "description": "Vue treemap chart with tiles that morph on data updates, nested hierarchies, tooltips, keyboard navigation and an accessible data table. Free source."
+ },
+ "candlestick-chart": {
+  "title": "Vue Candlestick Chart for Live OHLC Data",
+  "description": "Animated Vue candlestick chart with volume bars, a live last-price line and a crosshair OHLC readout for real-time trading data. Free, open source."
+ },
+ "donut-chart": {
+  "title": "Animated Vue Donut Chart Component",
+  "description": "Vue donut chart with rounded segments, a linked center readout, legend with share bars, keyboard focus and optional selection. Free source, shadcn-vue install."
+ },
+ "volume-profile": {
+  "title": "Vue Volume Profile Chart (Volume by Price)",
+  "description": "Animated volume profile chart for Vue with point of control, value area, tooltips and keyboard inspection for trading interfaces. Free, open source."
+ },
+ "status-bar": {
+  "title": "Vue Uptime Status Bar Chart Component",
+  "description": "Animated uptime and status history bars for Vue status pages, with custom statuses, period tooltips and keyboard inspection. Free source, shadcn-vue install."
+ },
+ "composition-chart": {
+  "title": "Vue Stacked Bar and Area Chart (100% Stacked)",
+  "description": "Normalized stacked bar and area chart for Vue with period tooltips, series pinning, an interactive legend and keyboard inspection. Free, open source."
+ },
+ "funnel-chart": {
+  "title": "Animated Vue Funnel Chart Component",
+  "description": "Vue funnel chart with curved stages in vertical or horizontal layouts, conversion and drop-off tooltips and animated numbers. Free source, shadcn-vue install."
+ },
+ "liquidity-heatmap": {
+  "title": "Vue Liquidity Heatmap Chart for Order Books",
+  "description": "Animated liquidity heatmap for Vue showing depth across price and time, with a price trace, tooltips and keyboard inspection. Free, open source."
+ },
+ "bump-chart": {
+  "title": "Vue Bump Chart: Animated Ranking Chart",
+  "description": "Animated Vue bump chart for rankings over time, with curved paths, interactive rank dots, tooltips and series pinning. Free source, install with shadcn-vue."
+ },
+ "order-book": {
+  "title": "Vue Order Book Component with Depth Bars",
+  "description": "Animated Vue order book with bid and ask depth bars, spread, volume balance and average fill inspection for trading UIs. Free, open source, copy-paste."
+ },
+ "heat-calendar": {
+  "title": "Vue Contribution Heatmap Calendar Component",
+  "description": "GitHub-style activity heatmap calendar for Vue with tooltips, range selection, a filterable legend and wave animations. Free source, install with shadcn-vue."
+ },
+ "returns-calendar": {
+  "title": "Vue Monthly Returns Calendar Heatmap",
+  "description": "Monthly returns calendar heatmap for Vue portfolios, with tooltips, year totals and compounded returns across a selected span. Free, open source."
+ },
+ "price-target-fan": {
+  "title": "Vue Price Target Chart for Analyst Forecasts",
+  "description": "Analyst price target fan chart for Vue with dated price history, high, average and low targets, and a scrubbable tooltip. Free source, shadcn-vue install."
+ },
+ "crash": {
+  "title": "Animated Crash Game for Vue",
+  "description": "Vue crash game: a multiplier climbs a live curve until it crashes. Cash out by hand or automatically, see what you missed. motion-v, install with shadcn-vue."
+ },
+ "mines": {
+  "title": "Animated Mines Game Board for Vue",
+  "description": "Vue mines board: pick tiles for gems, watch the multiplier roll up, cash out before a mine. Ripple reveals and keyboard play. motion-v, install with shadcn-vue."
+ },
+ "plinko": {
+  "title": "Animated Plinko Board for Vue",
+  "description": "Vue Plinko board: balls bounce through pegs into scoring slots, pegs flash on hit and slots pulse on landing. motion-v, install with shadcn-vue."
+ },
+ "slide-game": {
+  "title": "Animated Slide Casino Game for Vue",
+  "description": "Vue slide game: set a bet and target, watch 3D multiplier cards race past two center tabs to a server-decided result. motion-v, install with shadcn-vue."
+ },
+ "voice-orb": {
+  "title": "AI Voice Orb Vue Component: Audio Reactive",
+  "description": "Free animated AI voice orb for Vue: a liquid shader sphere that reacts to microphone or audio levels, for voice agent UIs. Custom colors, reduced motion support."
+ },
+ "message-bubble": {
+  "title": "Vue Chat Bubble Component for AI Chat UI",
+  "description": "Free Vue chat bubble component for AI chat and messaging apps, with six styles, alignment, grouping, links and a collapsible long reply. shadcn-vue install."
+ },
+ "message": {
+  "title": "Vue Chat Message Component for AI Apps",
+  "description": "Composable Vue chat message rows with bubbles, avatars, headers, typing indicators and a pop-in for new messages. Free source, install with shadcn-vue."
+ },
+ "message-scroller": {
+  "title": "Auto Scroll Chat Container for Streaming AI",
+  "description": "Vue chat scroll container that follows streamed AI output at the bottom and stops when the reader scrolls up, with an optional message rail. Free source."
+ },
+ "prompt-input": {
+  "title": "AI Prompt Input Component for Vue Chat",
+  "description": "Auto-growing Vue chat input for AI apps with a model picker, actions menu, Enter to send and animated send and stop states. Free source, shadcn-vue install."
+ },
+ "todo-list": {
+  "title": "AI Agent Task List Component for Vue",
+  "description": "Collapsible Vue todo list for AI agent plans, with pending, in-progress and done states, morphing check marks and a progress count. Free source."
+ },
+ "code-block": {
+  "title": "Streaming Code Block for Vue AI Chat",
+  "description": "Syntax-highlighted Vue code block that updates smoothly while AI streams code, with line numbers, highlighted lines and copy. Free source, shadcn-vue install."
+ },
+ "approval-card": {
+  "title": "Human in the Loop Approval UI for Vue Agents",
+  "description": "Vue approval card for AI agents: approve, reject or revise, plus single, multiple choice and multi-step questions. Free source, install with shadcn-vue."
+ },
+ "file-diff": {
+  "title": "Vue File Diff Viewer for AI Code Changes",
+  "description": "Syntax-highlighted Vue diff viewer that streams AI code edits line by line with live addition and deletion counts and copy. Free, open source."
+ },
+ "tool-result": {
+  "title": "AI Tool Call Result Component for Vue",
+  "description": "Vue disclosure for AI tool calls with syntax-highlighted terminal output and API responses, success and error states, copy and retry. Free source."
+ },
+ "streaming-response": {
+  "title": "Streaming AI Response Component for Vue",
+  "description": "Vue surface for streamed AI answers with copy, retry, feedback and an expandable source list once complete. Works with any renderer, free source."
+ },
+ "image-generation": {
+  "title": "AI Image Generation Loading UI for Vue",
+  "description": "Vue AI image generation component with queued, generating, refining, complete and error states, no layout shift. Free source, install with shadcn-vue."
+ },
+ "tool-approval": {
+  "title": "AI Tool Permission Prompt for Vue Agents",
+  "description": "Vue permission card for AI agent tool calls: review parameters, then allow once, always allow or deny. Free, open source, copy-paste or shadcn-vue install."
+ },
+ "citations": {
+  "title": "AI Citations and Sources Component for Vue",
+  "description": "Inline Vue citation links with a collapsible numbered source list and real favicons, for grounded AI answers. Free source, install with shadcn-vue."
+ },
+ "agent-activity": {
+  "title": "AI Agent Activity Feed for Vue",
+  "description": "Vue activity feed for AI agents showing reasoning, web searches, tool calls and traces in one stream that collapses when done. Free, open source."
+ },
+ "loading-states": {
+  "title": "AI Loading States: Thinking Animations for Vue",
+  "description": "Three AI loading states for Vue: shimmering thinking text, live agent progress with a timer and cycling reasoning phrases. Free source, shadcn-vue install."
+ },
+ "ai-sidebar": {
+  "title": "AI Workspace Sidebar for Vue Chat Apps",
+  "description": "Vue sidebar for AI chat apps with folders, projects, files and bookmarks, drag to move, inline rename and keyboard control. Free, open source."
+ },
+ "chat-app": {
+  "title": "Vue AI Chat App Template (shadcn-vue)",
+  "description": "Complete Vue AI chat interface with sidebar, messages, streaming, planning, approvals, tool results, code, diffs and prompt input. Free source."
+ },
+ "infinite-masonry": {
+  "title": "Vue Masonry Grid with Infinite Scroll",
+  "description": "Virtualized Vue masonry layout with variable-height cards, responsive columns and infinite loading near the end. Free source, install with shadcn-vue."
+ },
+ "notification-stack": {
+  "title": "Stacked Notifications Component for Vue",
+  "description": "Vue notification stack that springs from a stacked summary into a readable list on hover, focus or tap. motion-v, free source, shadcn-vue install."
+ },
+ "project-folder": {
+  "title": "Animated Folder Component for Vue",
+  "description": "Vue project folder that fans out its files on hover, then expands into a focus-managed overlay and folds back on close. Free source, shadcn-vue install."
+ },
+ "card-folder": {
+  "title": "Animated Wallet Card Pocket for Vue",
+  "description": "Vue card folder where a card lifts out of a stitched pocket as the pocket compresses, with controlled open and detail states. Free, open source."
+ },
+ "knockout-bracket": {
+  "title": "Vue Tournament Bracket and Fixtures Component",
+  "description": "Animated tournament bracket for Vue with round-by-round paging and a radial wheel layout, both from one rounds array. Free source, install with shadcn-vue."
+ },
+ "availability-scheduler": {
+  "title": "Weekly Availability Scheduler for Vue",
+  "description": "Vue weekly availability editor with per-day toggles, time ranges, a time dropdown and copy hours to other days. Free source, install with shadcn-vue."
+ },
+ "swap": {
+  "title": "Crypto Swap Widget for Vue (Multi Chain)",
+  "description": "Animated cross-chain token swap widget for Vue with chain and token selectors, morphing views, a flip button and quote. Free, open source."
+ },
+ "dynamic-island": {
+  "title": "Dynamic Island Component for Vue (iOS Style)",
+  "description": "iPhone-style Dynamic Island for Vue that morphs between live activity views with a bouncy resize and blur cross-fade. Free source, shadcn-vue install."
+ },
+ "command-palette": {
+  "title": "Vue Command Palette (Cmd K Menu)",
+  "description": "Cmd K command palette for Vue with fuzzy search, a spring-animated active row, keyboard navigation and a glass surface. Free source, shadcn-vue install."
+ },
+ "morphing-search": {
+  "title": "Animated Search Bar for Vue with Results",
+  "description": "Two Vue search bars: one morphs into a results panel, one docks as a pill with chips, recents and suggestions. Keyboard accessible, free source."
+ },
+ "expandable-action-bar": {
+  "title": "Expandable Icon Action Bar for Vue",
+  "description": "Vue toolbar whose icon buttons expand into labeled controls on hover or focus with shared layout motion. Free, open source, copy-paste or shadcn-vue."
+ },
+ "overflow-actions": {
+  "title": "Overflow Actions Menu Button for Vue",
+  "description": "Connected Vue pill rail for primary actions that springs open to reveal more controls. motion-v, free source, shadcn-vue install."
+ },
+ "expandable-tabs": {
+  "title": "Expandable Icon Tabs for Vue",
+  "description": "Vue icon tab bar where the active tab expands into a labeled pill and the panel above morphs height between views. Free source, shadcn-vue install."
+ },
+ "morphing-tabs": {
+  "title": "Morphing Tabs Component for Vue",
+  "description": "Reorderable Vue tabs whose selected tab grows into its content surface, with a gliding active shape and shared morphs. Free, open source."
+ },
+ "swipeable-list": {
+  "title": "Vue Swipeable List with Swipe Actions",
+  "description": "Mobile-style Vue list rows that swipe left or right to reveal action buttons like delete and archive. Touch and mouse, free source, shadcn-vue install."
+ },
+ "file-upload": {
+  "title": "Vue File Upload with Progress and Preview",
+  "description": "Two Vue file upload components: an attachment area with image previews and audio, and a progress queue with retry and remove. Free source."
+ },
+ "prediction-market": {
+  "title": "Prediction Market UI Components for Vue",
+  "description": "Vue prediction market cards with outcome prices and probabilities, plus a buy and sell trade ticket with rolling amount entry. Free, open source."
+ },
+ "wallet-card": {
+  "title": "Crypto Wallet Card Component for Vue",
+  "description": "Vue crypto wallet card with account switcher, search, animated balance, privacy toggle, copy address and send, swap and buy actions. Free source."
+ },
+ "otp-input": {
+  "title": "Animated OTP Input for Vue (One Time Code)",
+  "description": "Vue OTP and verification code input with a gliding focus ring, rolling digits, error shake and success check. Paste support, free source, shadcn-vue install."
+ },
+ "signup-form": {
+  "title": "Vue Sign Up Form with Validation",
+  "description": "Animated Vue sign up form with on-blur validation, a password strength meter, password reveal and loading and success states. Free, open source."
+ },
+ "card-dealer": {
+  "title": "Animated Card Dealer and Card Hand for Vue",
+  "description": "Vue card table with a deck, fanned hand and discard pile. Cards arc across the table, flip in flight and hop when sorted. motion-v, install with shadcn-vue."
+ },
+ "bloom-menu": {
+  "title": "Animated Bloom Menu Button for Vue",
+  "description": "Vue button that morphs into a menu and blooms open from its center with radially staggered items. motion-v, free source, install with shadcn-vue."
+ },
+ "feedback-widget": {
+  "title": "Feedback Widget Component for Vue",
+  "description": "Vue feedback widget that morphs from a corner button into a form, with sending, success and retry states. Free source, install with the shadcn-vue CLI."
+ },
+ "not-found": {
+  "title": "Animated 404 Page Templates for Vue",
+  "description": "Five animated 404 pages for Vue and Nuxt: glitch, magnetic digits, cursor spotlight, card stack and terminal. Free source, install with shadcn-vue."
+ }
+}

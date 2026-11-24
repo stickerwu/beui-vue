@@ -1,3 +1,7 @@
+---
+title: "Install beui-vue: Animated Components for Vue 3 and Nuxt"
+description: Install beui-vue in a Vue 3.5 Vite or Nuxt SSR project, or copy component source into your project with the shadcn-vue CLI. Import ButtonBase and the styles, and set up the dark theme.
+---
 # Installation and usage
 
 Use Vue 3.5 or a newer Vue 3 release. beui-vue ships two ways: as a package you import from, or as source you copy into your project with the [shadcn-vue](https://www.shadcn-vue.com/) CLI.
