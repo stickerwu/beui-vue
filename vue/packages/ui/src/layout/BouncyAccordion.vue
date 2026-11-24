@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { motion } from 'motion-v'
+import { LayoutGroup, motion } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
 import { computed, reactive, shallowRef, useId, watch } from 'vue'
 import { easeOut } from '../core/motion'
@@ -108,6 +108,12 @@ function panelHeight(item: Item, open: boolean) {
 
 <template>
   <div class="be-accordion" :class="classNames?.root">
+    <!-- React measures every row before it writes any DOM. Vue patches the rows one after
+         another, so a row below the one that closed measured itself after that row had
+         already shrunk: it saw no move, jumped up under the collapsing card, and left a gap
+         as the card bounced. In a LayoutGroup the first row to measure makes them all
+         measure at once, before any of them changes. -->
+    <LayoutGroup>
     <motion.div v-for="(item, index) in items" :key="item.id" layout="position" :initial="false"
       :style="{ marginTop: geometry(index).separatedFromPrevious ? 12 : 0 }"
       :transition="reduce ? instant : geometry(index).closing ? CLOSE_TRANSITION : ROW_TRANSITION">
@@ -150,6 +156,7 @@ function panelHeight(item: Item, open: boolean) {
         </motion.section>
       </motion.div>
     </motion.div>
+    </LayoutGroup>
   </div>
 </template>
 
