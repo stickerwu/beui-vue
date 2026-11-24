@@ -69,7 +69,6 @@
 }
 
 .beui-preview-icon-button svg,
-.beui-code-copy svg,
 .beui-code-file-icon,
 .beui-code-collapse svg,
 .beui-source-button svg,
@@ -222,25 +221,29 @@
   font-weight: 400;
 }
 
-.beui-code-copy {
-  position: relative;
-  display: inline-flex;
-  flex-shrink: 0;
-  align-items: center;
-  justify-content: center;
-  min-width: 28px;
-  min-height: 28px;
-  padding: 6px;
-  border: 0;
-  border-radius: 6px;
-  background: transparent;
+/* CopyButton.vue: beui.dev's CopyButton, a secondary icon Button (32x32, rounded-full). */
+.beui-copy-button.be-button.be-button[data-size=icon] {
+  border-radius: 9999px;
+  border-color: var(--border, var(--beui-border));
   color: var(--muted-foreground, var(--beui-muted-foreground));
-  cursor: pointer;
 }
 
-.beui-code-copy svg {
+.beui-copy-button-icon,
+.beui-copy-button svg {
   width: 14px;
   height: 14px;
+}
+
+.beui-copy-button svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.beui-copy-button .beui-copy-button-check {
+  color: var(--color-success, oklch(70% .18 155));
 }
 
 .beui-code-copy-floating {
@@ -248,22 +251,6 @@
   z-index: 2;
   top: 20px;
   right: 20px;
-  background: var(--background, var(--beui-background));
-}
-
-.beui-code-copy-feedback {
-  position: absolute;
-  z-index: 3;
-  top: 2px;
-  right: 34px;
-  padding: 2px 6px;
-  border-radius: 4px;
-  background: var(--background, var(--beui-background));
-  color: var(--foreground, var(--beui-foreground));
-  font-family: var(--font-geist-sans, "Geist", sans-serif);
-  font-size: 11px;
-  line-height: 20px;
-  white-space: nowrap;
 }
 
 .beui-code-surface {
@@ -688,7 +675,7 @@
 .beui-preview-tab:focus-visible,
 .beui-preview-icon-button:focus-visible,
 .beui-preview-panel:focus-visible,
-.beui-code-copy:focus-visible,
+.beui-copy-button:focus-visible,
 .beui-code-viewport:focus-visible,
 .beui-code-expand:focus-visible,
 .beui-code-collapse:focus-visible,
@@ -703,7 +690,7 @@
 
 @media (hover: hover) {
   .beui-preview-icon-button:hover,
-  .beui-code-copy:hover,
+  .beui-copy-button.be-button.be-button[data-size=icon]:hover,
   .beui-platform-option:not(.is-active):hover {
     color: var(--foreground, var(--beui-foreground));
   }
@@ -948,7 +935,7 @@
 
 @media (pointer: coarse) {
   .beui-install-command-header .be-trigger,
-  .beui-install-command-header .beui-code-copy {
+  .beui-install-command-header .beui-copy-button {
     min-height: 36px;
     min-width: 36px;
   }

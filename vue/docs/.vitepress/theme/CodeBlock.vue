@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, shallowRef, useId, useTemplateRef, watch } from 'vue'
+import CopyButton from './CopyButton.vue'
 import { useLocale } from './i18n'
 
 const { t } = useLocale()
@@ -60,31 +61,11 @@ const contentId = useId()
 const codeContent = useTemplateRef<HTMLElement>('codeContent')
 const expanded = shallowRef(false)
 const canExpand = shallowRef(false)
-const copyState = shallowRef<'idle' | 'copied' | 'failed'>('idle')
-const copyLabel = computed(() => t({
-  idle: 'Copy code',
-  copied: 'Copied!',
-  failed: 'Copy failed',
-}[copyState.value]))
 let resizeObserver: ResizeObserver | undefined
 let measureFrame = 0
-let copyTimeout: ReturnType<typeof setTimeout> | undefined
 
 function measureCode() {
   canExpand.value = (codeContent.value?.scrollHeight || 0) > 320
-}
-
-async function copyCode() {
-  clearTimeout(copyTimeout)
-  try {
-    await navigator.clipboard.writeText(props.code)
-    copyState.value = 'copied'
-  } catch {
-    copyState.value = 'failed'
-  }
-  copyTimeout = setTimeout(() => {
-    copyState.value = 'idle'
-  }, 2000)
 }
 
 watch(() => props.code, async () => {
@@ -107,7 +88,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   resizeObserver?.disconnect()
   cancelAnimationFrame(measureFrame)
-  clearTimeout(copyTimeout)
 })
 </script>
 
@@ -121,40 +101,9 @@ onBeforeUnmount(() => {
         </svg>
         <span class="beui-code-filename"><span>{{ labelParts.directory }}</span>{{ labelParts.filename }}</span>
       </div>
-      <button
-        class="beui-code-copy"
-        type="button"
-        :aria-label="copyLabel"
-        :title="copyLabel"
-        @click="copyCode"
-      >
-        <svg v-if="copyState === 'copied'" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="m5 12 4 4L19 6" />
-        </svg>
-        <svg v-else viewBox="0 0 24 24" aria-hidden="true">
-          <rect x="9" y="9" width="13" height="13" rx="2" />
-          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-        </svg>
-        <span v-if="copyState !== 'idle'" class="beui-code-copy-feedback" role="status">{{ copyLabel }}</span>
-      </button>
+      <CopyButton :text="props.code" />
     </div>
-    <button
-      v-else
-      class="beui-code-copy beui-code-copy-floating"
-      type="button"
-      :aria-label="copyLabel"
-      :title="copyLabel"
-      @click="copyCode"
-    >
-      <svg v-if="copyState === 'copied'" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="m5 12 4 4L19 6" />
-      </svg>
-      <svg v-else viewBox="0 0 24 24" aria-hidden="true">
-        <rect x="9" y="9" width="13" height="13" rx="2" />
-        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-      </svg>
-      <span v-if="copyState !== 'idle'" class="beui-code-copy-feedback" role="status">{{ copyLabel }}</span>
-    </button>
+    <div v-else class="beui-code-copy-floating"><CopyButton :text="props.code" /></div>
     <div class="beui-code-surface">
       <div
         :id="contentId"

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Tabs } from 'beui-vue'
-import { computed, onBeforeUnmount, shallowRef } from 'vue'
+import { computed, shallowRef } from 'vue'
 import CodeBlock from './CodeBlock.vue'
+import CopyButton from './CopyButton.vue'
 import { useLocale } from './i18n'
 
 const { t, href } = useLocale()
@@ -71,28 +72,6 @@ const usage = computed(() => {
 const usageDescription = computed(() => method.value === 'cli'
   ? t('Import the shared styles once in your application.')
   : t('Import the compiled styles once in your application.'))
-const copyState = shallowRef<'idle' | 'copied' | 'failed'>('idle')
-const copyLabel = computed(() => t({
-  idle: 'Copy install command',
-  copied: 'Copied!',
-  failed: 'Copy failed',
-}[copyState.value]))
-let copyTimer: ReturnType<typeof setTimeout> | undefined
-
-async function copyCommand() {
-  clearTimeout(copyTimer)
-  try {
-    await navigator.clipboard.writeText(installCommand.value)
-    copyState.value = 'copied'
-  } catch {
-    copyState.value = 'failed'
-  }
-  copyTimer = setTimeout(() => {
-    copyState.value = 'idle'
-  }, 2000)
-}
-
-onBeforeUnmount(() => clearTimeout(copyTimer))
 </script>
 
 <template>
@@ -125,22 +104,7 @@ onBeforeUnmount(() => clearTimeout(copyTimer))
               >
                 <template #trigger="{ item: manager }">{{ manager.label }}</template>
               </Tabs>
-              <button
-                class="beui-code-copy"
-                type="button"
-                :aria-label="copyLabel"
-                :title="copyLabel"
-                @click="copyCommand"
-              >
-                <svg v-if="copyState === 'copied'" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="m5 12 4 4L19 6" />
-                </svg>
-                <svg v-else viewBox="0 0 24 24" aria-hidden="true">
-                  <rect x="9" y="9" width="13" height="13" rx="2" />
-                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                </svg>
-                <span v-if="copyState !== 'idle'" class="beui-code-copy-feedback" role="status">{{ copyLabel }}</span>
-              </button>
+              <CopyButton :text="installCommand" label="Copy install command" />
             </div>
             <div class="beui-install-command-viewport" tabindex="0" role="region" :aria-label="t('Install command')">
               <pre class="beui-install-command"><code><span class="beui-install-prompt" aria-hidden="true">$ </span><span class="beui-install-runner">{{ commandFor(item.value).runner }}</span> <span class="beui-install-action">{{ commandFor(item.value).action }}</span> <span class="beui-install-target">{{ commandFor(item.value).target }}</span></code></pre>
