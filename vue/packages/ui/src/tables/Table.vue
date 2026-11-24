@@ -176,43 +176,72 @@ function columnWidth(column: TableColumn<Row>) {
 
 // The insert handles float on a column's top border and a row's left border. They are `position: fixed`
 // so the scroll container cannot clip them; a short leave delay lets the pointer cross onto the handle.
+// A handle that has focus stays shown and keeps its coordinates, so it is never focused and invisible
+// or stranded where its row used to be.
 const activeColumn = shallowRef<string | null>(null)
 const activeRow = shallowRef<string | null>(null)
 const columnAnchor = shallowRef({ top: 0, left: 0 })
 const rowAnchor = shallowRef({ top: 0, left: 0 })
 let menuOpen = false, columnTimer: ReturnType<typeof setTimeout> | undefined, rowTimer: ReturnType<typeof setTimeout> | undefined
-function activateColumn(key: string, element: HTMLElement) {
-  clearTimeout(columnTimer)
+let columnEl: HTMLElement | null = null, rowEl: HTMLElement | null = null
+function holdsFocus(element: HTMLElement | null) {
+  const focused = document.activeElement
+  return focused instanceof HTMLElement && focused.classList.contains('handle') && Boolean(element?.contains(focused))
+}
+function anchorColumn(element: HTMLElement) {
   const rect = element.getBoundingClientRect()
   columnAnchor.value = { top: rect.top, left: rect.left + rect.width / 2 }
+}
+function anchorRow(element: HTMLElement) {
+  const rect = element.getBoundingClientRect()
+  rowAnchor.value = { top: rect.top + rect.height / 2, left: rect.left }
+}
+function activateColumn(key: string, element: HTMLElement) {
+  clearTimeout(columnTimer)
+  columnEl = element
+  anchorColumn(element)
   activeColumn.value = key
 }
 function deactivateColumn() {
   clearTimeout(columnTimer)
-  columnTimer = setTimeout(() => { if (!menuOpen) activeColumn.value = null }, 100)
+  columnTimer = setTimeout(() => { if (!menuOpen && !holdsFocus(columnEl)) activeColumn.value = null }, 100)
 }
 function activateRow(id: string, element: HTMLElement) {
   clearTimeout(rowTimer)
-  const rect = element.getBoundingClientRect()
-  rowAnchor.value = { top: rect.top + rect.height / 2, left: rect.left }
+  rowEl = element
+  anchorRow(element)
   activeRow.value = id
 }
 function deactivateRow() {
   clearTimeout(rowTimer)
-  rowTimer = setTimeout(() => { if (!menuOpen) activeRow.value = null }, 100)
+  rowTimer = setTimeout(() => { if (!menuOpen && !holdsFocus(rowEl)) activeRow.value = null }, 100)
 }
+// After a scroll the pointer may rest on a row without a new pointerenter; the next move brings the handle back.
+function resumeColumn(key: string, element: HTMLElement) { if (activeColumn.value !== key) activateColumn(key, element) }
+function resumeRow(id: string, element: HTMLElement) { if (activeRow.value !== id) activateRow(id, element) }
 function menuToggled(open: boolean) {
   menuOpen = open
   if (!open) { deactivateColumn(); deactivateRow() }
 }
-function dropHandles() {
-  if (menuOpen) return
-  activeColumn.value = null
-  activeRow.value = null
+// A page or table scroll moves the rows under fixed handles. A handle follows its row while the row
+// still has the pointer or the handle's focus; otherwise it goes, as the pointer has left the row.
+function keeps(element: HTMLElement | null): element is HTMLElement {
+  return Boolean(element?.isConnected && (element.matches(':hover') || holdsFocus(element)))
 }
-onMounted(() => window.addEventListener('scroll', dropHandles, true))
+function scrolled() {
+  if (menuOpen) return
+  if (activeColumn.value !== null) {
+    if (keeps(columnEl)) anchorColumn(columnEl)
+    else activeColumn.value = null
+  }
+  if (activeRow.value !== null) {
+    if (keeps(rowEl)) anchorRow(rowEl)
+    else activeRow.value = null
+  }
+}
+onMounted(() => window.addEventListener('scroll', scrolled, { capture: true, passive: true }))
 onBeforeUnmount(() => {
-  window.removeEventListener('scroll', dropHandles, true)
+  window.removeEventListener('scroll', scrolled, true)
   clearTimeout(columnTimer); clearTimeout(rowTimer)
 })
 function handleStyle(active: boolean, anchor: { top: number; left: number }) {
@@ -239,7 +268,7 @@ function handleStyle(active: boolean, anchor: { top: number; left: number }) {
               v-for="(column, columnIndex) in columns" :key="column.key" scope="col" class="head" :data-key="column.key" :data-active="activeColumn === column.key || undefined"
               :data-drop="drag?.kind === 'order' ? dropIndex === columnIndex : undefined" :data-dropend="drag?.kind === 'order' ? dropIndex === columns.length && columnIndex === columns.length - 1 : undefined"
               :aria-sort="sort?.key === column.key ? sort.direction === 'asc' ? 'ascending' : 'descending' : undefined"
-              @pointerenter="hasColumnMenu && activateColumn(column.key, $event.currentTarget as HTMLElement)" @pointerleave="hasColumnMenu && deactivateColumn()"
+              @pointerenter="hasColumnMenu && activateColumn(column.key, $event.currentTarget as HTMLElement)" @pointermove="hasColumnMenu && resumeColumn(column.key, $event.currentTarget as HTMLElement)" @pointerleave="hasColumnMenu && deactivateColumn()"
               @focusin="hasColumnMenu && activateColumn(column.key, $event.currentTarget as HTMLElement)" @focusout="hasColumnMenu && deactivateColumn()"
             >
               <motion.div
@@ -276,7 +305,7 @@ function handleStyle(active: boolean, anchor: { top: number; left: number }) {
             <tr v-if="first > 0" aria-hidden="true" :style="{ height: `${first * rowHeight}px` }"><td :colspan="span" /></tr>
             <tr
               v-for="(entry, index) in visible" :key="entry.id" class="row" :aria-rowindex="first + index + 2" :data-selected="selected.has(entry.id)" :style="{ height: `${rowHeight}px` }"
-              @pointerenter="hasRowMenu && activateRow(entry.id, $event.currentTarget as HTMLElement)" @pointerleave="hasRowMenu && deactivateRow()"
+              @pointerenter="hasRowMenu && activateRow(entry.id, $event.currentTarget as HTMLElement)" @pointermove="hasRowMenu && resumeRow(entry.id, $event.currentTarget as HTMLElement)" @pointerleave="hasRowMenu && deactivateRow()"
               @focusin="hasRowMenu && activateRow(entry.id, $event.currentTarget as HTMLElement)" @focusout="hasRowMenu && deactivateRow()"
             >
               <td v-if="selectable" class="lead">
@@ -376,7 +405,7 @@ function handleStyle(active: boolean, anchor: { top: number; left: number }) {
 <style>
 /* Insert handles: a pill on the column's top border / the row's left border. Idle ones stay in the tab order but are invisible. */
 .beui-table .handle { position: absolute; z-index: 40; display: flex; align-items: center; justify-content: center; border-radius: 999px; background: var(--beui-primary); color: var(--beui-primary-foreground); box-shadow: 0 1px 2px 0 rgb(0 0 0 / .05); opacity: 0; pointer-events: none; transform: translate(-50%, -50%); transition: background-color .15s, opacity .15s; }
-.beui-table .handle[data-active], .beui-table .handle:focus-visible { position: fixed; opacity: 1; pointer-events: auto; }
+.beui-table .handle[data-active] { position: fixed; opacity: 1; pointer-events: auto; }
 .beui-table .handle:focus-visible { outline: 2px solid var(--beui-ring); outline-offset: 2px; }
 .beui-table .column-handle { top: 0; left: 50%; width: 1.5rem; height: .5rem; }
 .beui-table .row-handle { top: 50%; left: 0; width: .5rem; height: 1.5rem; }
