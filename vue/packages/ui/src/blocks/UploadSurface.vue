@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AnimatePresence, motion, mountedStates } from 'motion-v'
+import { AnimatePresence, LayoutGroup, motion, mountedStates } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
 import { computed, shallowRef, useId, useTemplateRef, watch } from 'vue'
 import { easeOut } from '../core/motion'
@@ -281,6 +281,10 @@ function onDrop(event: DragEvent) {
     </button>
 
     <ul ref="queue" class="be-file-upload-queue" :class="classNames?.queue">
+      <!-- React re-renders every row when the list changes, so each one measures and springs into
+           its new place. Vue re-renders only the row that enters or leaves; the group makes the
+           rows that stay measure with it, so they slide up when a row is removed. -->
+      <LayoutGroup>
       <AnimatePresence :initial="false">
         <motion.li
           v-for="item in items"
@@ -380,6 +384,7 @@ function onDrop(event: DragEvent) {
           </div>
         </motion.li>
       </AnimatePresence>
+      </LayoutGroup>
     </ul>
   </div>
 </template>
