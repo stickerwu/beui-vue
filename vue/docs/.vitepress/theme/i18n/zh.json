@@ -249,5 +249,11 @@
  "The default. Labels change color where the pill passes.": "默认样式。胶囊滑过之处，标签随之变色。",
  "Wider lists scroll and reveal the selected tab.": "更宽的列表可滚动，并让选中的标签进入视野。",
  "Icon on selected": "选中时显示图标",
- "Only the selected tab carries its icon. It springs open beside the label as the pill arrives.": "只有选中的标签带图标，胶囊到达时图标在标签旁弹性展开。"
+ "Only the selected tab carries its icon. It springs open beside the label as the pill arrives.": "只有选中的标签带图标，胶囊到达时图标在标签旁弹性展开。",
+ "Motion Guides": "动效指南",
+ "Agent Guide": "Agent 指南",
+ "When to animate, which token to use, timing ranges and reduced motion.": "何时加动效、用哪个 token、时长范围与减少动效。",
+ "Connect AI agents to beui-vue through the skill, MCP server and registry endpoints.": "通过 skill、MCP 服务和注册表端点把 AI agent 接入 beui-vue。",
+ "AI Agents": "AI Agent",
+ "For coding agents": "面向编程 Agent"
 }

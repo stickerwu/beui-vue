@@ -26,6 +26,8 @@ const filters = computed(() => [
 const guides = computed(() => [
   { title: t('Installation'), path: '/install' },
   { title: t('Component catalog'), path: '/catalog' },
+  { title: t('Motion Guides'), path: '/docs/motion-patterns' },
+  { title: t('Agent Guide'), path: '/docs/ai-agents' },
 ])
 const localized = computed(() => sections.map(section => localizeSection(section, isZh.value ? 'zh' : 'en')))
 const normalizedPath = computed(() => route.path.replace(/^\/en(?=\/)/, '').replace(/\.html$/, '').replace(/\/$/, '') || '/')

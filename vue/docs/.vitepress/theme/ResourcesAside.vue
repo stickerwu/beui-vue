@@ -8,7 +8,7 @@ const { page } = useData()
 const { t, href } = useLocale()
 const upstreamUrl = computed(() => {
   const path = page.value.relativePath.replace(/(^|\/)index\.md$/, '$1').replace(/\.md$/, '')
-  return path.startsWith('components/') || path.startsWith('charts/') || path.startsWith('casino/') || path.startsWith('blocks/')
+  return path.startsWith('components/') || path.startsWith('charts/') || path.startsWith('casino/') || path.startsWith('blocks/') || path.startsWith('docs/')
     ? `https://beui.dev/${path}`
     : 'https://beui.dev/components/motion'
 })

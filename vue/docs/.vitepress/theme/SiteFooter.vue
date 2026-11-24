@@ -19,6 +19,8 @@ const links = computed(() => [
   { title: t('Installation'), href: '/install' },
   { title: t('Component catalog'), href: '/catalog' },
   { title: 'GitHub', href: repository },
+  { title: t('For coding agents'), href: '/docs/ai-agents' },
+  { title: t('Motion Guides'), href: '/docs/motion-patterns' },
   { title: 'llms.txt', href: '/llms.txt' },
 ])
 const upstream = [
@@ -39,6 +41,7 @@ function linkHref(path: string) {
     <nav :aria-label="t('Footer')">
       <a :href="repository" target="_blank" rel="noopener noreferrer">GitHub</a>
       <a :href="href('/install')">{{ t('Guide') }}</a>
+      <a :href="href('/docs/ai-agents')">{{ t('For coding agents') }}</a>
       <a :href="href('/llms.txt')">llms.txt</a>
       <a href="https://beui.dev" target="_blank" rel="noopener noreferrer">beUI <Icon name="arrow-up-right" :size="12" /></a>
     </nav>

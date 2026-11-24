@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, shallowRef, useTemplateRef } from 'vue'
+import { computed, useTemplateRef } from 'vue'
 import { Content, useData, useRoute } from 'vitepress'
-import { PopoverMorph } from 'beui-vue'
 import { findPage, localizePage, localizeSection, pages, sections } from './catalog'
 import { useLocale } from './i18n'
 import CategoryPage from './CategoryPage.vue'
 import ComponentGuide from './ComponentGuide.vue'
+import CopyPage from './CopyPage.vue'
 import CreditLink from './CreditLink.vue'
 import HomePage from './HomePage.vue'
+import AgentGuidePage from './guides/AgentGuidePage.vue'
+import MotionGuidePage from './guides/MotionGuidePage.vue'
 import Icon from './Icon.vue'
 import ProBlockLinks from './ProBlockLinks.vue'
 import ResourcesAside from './ResourcesAside.vue'
@@ -47,9 +49,6 @@ const creditNames = computed(() => {
 })
 const related = computed(() => (currentPage.value?.relatedSlugs ?? []).flatMap(slug => pages.filter(item => item.slug === slug)).map(item => localizePage(item, locale.value)))
 const content = useTemplateRef<HTMLElement>('content')
-const copied = shallowRef(false)
-const copyStatus = shallowRef('')
-const copyMenuOpen = shallowRef(false)
 const pageActions = computed(() => {
   const pageUrl = `https://beui.stickerwu.net${route.path}`
   const prompt = encodeURIComponent(`Help me use this beui-vue component in Vue 3 and Nuxt. Explain its API and provide Vue examples. ${pageUrl}`)
@@ -59,21 +58,11 @@ const pageActions = computed(() => {
     { label: t('Open in Claude'), href: `https://claude.ai/new?q=${prompt}`, icon: 'arrow-up-right' },
   ]
 })
-let copyTimer: ReturnType<typeof setTimeout> | undefined
+const pageText = () => `# ${page.value.title}
 
-async function copyPage() {
-  clearTimeout(copyTimer)
-  try {
-    await navigator.clipboard.writeText(`# ${page.value.title}\n\n${content.value?.innerText ?? ''}\n\n${location.href}`)
-    copied.value = true
-    copyStatus.value = t('Page copied.')
-    copyTimer = setTimeout(() => { copied.value = false }, 2000)
-  } catch {
-    copyStatus.value = t('Select the page text to copy it.')
-  }
-}
+${content.value?.innerText ?? ''}
 
-onBeforeUnmount(() => clearTimeout(copyTimer))
+${location.href}`
 </script>
 
 <template>
@@ -115,23 +104,7 @@ onBeforeUnmount(() => clearTimeout(copyTimer))
               </span>
             </p>
           </div>
-          <div class="beui-copy-page">
-            <button type="button" @click="copyPage">
-              <Icon :name="copied ? 'check' : 'copy'" />
-              {{ copied ? t('Copied!') : t('Copy Page') }}
-            </button>
-            <PopoverMorph v-model:open="copyMenuOpen" :label="t('More page actions')" align="end">
-              <template #trigger><Icon name="chevron-down" /><span class="beui-sr-only">{{ t('More page actions') }}</span></template>
-              <template #default="{ close }">
-                <div class="beui-page-actions">
-                  <a v-for="action in pageActions" :key="action.label" :href="action.href" target="_blank" rel="noopener noreferrer" @click="close">
-                    <Icon :name="action.icon" />{{ action.label }}<span class="beui-sr-only">{{ t('Opens in a new tab.') }}</span>
-                  </a>
-                </div>
-              </template>
-            </PopoverMorph>
-          </div>
-          <span class="beui-sr-only" role="status">{{ copyStatus }}</span>
+          <CopyPage :text="pageText" :actions="pageActions" />
         </div>
         <nav class="beui-mobile-platform" :aria-label="t('Component platform')">
           <span aria-current="page">Vue</span>
@@ -171,6 +144,8 @@ onBeforeUnmount(() => clearTimeout(copyTimer))
           <span v-else class="beui-pager-spacer" aria-hidden="true" />
         </nav>
       </article>
+      <MotionGuidePage v-else-if="frontmatter.guidePage === 'motion'" />
+      <AgentGuidePage v-else-if="frontmatter.guidePage === 'agents'" />
       <article v-else class="beui-prose">
         <nav class="beui-breadcrumb" :aria-label="t('Breadcrumb')"><a :href="href('/install')">{{ t('Documentation') }}</a></nav>
         <Content />

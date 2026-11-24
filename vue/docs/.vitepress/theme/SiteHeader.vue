@@ -51,6 +51,8 @@ const themes = computed(() => [
 const documentationPages = computed(() => [
   { slug: 'installation', title: t('Installation'), description: t('Install and use beui-vue in Vue 3, Vite and Nuxt.'), category: t('Guides'), path: '/install' },
   { slug: 'catalog', title: t('Component catalog'), description: t('Browse every Vue component and variant.'), category: t('Guides'), path: '/catalog' },
+  { slug: 'motion-patterns', title: t('Motion Guides'), description: t('When to animate, which token to use, timing ranges and reduced motion.'), category: t('Guides'), path: '/docs/motion-patterns' },
+  { slug: 'ai-agents', title: t('AI Agents'), description: t('Connect AI agents to beui-vue through the skill, MCP server and registry endpoints.'), category: t('Guides'), path: '/docs/ai-agents' },
 ])
 const searchItems = computed(() => {
   const locale = isZh.value ? 'zh' : 'en'

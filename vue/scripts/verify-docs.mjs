@@ -18,7 +18,7 @@ for (const locale of locales) {
   const index = await readFile(locale.llms, 'utf8')
   const page = path => join(root, locale.prefix + (path === '/' ? 'index' : path.slice(1)) + '.html')
   const url = path => siteURL + locale.prefix + path.slice(1)
-  for (const path of new Set([...groups.keys(), ...paths.values(), '/', '/catalog', '/install'])) {
+  for (const path of new Set([...groups.keys(), ...paths.values(), '/', '/catalog', '/install', '/docs/motion-patterns', '/docs/ai-agents'])) {
     const html = await readFile(page(path), 'utf8')
     assert(html.includes(`<html lang="${locale.lang}"`), `${locale.prefix}${path} lang`)
     assert(html.includes(canonical(url(path))), url(path))
@@ -34,6 +34,7 @@ for (const locale of locales) {
     assert(alias.includes(canonical(siteURL + path.slice(1))), path)
   }
   assert(index.includes('beui-vue'), locale.llms)
+  for (const path of ['/docs/motion-patterns', '/docs/ai-agents']) assert(index.includes(`(${url(path)})`), `${locale.llms} ${path}`)
 }
 const chinese = await readFile(join(root, 'index.html'), 'utf8')
 const english = await readFile(join(root, 'en', 'index.html'), 'utf8')

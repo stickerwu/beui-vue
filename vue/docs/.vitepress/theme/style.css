@@ -274,8 +274,10 @@ pre, code, kbd {
   align-items: center;
   min-height: 32px;
   border-radius: 8px;
-  background: var(--card);
+  /* Upstream: bg-muted/70, font-medium. */
+  background: color-mix(in oklab, var(--card) 70%, transparent);
   font-size: 12px;
+  font-weight: 500;
 }
 
 .beui-copy-page > button {
@@ -288,17 +290,28 @@ pre, code, kbd {
   cursor: pointer;
 }
 
-.beui-copy-page .popover-trigger {
-  min-height: 32px;
+/* Upstream: the menu trigger is a 32px square (sm:min-h-8 sm:w-8) after a 1px divider (my-2 w-px bg-border). */
+.beui-copy-page > .be-morph-popover::before {
+  content: '';
+  align-self: center;
+  width: 1px;
+  height: 16px;
+  background: var(--border);
+}
+
+.beui-copy-page .be-morph-popover .be-morph-trigger {
+  height: 32px;
   width: 32px;
+  justify-content: center;
   padding: 0;
   border: 0;
   border-radius: 0 8px 8px 0;
   background: transparent;
+  color: var(--muted-foreground);
 }
 
 .beui-copy-page > button:hover,
-.beui-copy-page .popover-trigger:hover {
+.beui-copy-page .be-morph-popover .be-morph-trigger:hover {
   background: var(--border);
 }
 
