@@ -91,11 +91,15 @@ const enterScale = computed(() => (reduce.value ? 1 : 0.97))
       <!-- The layer itself never takes pointer events, so it carries `inert` alone. -->
       <div class="be-mm-layer" :class="placement === 'bottom' ? 'be-mm-bottom' : 'be-mm-center'" :inert="!isPresent">
         <motion.div ref="panel" class="be-mm-panel" :class="$attrs.class" role="dialog" aria-modal="true" :aria-label="accessibleName"
-          :aria-labelledby="accessibleName ? undefined : headingId" tabindex="-1" layout
+          :aria-labelledby="accessibleName ? undefined : headingId" tabindex="-1" layout :layout-dependency="shown"
           :initial="{ opacity: 0, y: enterY, scale: enterScale }" :animate="{ opacity: 1, y: 0, scale: 1 }"
           :exit="{ opacity: 0, y: enterY, scale: reduce ? 1 : 0.98, transition: { duration: 0.18, ease: easeOut } }"
           :transition="panelSpring" :inert="!isPresent" :style="{ pointerEvents: isPresent ? 'auto' : 'none' }">
-          <motion.div layout="position" class="be-mm-body" :transition="panelSpring">
+          <!-- `layout-dependency` makes the panel and body re-render, and so snapshot their
+               layout, when the view changes. Upstream gets that from React re-rendering the
+               panel; in Vue only the AnimatePresence that reads `shown` would update, so in a
+               production build the panel never measured and the height jumped. -->
+          <motion.div layout="position" :layout-dependency="shown" class="be-mm-body" :transition="panelSpring">
             <AnimatePresence mode="popLayout" :initial="false">
               <!-- The keyed motion element is the direct child, so popLayout can lift the outgoing
                    view out of flow. Its slot content is the last render of that view, frozen
