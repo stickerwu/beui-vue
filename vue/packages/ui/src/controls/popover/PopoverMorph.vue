@@ -153,7 +153,9 @@ let keyboardPress = false
 watch(triggerEl, (el, _, cleanup) => {
   if (!el) return
   const keydown = (event: KeyboardEvent) => { keyboardPress = event.key === 'Enter' || event.key === ' ' }
-  const pointerdown = () => { keyboardPress = false }
+  // A press gesture on the trigger (motion's whilePress) answers Enter with a synthetic pointerdown; only a real
+  // pointer means the open did not come from the keyboard.
+  const pointerdown = (event: PointerEvent) => { if (event.isTrusted) keyboardPress = false }
   const click = (event: MouseEvent) => {
     // Enter and Space reach here as a click with `detail` 0 after their keydown
     // on this element. Only a keyboard open moves focus into the panel.

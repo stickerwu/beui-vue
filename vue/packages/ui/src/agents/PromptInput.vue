@@ -19,9 +19,11 @@ export interface PromptAction { value: string, label: string, description?: stri
 <script setup lang="ts">
 import { AnimatePresence, motion } from 'motion-v'
 import { useReducedMotion } from '../core/reduced-motion'
-import { computed, nextTick, onBeforeUnmount, onMounted, shallowRef, useId, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, shallowRef, watch } from 'vue'
 import ButtonBase from '../ButtonBase.vue'
-import FloatingPanel from '../controls/FloatingPanel.vue'
+import MorphPopoverContent from '../controls/popover/MorphPopoverContent.vue'
+import MorphPopoverTrigger from '../controls/popover/MorphPopoverTrigger.vue'
+import PopoverMorph from '../controls/popover/PopoverMorph.vue'
 import Select from '../controls/choice/Select.vue'
 import SelectContent from '../controls/choice/SelectContent.vue'
 import SelectItem from '../controls/choice/SelectItem.vue'
@@ -62,7 +64,6 @@ const mirror = shallowRef<HTMLElement | null>(null)
 const addButton = shallowRef<{ $el: HTMLElement } | HTMLElement | null>(null)
 const actionsOpen = shallowRef(false)
 const modelOpen = shallowRef(false)
-const uid = useId()
 const canSend = computed(() => Boolean(value.value.trim()) && !props.disabled && !props.loading)
 
 const anchorOf = (node: { $el: HTMLElement } | HTMLElement | null) => (node && '$el' in node ? node.$el : node) as HTMLElement | null
@@ -92,17 +93,10 @@ function keydown(event: KeyboardEvent) {
   send()
 }
 
-function closeActions(reason?: string) {
-  actionsOpen.value = false
-  if (reason === 'escape') anchorOf(addButton.value)?.focus()
-}
 function pickAction(action: PromptAction) {
   emit('action', action.value)
   actionsOpen.value = false
   anchorOf(addButton.value)?.focus()
-}
-function placedActions() {
-  nextTick(() => document.getElementById(`${uid}-actions`)?.querySelector<HTMLElement>('button:not(:disabled)')?.focus({ preventScroll: true }))
 }
 
 // The model picker is the library's unfold Select, as upstream; only its open state is held here so a
@@ -141,46 +135,34 @@ const isIconName = (icon?: string): icon is AgentIconName => Boolean(icon && ico
 
     <div class="be-pi-bar">
       <template v-if="actions.length">
-        <ButtonBase
-          :ref="(node: any) => { addButton = node }"
-          variant="ghost"
-          size="icon"
-          class="be-pi-round"
-          :disabled="disabled || loading"
-          :aria-label="t.addToPrompt"
-          aria-haspopup="dialog"
-          :aria-expanded="actionsOpen"
-          :aria-controls="actionsOpen ? `${uid}-actions` : undefined"
-          @click="actionsOpen = !actionsOpen"
-        >
-          <motion.span aria-hidden="true" class="be-pi-icon" :animate="{ rotate: actionsOpen ? 45 : 0 }" :transition="reduce ? { duration: 0 } : swapSpring">
-            <AgentIcon name="Plus" :size="16" />
-          </motion.span>
-        </ButtonBase>
-        <FloatingPanel
-          :id="`${uid}-actions`"
-          role="dialog"
-          :aria-label="t.addToPrompt"
-          :open="actionsOpen"
-          :anchor="anchorOf(addButton)"
-          side="top"
-          align="start"
-          :gap="8"
-          variant="morph"
-          class="be-pi-popover"
-          @placed="placedActions"
-          @dismiss="closeActions"
-        >
-          <button v-for="action in actions" :key="action.value" type="button" class="be-pi-action" :disabled="action.disabled" @click="pickAction(action)">
-            <span v-if="action.icon || $slots['action-icon']" class="be-pi-action-icon">
-              <slot name="action-icon" :action="action"><AgentIcon v-if="isIconName(action.icon)" :name="action.icon" :size="16" /><img v-else :src="action.icon" alt="" width="16" height="16"></slot>
-            </span>
-            <span class="be-pi-action-text">
-              <span class="be-pi-action-label">{{ action.label }}</span>
-              <span v-if="action.description" class="be-pi-action-description">{{ action.description }}</span>
-            </span>
-          </button>
-        </FloatingPanel>
+        <!-- Upstream: MorphPopover side="top" align="start" sideOffset={8} radius={12}, content w-56 p-1.5. -->
+        <PopoverMorph v-model:open="actionsOpen">
+          <MorphPopoverTrigger>
+            <ButtonBase
+              :ref="(node: any) => { addButton = node }"
+              variant="ghost"
+              size="icon"
+              class="be-pi-round"
+              :disabled="disabled || loading"
+              :aria-label="t.addToPrompt"
+            >
+              <motion.span aria-hidden="true" class="be-pi-icon" :animate="{ rotate: actionsOpen ? 45 : 0 }" :transition="reduce ? { duration: 0 } : swapSpring">
+                <AgentIcon name="Plus" :size="16" />
+              </motion.span>
+            </ButtonBase>
+          </MorphPopoverTrigger>
+          <MorphPopoverContent side="top" align="start" :side-offset="8" :radius="12" class="be-pi-popover">
+            <button v-for="action in actions" :key="action.value" type="button" class="be-pi-action" :disabled="action.disabled" @click="pickAction(action)">
+              <span v-if="action.icon || $slots['action-icon']" class="be-pi-action-icon">
+                <slot name="action-icon" :action="action"><AgentIcon v-if="isIconName(action.icon)" :name="action.icon" :size="16" /><img v-else :src="action.icon" alt="" width="16" height="16"></slot>
+              </span>
+              <span class="be-pi-action-text">
+                <span class="be-pi-action-label">{{ action.label }}</span>
+                <span v-if="action.description" class="be-pi-action-description">{{ action.description }}</span>
+              </span>
+            </button>
+          </MorphPopoverContent>
+        </PopoverMorph>
       </template>
 
       <slot name="leading-action" />
@@ -283,10 +265,7 @@ const isIconName = (icon?: string): icon is AgentIconName => Boolean(icon && ico
 .be-pi-model-icon img { width: 1rem; height: 1rem; border-radius: .25rem; object-fit: contain; }
 .be-pi-select-label { overflow: hidden; color: var(--beui-muted-foreground); text-overflow: ellipsis; white-space: nowrap; }
 
-div.be-pi-popover.floating {
-  padding: .375rem; border-color: var(--beui-border); border-radius: .75rem; background: var(--beui-background);
-}
-div.be-pi-popover.floating { width: 14rem; box-shadow: 0 12px 32px -12px rgb(0 0 0 / .32); }
+.be-pi-popover { width: 14rem; padding: .375rem; }
 /* Upstream: SelectContent right-auto w-52 shadow-none; SelectItem py-2. */
 .be-pi .be-pi-select .be-pi-listbox { right: auto; width: 13rem; box-shadow: none; }
 .be-pi-action {
