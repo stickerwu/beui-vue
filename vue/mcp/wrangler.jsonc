@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "beui-vue-mcp",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": false },
+  "vars": {
+    "REGISTRY_URL": "https://beui.stickerwu.net"
+  },
+  // Only /mcp goes to the Worker; every other path on beui.stickerwu.net is still
+  // served by the 1Panel origin. Needs the stickerwu.net zone on this Cloudflare account.
+  "routes": [{ "pattern": "beui.stickerwu.net/mcp*", "zone_name": "stickerwu.net" }]
+}
