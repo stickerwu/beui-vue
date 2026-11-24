@@ -313,7 +313,7 @@ const actions = computed(() => [
     <div class="be-wallet-actions-wrap">
       <div class="be-wallet-actions">
         <motion.button
-          v-for="action in actions" :key="action.key" type="button" class="be-wallet-action" :while-tap="reduce ? undefined : { scale: 0.94 }" :transition="pressSpring" @click="action.run"
+          v-for="action in actions" :key="action.key" type="button" class="be-wallet-action" :while-press="reduce ? undefined : { scale: 0.94 }" :transition="pressSpring" @click="action.run"
         >
           <span class="be-wallet-action-icon"><Glyph :name="action.key" :size="20" /></span>
           <span class="be-wallet-action-label">{{ action.label }}</span>

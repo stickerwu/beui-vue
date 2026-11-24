@@ -74,7 +74,7 @@ function onKeydown(event: KeyboardEvent) {
       :disabled="off"
       :tabindex="tabIndex"
       :data-state="selected ? 'checked' : 'unchecked'"
-      :while-tap="reduce || off ? undefined : { scale: 0.92 }"
+      :while-press="reduce || off ? undefined : { scale: 0.92 }"
       :transition="pressSpring"
       @click="!off && group.setValue(value)"
       @keydown="onKeydown"

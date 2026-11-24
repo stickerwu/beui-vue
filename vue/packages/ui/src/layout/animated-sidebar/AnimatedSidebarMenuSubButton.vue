@@ -36,7 +36,7 @@ function select(event: MouseEvent) {
     :target="href ? target : undefined" :rel="href ? (rel ?? (target === '_blank' ? 'noreferrer noopener' : undefined)) : undefined"
     :aria-current="isActive ? 'page' : undefined" :aria-disabled="href && disabled ? true : undefined" :tabindex="href && disabled ? -1 : undefined"
     class="be-asb-sub-button" :class="{ 'be-asb-sub-button-active': isActive, 'be-asb-sub-button-disabled': disabled }"
-    :while-tap="context.reduce.value || disabled ? undefined : { scale: 0.98 }" :transition="pressSpring" @click="select"
+    :while-press="context.reduce.value || disabled ? undefined : { scale: 0.98 }" :transition="pressSpring" @click="select"
   >
     <span aria-hidden="true" class="be-asb-sub-icon"><slot name="icon"><span class="be-asb-sub-dot" /></slot></span>
     <span class="be-asb-sub-label"><slot /></span>

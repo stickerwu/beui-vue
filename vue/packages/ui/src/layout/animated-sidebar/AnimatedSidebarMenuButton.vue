@@ -66,7 +66,7 @@ function select(event: MouseEvent) {
     :aria-current="isActive ? 'page' : undefined" :aria-expanded="ariaExpanded" :aria-disabled="href && disabled ? true : undefined"
     :aria-label="panel.collapsed.value ? textLabel() : undefined" :title="panel.collapsed.value ? textLabel() : undefined"
     :tabindex="href && disabled ? -1 : undefined" class="be-asb-button" :class="{ 'be-asb-button-active': isActive, 'be-asb-button-disabled': disabled }"
-    :while-tap="context.reduce.value || disabled ? undefined : { scale: 0.98 }" :transition="pressSpring" @click="select"
+    :while-press="context.reduce.value || disabled ? undefined : { scale: 0.98 }" :transition="pressSpring" @click="select"
   >
     <motion.span v-if="isActive" :layout-id="context.layoutId" :transition="context.reduce.value ? { duration: 0 } : layoutSpring" class="be-asb-active-bg" />
     <span v-if="$slots.icon" aria-hidden="true" class="be-asb-icon"><slot name="icon" /></span>

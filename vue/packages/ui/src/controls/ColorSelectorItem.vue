@@ -29,7 +29,7 @@ const unavailable = () => props.disabled || context.disabled.value
     :tabindex="-1"
     class="be-color-selector-item"
     :data-unavailable="unavailable() || undefined"
-    :while-tap="reduce || unavailable() ? undefined : { scale: 0.94 }"
+    :while-press="reduce || unavailable() ? undefined : { scale: 0.94 }"
     :transition="pressSpring"
   >
     <input

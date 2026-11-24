@@ -115,8 +115,8 @@ const TYPE_SPRING = { stiffness: 320, damping: 30, mass: .6 }
     </div>
 
     <div class="be-nf-actions">
-      <motion.a :href="homeHref" :while-tap="whileTap" :while-hover="whileHover" :transition="pressSpring" class="be-nf-button be-nf-primary">{{ homeLabel ?? text.homeLabel }}</motion.a>
-      <motion.a :href="browseHref" :while-tap="whileTap" :while-hover="whileHover" :transition="pressSpring" class="be-nf-button be-nf-secondary">{{ browseLabel ?? text.browseLabel }}</motion.a>
+      <motion.a :href="homeHref" :while-press="whileTap" :while-hover="whileHover" :transition="pressSpring" class="be-nf-button be-nf-primary">{{ homeLabel ?? text.homeLabel }}</motion.a>
+      <motion.a :href="browseHref" :while-press="whileTap" :while-hover="whileHover" :transition="pressSpring" class="be-nf-button be-nf-secondary">{{ browseLabel ?? text.browseLabel }}</motion.a>
     </div>
   </section>
 </template>

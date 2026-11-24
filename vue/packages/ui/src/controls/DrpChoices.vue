@@ -59,7 +59,7 @@ function onKey(event: KeyboardEvent) {
       :disabled="choice.disabled"
       :aria-pressed="choice.id === selected"
       :tabindex="choice.id === active ? 0 : -1"
-      :while-tap="reduce ? undefined : { scale: 0.96 }"
+      :while-press="reduce ? undefined : { scale: 0.96 }"
       :transition="pressSpring"
       @focus="cursor = choice.id"
       @keydown="onKey"

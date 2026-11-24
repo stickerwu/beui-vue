@@ -44,7 +44,7 @@ const cells = computed(() => cols.value.flatMap(({ w }) => DAYS.flatMap(d => {
     <span v-for="cell in cells" :key="cell.key" class="cell" :style="{ gridColumn: cell.w + 1, gridRow: cell.d + 2, opacity: cell.dim ? 0.25 : 1, zIndex: cell.lift > 1 ? LIFT.length - cell.dist : 0 }">
       <!-- the hit area is the cell plus half the gap on every side, so a fast pointer never falls through; the visual inside never takes pointer events -->
       <motion.button type="button" class="hit" :aria-label="cell.label" :data-heat-cell="`${cell.w}-${cell.d}`" :aria-pressed="cell.isEnd" :aria-describedby="cell.on ? tooltipId : undefined"
-        :while-tap="reduce ? undefined : { scale: 0.9, transition: pressSpring }"
+        :while-press="reduce ? undefined : { scale: 0.9, transition: pressSpring }"
         @pointerenter="setHover({ w: cell.w, d: cell.d })" @focus="setHover({ w: cell.w, d: cell.d })" @blur="setHover(null)" @click="select({ w: cell.w, d: cell.d })" @keydown.esc="clear">
         <!-- the diagonal wave: each cell arrives (w + d) steps after the corner; once settled, the ripple spreads out by distance -->
         <motion.span class="face" :style="{ background: cell.background, boxShadow: cell.isEnd ? '0 0 0 2px var(--beui-background), 0 0 0 3.5px var(--beui-foreground)' : 'none' }"

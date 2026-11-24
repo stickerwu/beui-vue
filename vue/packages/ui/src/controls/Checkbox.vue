@@ -70,7 +70,7 @@ function toggle(event: MouseEvent) {
       :aria-required="required || undefined"
       :disabled="disabled"
       :data-state="state"
-      :while-tap="reduce || disabled ? undefined : { scale: 0.92 }"
+      :while-press="reduce || disabled ? undefined : { scale: 0.92 }"
       :transition="pressSpring"
       @click="toggle"
     >

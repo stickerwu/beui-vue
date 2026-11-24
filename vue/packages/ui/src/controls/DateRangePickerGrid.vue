@@ -142,7 +142,7 @@ function pickChoice(id: string) {
                       :aria-label="ctx.formats.value.date.format(parse(date))"
                       :aria-current="date === ctx.today ? 'date' : undefined"
                       :tabindex="date === ctx.active.value ? 0 : -1"
-                      :while-tap="ctx.reduce.value ? undefined : { scale: 0.9 }"
+                      :while-press="ctx.reduce.value ? undefined : { scale: 0.9 }"
                       :transition="pressSpring"
                       @click="ctx.select(date)"
                       @focus="focusDate(date)"

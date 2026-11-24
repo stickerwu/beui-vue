@@ -194,7 +194,7 @@ const Glyph = (glyph: { name: string }) => h('svg', {
 
         <motion.button
           v-else key="trigger" type="button" class="be-fb-trigger" :class="left ? 'is-left' : 'is-right'" :aria-label="title" aria-haspopup="dialog"
-          :initial="triggerHidden" :animate="{ opacity: 1, x: 0, filter: 'blur(0px)' }" :exit="triggerHidden" :transition="contentTransition" :while-tap="reduce ? undefined : { scale: 0.92 }" @click="openPanel"
+          :initial="triggerHidden" :animate="{ opacity: 1, x: 0, filter: 'blur(0px)' }" :exit="triggerHidden" :transition="contentTransition" :while-press="reduce ? undefined : { scale: 0.92 }" @click="openPanel"
         >
           <motion.span
             class="be-fb-trigger-icon" :initial="reduce ? false : { rotate: 45, scale: MORPH_SCALE }" :animate="{ rotate: 0, scale: 1 }" :exit="{ rotate: 45, scale: MORPH_SCALE }" :transition="contentTransition"

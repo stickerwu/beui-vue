@@ -45,7 +45,7 @@ const yearEnd = (y: number) => yearSpan.value ? y === yearSpan.value.lo || y ===
           <!-- the hit area is the cell plus half the gap on every side, so the grid has no dead space; the visual inside never takes pointer events -->
           <motion.button type="button" class="hit" :data-return-cell="`${y}-${c.m}`" :aria-describedby="cellState(y, c.m).on ? tooltipId : undefined"
             :aria-label="t('monthCell', { month: c.name, year: String(year), value: signed(cellState(y, c.m).v, 1) })" :aria-pressed="cellState(y, c.m).isEnd"
-            :while-tap="reduce ? undefined : { scale: 0.92, transition: pressSpring }"
+            :while-press="reduce ? undefined : { scale: 0.92, transition: pressSpring }"
             @pointerenter="enter(y, c.m)()" @focus="enter(y, c.m)()" @blur="setHover(null)" @click="select({ y, m: c.m })" @keydown="clearOnEscape">
             <motion.span class="face" :style="{
               background: tint(cellState(y, c.m).v, range, cellState(y, c.m).on),
@@ -65,7 +65,7 @@ const yearEnd = (y: number) => yearSpan.value ? y === yearSpan.value.lo || y ===
       <span class="total" :style="{ opacity: yearDim(y) }">
         <motion.button type="button" class="hit" :data-return-cell="`${y}-${YEAR}`" :aria-describedby="same(hot, y, YEAR) ? tooltipId : undefined"
           :aria-label="t('yearCell', { year: String(year), value: signed(totals[y], 1) })" :aria-pressed="yearEnd(y)"
-          :while-tap="reduce ? undefined : { scale: 0.96, transition: pressSpring }"
+          :while-press="reduce ? undefined : { scale: 0.96, transition: pressSpring }"
           @pointerenter="enter(y, YEAR)()" @focus="enter(y, YEAR)()" @blur="setHover(null)" @click="select({ y, m: YEAR })" @keydown="clearOnEscape">
           <!-- a neutral cell under the colored number: the tint of the same hue ate its contrast -->
           <motion.span class="face year" :style="{

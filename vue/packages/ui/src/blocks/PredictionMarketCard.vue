@@ -138,7 +138,7 @@ function hideTip(wait = 0) {
             <motion.button
               type="button" class="be-pmc-odds" :class="index % 2 === 0 ? 'is-positive' : 'is-negative'"
               :aria-label="formatMessage(t.trade, { outcome: outcome.label, percent: cents(outcome) })"
-              :while-tap="reduce ? undefined : { scale: 0.96 }" :transition="pressSpring"
+              :while-press="reduce ? undefined : { scale: 0.96 }" :transition="pressSpring"
               @click="emit('outcomeClick', { outcomeId: outcome.id, side: 'yes' })"
               @pointerenter="(event: PointerEvent) => { if (event.pointerType !== 'touch') hovered = outcome.id }"
               @pointerleave="hovered = null"
@@ -179,7 +179,7 @@ function hideTip(wait = 0) {
         <span class="be-pmc-volume">{{ formatMessage(t.volume, { volume }) }}</span>
         <motion.button
           type="button" class="be-pmc-bookmark" :class="{ 'is-saved': saved }" :aria-label="formatMessage(t.bookmark, { title })" :aria-pressed="saved"
-          :while-tap="reduce ? undefined : { scale: 0.85 }" :transition="pressSpring" @click="setSaved(!saved)"
+          :while-press="reduce ? undefined : { scale: 0.85 }" :transition="pressSpring" @click="setSaved(!saved)"
         >
           <motion.span :animate="{ scale: saved && !reduce ? [1, 1.2, 1] : 1 }" :transition="{ duration: 0.22, ease: easeOut }" class="be-pmc-bookmark-icon">
             <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" :fill="saved ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2 2 0 0 1 2 2v15a1 1 0 0 1-1.496.868l-4.512-2.578a2 2 0 0 0-1.984 0l-4.512 2.578A1 1 0 0 1 5 20V5a2 2 0 0 1 2-2z" /></svg>
