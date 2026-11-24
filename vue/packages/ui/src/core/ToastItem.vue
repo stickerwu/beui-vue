@@ -135,7 +135,10 @@ onBeforeUnmount(() => toastFocusChanged(props.toast, false))
     <div class="be-toast-surface" :class="classNames?.surface">
       <slot :toast="toast">
         <div class="be-toast-row" :data-detail="hasDetails || undefined">
-          <motion.span class="be-toast-icon" :class="classNames?.iconWrap" :layout="!reduce" :data-status="status">
+          <!-- Upstream's memoised item re-renders, and so measures this wrapper, only when its
+               props change: a stack shift (index) or a status swap. Without the dependency it
+               also measured right after mounting, mid-entrance, and slid sideways as it settled. -->
+          <motion.span class="be-toast-icon" :class="classNames?.iconWrap" :layout="!reduce" :layout-dependency="`${index}-${status}`" :data-status="status">
             <AnimatePresence :initial="false" mode="popLayout">
               <motion.span
                 :key="status"

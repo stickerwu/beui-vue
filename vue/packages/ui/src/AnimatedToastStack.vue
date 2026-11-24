@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AnimatePresence } from 'motion-v'
+import { AnimatePresence, LayoutGroup } from 'motion-v'
 import { computed, onBeforeUnmount, onMounted, shallowRef, watch, type VNodeChild } from 'vue'
 import ToastItem from './core/ToastItem.vue'
 import { animatedToastStackMessages, type AnimatedToast, type ToastClassNames, type ToastPosition, type ToastStatus } from './core/toasts'
@@ -84,7 +84,13 @@ onBeforeUnmount(() => { portalTarget.value = null })
       :aria-label="text.list"
       aria-live="polite"
       aria-atomic="false">
-      <AnimatePresence :initial="false" mode="popLayout">
+      <!-- When the stack is full, the oldest toast fades out where it is, then the rest
+           slide down into its slot. Upstream gets that slide because React re-renders every
+           item when the list changes, so each one measures its layout. In Vue the items that
+           stay do not re-render; the LayoutGroup has them measure together when one leaves.
+           The exiting toast stays in flow (no popLayout), so the slide waits for its fade. -->
+      <LayoutGroup>
+      <AnimatePresence :initial="false">
         <ToastItem
           v-for="(item, index) in visible"
           :key="item.id"
@@ -98,6 +104,7 @@ onBeforeUnmount(() => { portalTarget.value = null })
           <template v-if="$slots.icon" #icon="scope"><slot name="icon" v-bind="scope" /></template>
         </ToastItem>
       </AnimatePresence>
+      </LayoutGroup>
     </ol>
   </Teleport>
 </template>
