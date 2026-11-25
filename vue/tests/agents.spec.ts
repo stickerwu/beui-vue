@@ -40,6 +40,14 @@ test('tool approval exposes parameters and reports the user decision', async ({ 
 
 test('answer feedback can be toggled with the keyboard', async ({ page }) => {
   await openDemo(page, 'streaming-response')
+  // The demo replays its stream on mount, which removes the actions until it ends. A key
+  // pressed while they fade out is lost, so wait for the replay to finish. The server markup
+  // is already complete, so see the replay start first (it never runs with reduced motion).
+  const response = page.locator('.beui-demo .sr')
+  if (!await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+    await expect(response).toHaveAttribute('aria-busy', 'true')
+  }
+  await expect(response).toHaveAttribute('aria-busy', 'false', { timeout: 15_000 })
   const helpful = page.getByRole('button', { name: 'Helpful', exact: true })
   await helpful.press('Space')
   await expect(helpful).toHaveAttribute('aria-pressed', 'true')
