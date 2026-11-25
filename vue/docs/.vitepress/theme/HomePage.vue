@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ShaderBackground, Tabs } from 'beui-vue'
+import { BouncyAccordion, ShaderBackground, Tabs } from 'beui-vue'
 import { computed, onBeforeUnmount, onMounted, shallowRef, useTemplateRef } from 'vue'
 import { useData } from 'vitepress'
 import { entries, pages, sections } from './catalog'
@@ -77,33 +77,33 @@ const comparisonRows = computed(() => [
 const faqItems = computed(() => [
   {
     id: 'free',
-    question: t('Is beui-vue free for commercial projects?'),
-    answer: t('Yes. The components are MIT licensed, including commercial use and modification. Keep the copyright and license notice in copies or substantial portions of the source.'),
+    title: t('Is beui-vue free for commercial projects?'),
+    description: t('Yes. The components are MIT licensed, including commercial use and modification. Keep the copyright and license notice in copies or substantial portions of the source.'),
   },
   {
     id: 'install',
-    question: t('How do I install a component?'),
-    answer: t('Add one component with the shadcn-vue CLI, which copies its source into your project, or install the preview package from npm (beui-vue@next) and import from beui-vue. Every component page shows both, with a Vue example and the source files.'),
+    title: t('How do I install a component?'),
+    description: t('Add one component with the shadcn-vue CLI, which copies its source into your project, or install the preview package from npm (beui-vue@next) and import from beui-vue. Every component page shows both, with a Vue example and the source files.'),
   },
   {
     id: 'stack',
-    question: t('What does my project need?'),
-    answer: t('Use Vue 3.5 or newer in a Vite or Nuxt project. Import beui-vue/style.css once in your application. The package includes TypeScript types and compiled styles.'),
+    title: t('What does my project need?'),
+    description: t('Use Vue 3.5 or newer in a Vite or Nuxt project. Import beui-vue/style.css once in your application. The package includes TypeScript types and compiled styles.'),
   },
   {
     id: 'nuxt',
-    question: t('Does beui-vue work with Nuxt?'),
-    answer: t('Yes. The package supports Nuxt SSR. Add beui-vue/style.css to the css array in your Nuxt configuration, then import the Vue components in your pages and components.'),
+    title: t('Does beui-vue work with Nuxt?'),
+    description: t('Yes. The package supports Nuxt SSR. Add beui-vue/style.css to the css array in your Nuxt configuration, then import the Vue components in your pages and components.'),
   },
   {
     id: 'customize',
-    question: t('Can I change the design and animations?'),
-    answer: t('Yes. You can copy the source into your project and change the styles, motion, and behavior directly. The shared CSS tokens let you match the components to your own theme.'),
+    title: t('Can I change the design and animations?'),
+    description: t('Yes. You can copy the source into your project and change the styles, motion, and behavior directly. The shared CSS tokens let you match the components to your own theme.'),
   },
   {
     id: 'upstream',
-    question: t('How is this project related to beUI?'),
-    answer: t('beui-vue is an independently maintained Vue implementation by stickerwu. The original component designs and interactions come from beUI and its contributors, whose attribution and MIT license are preserved.'),
+    title: t('How is this project related to beUI?'),
+    description: t('beui-vue is an independently maintained Vue implementation by stickerwu. The original component designs and interactions come from beUI and its contributors, whose attribution and MIT license are preserved.'),
   },
 ])
 
@@ -309,20 +309,14 @@ onBeforeUnmount(() => {
           <h2 id="home-faq" class="home-section-title">{{ t('A few things to know') }}</h2>
         </div>
       </div>
-      <div class="home-faq-list">
-        <details v-for="item in faqItems" :key="item.id" class="home-faq-item" name="home-faq">
-          <summary class="home-faq-question">
-            {{ item.question }}
-            <Icon name="chevron-down" />
-          </summary>
-          <p class="home-faq-answer">
-            {{ item.answer }}
-            <a v-if="item.id === 'free'" href="https://github.com/stickerwu/beui-vue/blob/main/LICENSE" target="_blank" rel="noreferrer noopener">{{ t('Read the license.') }}</a>
-            <a v-if="item.id === 'install' || item.id === 'stack' || item.id === 'nuxt'" :href="href('/install')">{{ t('Installation guide.') }}</a>
-            <a v-if="item.id === 'upstream'" href="https://beui.dev" target="_blank" rel="noreferrer noopener">{{ t('Explore beUI.') }}</a>
-          </p>
-        </details>
-      </div>
+      <BouncyAccordion :items="faqItems" class="home-faq-list">
+        <template #default="{ item }">
+          {{ item.description }}
+          <a v-if="item.id === 'free'" href="https://github.com/stickerwu/beui-vue/blob/main/LICENSE" target="_blank" rel="noreferrer noopener">{{ t('Read the license.') }}</a>
+          <a v-if="item.id === 'install' || item.id === 'stack' || item.id === 'nuxt'" :href="href('/install')">{{ t('Installation guide.') }}</a>
+          <a v-if="item.id === 'upstream'" href="https://beui.dev" target="_blank" rel="noreferrer noopener">{{ t('Explore beUI.') }}</a>
+        </template>
+      </BouncyAccordion>
     </section>
 
     <section class="home-container home-closing" aria-labelledby="home-closing-title">
