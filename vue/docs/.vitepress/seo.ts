@@ -154,7 +154,7 @@ export function llmsFull() {
     '',
     '    npx shadcn-vue@latest add @beui-vue/<slug>',
     '',
-    `Or install the package from npm: \`npm install beui-vue@next\`, then \`import 'beui-vue/style.css'\`.`,
+    `Or install the package from npm: \`npm install beui-vue\`, then \`import 'beui-vue/style.css'\`.`,
     '',
     `- Docs: ${site} (中文), ${site}en/ (English)`,
     `- Registry index (shadcn-vue): ${site}r/index.json, one item per slug at ${site}r/<slug>.json`,

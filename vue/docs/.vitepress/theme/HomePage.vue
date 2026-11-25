@@ -16,7 +16,7 @@ const { isZh, t, href } = useLocale()
 // Every install slug, in catalog order, for the hero command.
 const installSlugs = entries.map(entry => entry.slug)
 /** The preview line on npm; `@next` until the first stable release. */
-const packageUrl = 'beui-vue@next'
+const packageUrl = 'beui-vue'
 const packageManager = shallowRef('bun')
 const packageManagers = [
   { value: 'bun', label: 'bun' },
@@ -83,7 +83,7 @@ const faqItems = computed(() => [
   {
     id: 'install',
     title: t('How do I install a component?'),
-    description: t('Add one component with the shadcn-vue CLI, which copies its source into your project, or install the preview package from npm (beui-vue@next) and import from beui-vue. Every component page shows both, with a Vue example and the source files.'),
+    description: t('Add one component with the shadcn-vue CLI, which copies its source into your project, or install the beui-vue package from npm and import from it. Every component page shows both, with a Vue example and the source files.'),
   },
   {
     id: 'stack',

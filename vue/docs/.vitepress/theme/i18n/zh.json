@@ -235,7 +235,7 @@
  "Human-in-the-loop components": "人机协同组件",
  "Pause agent work for a scoped permission, clarification, review, or decision, then preserve the resolved outcome in the run history.": "为限定范围的授权、澄清、审查或决定暂停 Agent 工作，并在运行记录中保留处理结果。",
  "All {count} in {name}": "全部 {count} 个{name}",
- "Add one component with the shadcn-vue CLI, which copies its source into your project, or install the preview package from npm (beui-vue@next) and import from beui-vue. Every component page shows both, with a Vue example and the source files.": "用 shadcn-vue CLI 添加单个组件，源码会复制到你的项目里；也可以从 npm 安装预览包（beui-vue@next），再从 beui-vue 导入。每个组件页面都提供这两种方式，以及 Vue 示例和源码文件。",
+ "Add one component with the shadcn-vue CLI, which copies its source into your project, or install the beui-vue package from npm and import from it. Every component page shows both, with a Vue example and the source files.": "用 shadcn-vue CLI 添加单个组件，源码会复制到你的项目里；也可以从 npm 安装 beui-vue 包，再从中导入。每个组件页面都提供这两种方式，以及 Vue 示例和源码文件。",
  "Install a component with the shadcn-vue CLI": "用 shadcn-vue CLI 安装组件",
  "Play demos": "播放演示",
  "Pause demos": "暂停演示",

@@ -1,6 +1,6 @@
 {
   "name": "beui-vue",
-  "version": "0.1.0-alpha.1",
+  "version": "0.1.0",
   "description": "Animated Vue 3 components and UI blocks, the Vue port of beUI. motion-v, TypeScript, Nuxt SSR, shadcn-vue registry.",
   "keywords": [
     "vue",

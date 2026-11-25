@@ -16,9 +16,9 @@ const props = defineProps<{
   sourcePath?: string
 }>()
 
-/** The npm preview line (`next` until the first stable release) and its tarball for manual installs. */
-const packageSpec = 'beui-vue@next'
-const archiveName = 'beui-vue-0.1.0-alpha.1.tgz'
+/** The npm package and the tarball of its current release, for manual installs. */
+const packageSpec = 'beui-vue'
+const archiveName = 'beui-vue-0.1.0.tgz'
 const packageUrl = `https://registry.npmjs.org/beui-vue/-/${archiveName}`
 /** `@beui-vue` is in the shadcn-vue registry directory, so the CLI resolves it with no setup. */
 const registryNamespace = '@beui-vue'

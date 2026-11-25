@@ -34,7 +34,7 @@ The full URL works too: `npx shadcn-vue@latest add https://beui.stickerwu.net/r/
 
 5. Load the shared styles once in the app entry, `import '@/components/beui/styles.css'`, then import the component from the file that was added, for example `import ButtonBase from '@/components/beui/ButtonBase.vue'`.
 
-Projects that prefer a dependency can install the `beui-vue` package instead (`npm install beui-vue@next`; see the [installation guide](https://beui.stickerwu.net/en/install)), import named components from `beui-vue`, and load `beui-vue/style.css` once.
+Projects that prefer a dependency can install the `beui-vue` package instead (`npm install beui-vue`; see the [installation guide](https://beui.stickerwu.net/en/install)), import named components from `beui-vue`, and load `beui-vue/style.css` once.
 
 The live registry is the source of truth. Use the table below only to resolve common lookalikes.
 

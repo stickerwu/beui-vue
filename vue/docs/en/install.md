@@ -8,10 +8,10 @@ Use Vue 3.5 or a newer Vue 3 release. beui-vue ships two ways: as a package you 
 
 ## Install the package {#package}
 
-The preview is published on npm under the `next` tag. Install it from your project root:
+beui-vue is published on npm. Install it from your project root:
 
 ```sh
-npm install beui-vue@next
+npm install beui-vue
 ```
 
 Load `beui-vue/style.css` once at your application entry. Nuxt projects can add the same path to the `css` array in `nuxt.config.ts`. The components use compiled styles, and both Vite and Nuxt can import them directly.

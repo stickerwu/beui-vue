@@ -1,6 +1,6 @@
 ---
 title: 安装 beui-vue：Vue 3 与 Nuxt 动画组件库
-description: 在 Vue 3.5 的 Vite 或 Nuxt SSR 项目中安装 beui-vue 预览版，或用 shadcn-vue CLI 把组件源码复制进项目；导入 ButtonBase 和样式，并配置深色主题。
+description: 在 Vue 3.5 的 Vite 或 Nuxt SSR 项目中安装 beui-vue，或用 shadcn-vue CLI 把组件源码复制进项目；导入 ButtonBase 和样式，并配置深色主题。
 ---
 # 安装与使用
 
@@ -8,10 +8,10 @@ description: 在 Vue 3.5 的 Vite 或 Nuxt SSR 项目中安装 beui-vue 预览�
 
 ## 安装依赖包 {#package}
 
-预览版发布在 npm 的 `next` 标签下，在项目根目录安装：
+beui-vue 发布在 npm 上，在项目根目录安装：
 
 ```sh
-npm install beui-vue@next
+npm install beui-vue
 ```
 
 在应用入口加载一次 `beui-vue/style.css`。Nuxt 项目可以将相同路径加入 `nuxt.config.ts` 的 `css` 列表。组件使用编译后的样式，Vite 和 Nuxt 均可直接引入。

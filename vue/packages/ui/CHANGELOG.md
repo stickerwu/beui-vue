@@ -1,5 +1,9 @@
 # beui-vue
 
+## 0.1.0
+
+First stable release. `npm install beui-vue` now installs it (the `latest` tag); the components are the same as in 0.1.0-alpha.1.
+
 ## 0.1.0-alpha.1
 
 First release on npm (`npm install beui-vue@next`).

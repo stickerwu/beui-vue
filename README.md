@@ -56,10 +56,10 @@ import '@/components/beui/styles.css'
 
 ### 方式二：npm 包
 
-在 **Vue 3.5 或更新的 3.x** 项目里，从 npm 安装预览版：
+在 **Vue 3.5 或更新的 3.x** 项目里，从 npm 安装：
 
 ```sh
-npm install beui-vue@next
+npm install beui-vue
 ```
 
 Nuxt 项目把 `beui-vue/style.css` 加进 `nuxt.config.ts` 的 `css` 数组即可。详见[安装指南](https://beui.stickerwu.net/install)。
@@ -144,7 +144,7 @@ const items = [
 
 ## 🛠️ 版本与开发
 
-[`beui-vue@0.1.0-alpha.1`](https://www.npmjs.com/package/beui-vue) 包含全部 160 个公开 Web 条目的 Vue 实现。172 组演示的动效按变体审看，目录逐项记录还原进度。[npm 包](https://www.npmjs.com/package/beui-vue) · [更新记录](./vue/packages/ui/CHANGELOG.md)
+[`beui-vue@0.1.0`](https://www.npmjs.com/package/beui-vue) 包含全部 160 个公开 Web 条目的 Vue 实现。172 组演示的动效按变体审看，目录逐项记录还原进度。[npm 包](https://www.npmjs.com/package/beui-vue) · [更新记录](./vue/packages/ui/CHANGELOG.md)
 
 Vue 组件、示例和文档都在 [`vue/`](./vue) 目录。本地构建、Vite 与 Nuxt 安装测试和截图对照的方法见[开发指南](./vue/README.md)。
 

@@ -56,10 +56,10 @@ import '@/components/beui/styles.css'
 
 ### Option 2: npm package
 
-In a **Vue 3.5 or newer 3.x** project, install the preview from npm:
+In a **Vue 3.5 or newer 3.x** project, install it from npm:
 
 ```sh
-npm install beui-vue@next
+npm install beui-vue
 ```
 
 For Nuxt, add `beui-vue/style.css` to the `css` array in `nuxt.config.ts`. See the [installation guide](https://beui.stickerwu.net/en/install).
@@ -144,7 +144,7 @@ See the [AI agent guide](https://beui.stickerwu.net/en/docs/ai-agents).
 
 ## 🛠️ Releases and development
 
-[`beui-vue@0.1.0-alpha.1`](https://www.npmjs.com/package/beui-vue) includes Vue implementations of all 160 public web items. The motion of the 172 demos is reviewed per variant, and the catalog tracks each one. [npm package](https://www.npmjs.com/package/beui-vue) · [Changelog](./vue/packages/ui/CHANGELOG.md)
+[`beui-vue@0.1.0`](https://www.npmjs.com/package/beui-vue) includes Vue implementations of all 160 public web items. The motion of the 172 demos is reviewed per variant, and the catalog tracks each one. [npm package](https://www.npmjs.com/package/beui-vue) · [Changelog](./vue/packages/ui/CHANGELOG.md)
 
 The Vue components, demos and docs live in [`vue/`](./vue). The [development guide](./vue/README.md) covers local builds, Vite and Nuxt install tests, and screenshot comparisons.
 

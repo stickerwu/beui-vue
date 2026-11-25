@@ -9,7 +9,7 @@ beUI 动效组件与界面区块的 Vue 3 实现，由 stickerwu 独立维护。
 ## Install
 
 ```sh
-npm install beui-vue@next
+npm install beui-vue
 ```
 
 Requires Vue 3.5 or a newer 3.x. Load the compiled styles once in your app entry (in Nuxt, add `beui-vue/style.css` to `css` in `nuxt.config.ts`):
